@@ -81,23 +81,19 @@ public class WebPoker extends WebSocketServer {
 
     numPlayers++;
     int newID = 0;
-    synchronized(mutex)
-    {
-        newID = game.get_next_id();
-      if(game.players.size() >= 5){
-        player = new Player(newID);          // New player is created and given no id
-        game.add_player_queue(player);            // Player is added to a queue waiting to enter a game
+    synchronized(mutex){
+      newID = game.get_next_id();
+      if(game.players.size() >= 5){             
+        player = new Player(newID);             // New player is created and given no id
+        game.add_player_queue(player);          // Player is added to a queue waiting to enter a game
       }
-      else if( game.phase == 0)
-      {
-        player = new Player(newID);          // New player is created and given their unique Id
-        game.addPlayer(player);                   // Player is added to the game
+      else if(game.phase == 0){
+        player = new Player(newID);             // New player is created and given their unique Id
+        game.addPlayer(player);                 // Player is added to the game
       }
-      else
-      {
-          // add to queue if a game is in session
-          player = new Player(newID);          // New player is created and given no id
-          game.add_player_queue(player);
+      else{  // add to queue if a game is in session
+        player = new Player(newID);           // New player is created and given no id
+        game.add_player_queue(player);
       }
     }
 
@@ -300,6 +296,4 @@ public class WebPoker extends WebSocketServer {
   public static Object mutex = new Object();
 
   private Player player;
-
-
 }

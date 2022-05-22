@@ -8,677 +8,555 @@
 </head>
 
 <body>
-  <big id="titleText" style="text-align:center">
-    <p style="text-align:center"><img id="mav1" src="UT_Arlington_Mavericks_logo.png" width="100px">
-      <big><big><b>MavPoker</b></big></big>
-      <img id="mav2" src="UT_Arlington_Mavericks_logo.png" width="100px"></p>
-</big>
-  <hr style="height:5px; width:100%; border-width:0; color:black; background-color:black">
-  <p>
-      <div id="waitingBody" style="text-align:center">
-          <p id="waitingText" style="text-align:center"></p>
-          <p id="waitingQueue" style="text-align:center"></p>
-      </div>
-  </p>
-  <a id="bodyText">
-      <div id="nameInput">
-        <p style="text-align:center">
-          Name:
-          <input id="sendName" type="text" style="text-align:center">
-          <input type="button" name="sendName" value="Connect" onclick="sendName()" >
+    <big id="titleText" style="text-align:center">
+        <p style="text-align:center"><img id="mav1" src="UT_Arlington_Mavericks_logo.png" width="100px">
+            <big><big><b>MavPoker</b></big></big>
+            <img id="mav2" src="UT_Arlington_Mavericks_logo.png" width="100px">
         </p>
-      </div>
-      <div id="info_display" style="width: auto;">
-          <p id="phaseNumber"       style="width: auto; white-space: pre-line;"></p>
-          <p id="readyDisplay"      style="width: auto; white-space: pre-line;"></p>
-          <p id="turnNumber"        style="width: auto; white-space: pre-line;"></p>
-          <b><p id="timeRemaining"     style="width: auto; white-space: pre-line;"></p></b>
-          <b><p id ="timeWarning"      style="width: auto; white-space: pre-line;"></p></b>
-          <p id="turnHelp"          style="width: auto; white-space: pre-line;"></p>
-          <p id="info"              style="width: auto; white-space: pre-line;"></p>
-          <p id="playersTotalBets"  style="width: auto; white-space: pre-line;"></p>
-          <b>
-            <img id="chips" src="chips.png" width="150px">
-            <p id="pot"               style="width: auto; white-space: pre-line;"></p></b>
-      </div>
-      <t id="cardstext">Your Cards:</t>
-      <p id="cards" style="text-align:center">
-          <input type="checkbox" id="card1checkbox">
-          <img id="card1" src="" width="100px">
-          <input type="checkbox" id="card2checkbox">
-          <img id="card2" src="" width="100px">
-          <input type="checkbox" id="card3checkbox">
-          <img id="card3" src="" width="100px">
-          <input type="checkbox" id="card4checkbox">
-          <img id="card4" src="" width="100px">
-          <input type="checkbox" id="card5checkbox">
-          <img id="card5" src="" width="100px">
-      </p>
-      <div id="stand_fold_display" style="text-align:center">
-        <input type="button" id="sendReady" value="Ready"   onclick="sendEvent(0)" style="text-align:center">
-        <input type="button" id="sendStand" value="Check"   onclick="sendEvent(1)" style="text-align:center">
-        <input type="button" id="sendCall" value="Call"   onclick="sendEvent(8)" style="text-align:center">
-        <input type="button" id="sendFold"  value="Fold"    onclick="sendEvent(2)" style="text-align:center">
-        <input type="button" id="sendBet1"   value="Bet 05"  onclick="sendEvent(3)" style="text-align:center">
-        <input type="button" id="sendBet2"   value="Bet 10"  onclick="sendEvent(4)" style="text-align:center">
-        <input type="button" id="sendBet3"   value="Bet 20"  onclick="sendEvent(5)" style="text-align:center">
-        <input type="button" id="sendDraw"  value="Draw"    onclick="sendEvent(7)" style="text-align:center">
-        <input type="button" id="sendSort"   value="Sort"    onclick="sendEvent(6)" style="text-align:center">
-      </div>
-  </a>
-  <hr style="height:5px; width:100%; border-width:0; color:black; background-color:black">
-
-  <input type="button" id="infoButton" value="Toggle Info" onclick="toggleInfo()" style="text-align:center">
-  <p id="infoToggle">
-    <big><b id="info1">Five Card Draw Poker</b></big>
-    <p id="info1text">
-      This version of Five Card Draw is played with a standard 52-card deck with two to five players.
-    </p>
-    <big id="info2">
-      <b>First Phase Betting</b>
     </big>
+    <hr style="height:5px; width:100%; border-width:0; color:black; background-color:black">
+    <p>
+        <div id="waitingBody" style="text-align:center">
+            <p id="waitingText" style="text-align:center"></p>
+            <p id="waitingQueue" style="text-align:center"></p>
+        </div>
+    </p>
+    <a id="bodyText">
+        <div id="nameInput">
+            <p style="text-align:center">
+                Name:
+                <input id="sendName" type="text" style="text-align:center">
+                <input type="button" name="sendName" value="Connect" onclick="sendName()" >
+            </p>
+        </div>
+        <div id="info_display" style="width: auto;">
+            <p id="phaseNumber"       style="width: auto; white-space: pre-line;"></p>
+            <p id="readyDisplay"      style="width: auto; white-space: pre-line;"></p>
+            <p id="turnNumber"        style="width: auto; white-space: pre-line;"></p>
+            <p id="timeRemaining"     style="width: auto; white-space: pre-line; font-weight: bold;"></p>
+            <p id ="timeWarning"      style="width: auto; white-space: pre-line; font-weight: bold;"></p>
+            <p id="turnHelp"          style="width: auto; white-space: pre-line;"></p>
+            <p id="info"              style="width: auto; white-space: pre-line;"></p>
+            <p id="playersTotalBets"  style="width: auto; white-space: pre-line;"></p>
+            <img id="chips" src="chips.png" width="150px">
+            <p id="pot"               style="width: auto; white-space: pre-line; font-weight: bold;"></p>
+        </div>
+        <t id="cardstext">Your Cards:</t>
+        <p id="cards" style="text-align:center">
+            <input type="checkbox" id="card1checkbox">
+            <img id="card1" src="" width="100px">
+            <input type="checkbox" id="card2checkbox">
+            <img id="card2" src="" width="100px">
+            <input type="checkbox" id="card3checkbox">
+            <img id="card3" src="" width="100px">
+            <input type="checkbox" id="card4checkbox">
+            <img id="card4" src="" width="100px">
+            <input type="checkbox" id="card5checkbox">
+            <img id="card5" src="" width="100px">
+        </p>
+        <div id="check_fold_display" style="text-align:center">
+            <input type="button" id="sendReady"   value="Ready"   onclick="sendEvent(0)" style="text-align:center">
+            <input type="button" id="sendCheck"   value="Check"   onclick="sendEvent(1)" style="text-align:center">
+            <input type="button" id="sendFold"    value="Fold"    onclick="sendEvent(2)" style="text-align:center">
+            <input type="button" id="sendBet1"    value="Bet 05"  onclick="sendEvent(3)" style="text-align:center">
+            <input type="button" id="sendBet2"    value="Bet 10"  onclick="sendEvent(4)" style="text-align:center">
+            <input type="button" id="sendBet3"    value="Bet 20"  onclick="sendEvent(5)" style="text-align:center">
+            <input type="button" id="sendSort"    value="Sort"    onclick="sendEvent(6)" style="text-align:center">
+            <input type="button" id="sendDraw"    value="Draw"    onclick="sendEvent(7)" style="text-align:center">
+            <input type="button" id="sendCall"    value="Call"    onclick="sendEvent(8)" style="text-align:center">
+        </div>
+    </a>
+    <hr style="height: 5px; width: 100%; border-width: 0; color: black; background-color: black">
+
+    <input type="button" id="infoButton" value="Toggle Info" onclick="toggleInfo()" style="text-align:center">
+    <p id="infoToggle">
+        <big><b id="info1">Five Card Draw Poker</b></big>
+    </p>
+    <p id="info1text">
+        This version of Five Card Draw is played with a standard 52-card deck with two to five players.
+    </p>
+    <big id="info2"><b>First Phase Betting</b></big>
     <p id="info2text">
-      Before given cards, each player must play an ante into the pot. Once the ante is placed, all players 
-      will receive their cards and the first phase of betting will begin. Each player can 
-      place a bet that all players must match or they will have to fold, unless they have bet their entire wallet.
+        Before given cards, each player must play an ante into the pot. Once the ante is placed, all players will receive their cards and the first phase of betting will begin. Each player can place a bet that all players must match or they will have to fold, unless they have bet their entire wallet.
     </p>
     <big id="info3">
-      <b>Second Phase Drawing</b>
+        <b>Second Phase Drawing</b>
     </big>
     <p id="info3text">
-      During this phase, all players may swap up to three cards in their hand in hopes of getting better cards. No bets
-      are placed during this round.
+        During this phase, all players may swap up to three cards in their hand in hopes of getting better cards. No bets are placed during this round.
     </p>
     <big id="info4">
-      <b>Third Phase Betting</b>
+        <b>Third Phase Betting</b>
     </big>
     <p id="info4text">
-      Like in the first bet phase, all players each player can 
-      place a bet that all players must match or they will have to fold, unless they have bet their entire wallet.
+        Like in the first bet phase, all players each player can place a bet that all players must match or they will have to fold, unless they have bet their entire wallet.
     </p>
     <big id="info5">
-      <b>Last Phase Showdown</b>
+        <b>Last Phase Showdown</b>
     </big>
     <p id="info5text">
-      After the second betting phase, the pot will be awarded to the highest ranking hand with tie breakers going 
-      down to all five cards if needed. If there is still a tie, the pot will be split between the winning players.
+        After the second betting phase, the pot will be awarded to the highest ranking hand with tie breakers going down to all five cards if needed. If there is still a tie, the pot will be split between the winning players.
     </p>
-  </p>
 </body>
 
 </html>
 <script>
-  var playerID;
-  var name;
-  var playerObj;
-  var cardIdx = 0;
-  var inQueue;
-  var infoToggle = false;
+    var playerID;
+    var name;
+    var playerObj;
+    var cardIdx = 0;
+    var inQueue;
+    var infoToggle = false;
 
-  var serverUrl ="ws://" + window.location.hostname + ":8885";
-  var connection = new WebSocket(serverUrl);
+    var serverUrl ="ws://" + window.location.hostname + ":8885";
+    var connection = new WebSocket(serverUrl);
   
 
-  connection.onopen = function (evt){
-    console.log("open");
-  }
-
-  connection.onmessage = function(evt) {
-    //console.log("message: " + evt.data);
-    var msg;
-    msg = evt.data;
-    inQueue = true;
-
-    document.getElementById('sendReady').style.display = "none";
-    document.getElementById('sendStand').style.display = "none";
-    document.getElementById('sendFold').style.display = "none";
-    document.getElementById('sendCall').style.display = "none";
-    document.getElementById('sendBet1').style.display = "none";
-    document.getElementById('sendBet2').style.display = "none";
-    document.getElementById('sendBet3').style.display = "none";
-    document.getElementById('sendDraw').style.display = "none";
-    document.getElementById('sendSort').style.display = "none";
-    document.getElementById('cards').style.display = "none";
-    document.getElementById('cardstext').style.display = "none";
-    document.getElementById('chips').src = "";
-    document.getElementById('infoButton').style = "text-align:center";
-
-    // This is a hack for this example.
-    // The only time the WebPoker server sends data just
-    // to this client is at the beginging, when the connection
-    // is first made.  The first communication tells us which
-    // connection number we are, which is very import.
-    // So, we detect this situation where it is not game state
-
-    // Take the msg and turn it into a javascript object
-    const obj = JSON.parse(msg);
-
-    // This is specifically for functionality sent from onOpen in WebSocket.java
-
-    if(obj.name == "not set"){
-        playerID = obj.id;
-        console.log("Player id: " + playerID);
+    connection.onopen = function (evt){
+        console.log("open");
     }
-    else {
-      // process the game state
-      // this will just have one card change every time a new game state comes in.
-      // the term LUT means "look up table".  you will see it sometimes in code written last
-      // century.
 
+    connection.onmessage = function(evt){
+        //console.log("message: " + evt.data);
+        var msg;
+        msg = evt.data;
+        inQueue = true;
 
+        document.getElementById('sendReady').style.display = "none";
+        document.getElementById('sendCheck').style.display = "none";    // Check not stand
+        document.getElementById('sendFold').style.display = "none";
+        document.getElementById('sendCall').style.display = "none";
+        document.getElementById('sendBet1').style.display = "none";
+        document.getElementById('sendBet2').style.display = "none";
+        document.getElementById('sendBet3').style.display = "none";
+        document.getElementById('sendDraw').style.display = "none";
+        document.getElementById('sendSort').style.display = "none";
+        document.getElementById('cards').style.display = "none";
+        document.getElementById('cardstext').style.display = "none";
+        document.getElementById('chips').src = "";
+        document.getElementById('infoButton').style = "text-align:center";
 
-      for(var i = 0; i < obj.players.length; i++)
-      {
-          if(obj.players[i].id == playerID)
-          {
-              playerObj = obj.players[i];
-              inQueue = false;
-              document.getElementById('bodyText').style.display = "block";
-              document.getElementById('waitingBody').style.display = "none";
-              //console.log(playerObj);
-          }
-      }
-      if(obj.player_queue.length != 0)
-      {
-          for(var i = 0; i < obj.player_queue.length; i++)
-          {
-            try
-            {
-              if(obj.players_queue[i].id == playerID)
-              {
-                  playerObj = obj.players_queue[i];
-                  inQueue = true;
-                  document.getElementById('bodyText').style.display = "none";
-                  document.getElementById('waitingBody').style.display = "block";
-                  //console.log(playerObj);
-              }
-            } catch(error)
-            {
-              console.log(error);
+        // This is a hack for this example.
+        // The only time the WebPoker server sends data just
+        // to this client is at the beginging, when the connection
+        // is first made.  The first communication tells us which
+        // connection number we are, which is very import.
+        // So, we detect this situation where it is not game state
+
+        // Take the msg and turn it into a javascript object
+        const obj = JSON.parse(msg);
+
+        // This is specifically for functionality sent from onOpen in WebSocket.java
+
+        if(obj.name == "not set"){
+            playerID = obj.id;
+            console.log("Player id: " + playerID);
+        }
+        else{
+            // process the game state
+            // this will just have one card change every time a new game state comes in.
+            // the term LUT means "look up table".  you will see it sometimes in code written last
+            // century.
+
+            for(var i = 0; i < obj.players.length; i++){
+                if(obj.players[i].id == playerID){
+                    playerObj = obj.players[i];
+                    inQueue = false;
+                    document.getElementById('bodyText').style.display = "block";
+                    document.getElementById('waitingBody').style.display = "none";
+                }
             }
-          }
-      }
+        }
+        if(obj.player_queue.length != 0){
+            for(var i = 0; i < obj.player_queue.length; i++){
+                try{
+                    if(obj.players_queue[i].id == playerID){
+                        playerObj = obj.players_queue[i];
+                        inQueue = true;
+                        document.getElementById('bodyText').style.display = "none";
+                        document.getElementById('waitingBody').style.display = "block";
+                    }   
+                }catch(error){
+                    console.log(error);
+                }
+            }
+        }
       
-      if(obj.players.length == 5 && inQueue == true)
-      {
-          document.getElementById('waitingText').innerHTML = "Waiting for player spot to open up..."
+        if(obj.players.length == 5 && inQueue == true){
+            document.getElementById('waitingText').innerHTML = "Waiting for player spot to open up..."
             + "\n" + "Players in game (" + obj.players.length + "/5)";
-      }
-      else if(inQueue == true)
-      {
-          document.getElementById('waitingQueue').innerHTML = "Waiting for round to end...";
-      }
-      else 
-      {
-          // display whose turn it is
-          document.getElementById("phaseNumber").innerHTML = obj.playerMessage;
+        }
+        else if(inQueue == true){
+            document.getElementById('waitingQueue').innerHTML = "Waiting for round to end...";
+        }
+        else{
+            // display whose turn it is
+            document.getElementById("phaseNumber").innerHTML = obj.playerMessage;
 
-          // conditionals to hide or display buttons
-          updateButtons(obj, playerObj);
+            // conditionals to hide or display buttons
+            updateButtons(obj, playerObj);
 
-          if(playerObj.ready)
-          {
-            document.getElementById("sendReady").disabled = true;
-          }
-          else 
-          {
-            document.getElementById("sendReady").disabled = false;
-          }
+            if(playerObj.ready) document.getElementById("sendReady").disabled = true;
+            else document.getElementById("sendReady").disabled = false;
           
+            document.getElementById("info").innerHTML
+                = "Player Wallet: " + playerObj.wallet
+                + "\n"
+                + "Player Name: "   + playerObj.name
+                + "\n"
+                + "Player Id: "     + playerObj.id;
+            // display the amount in the pot
+            document.getElementById("pot").innerHTML = "Total Pot: " + obj.pot.pot;
+            document.getElementById('chips').src = "chips.png";
 
-          document.getElementById("info").innerHTML
-            = "Player Wallet: " + playerObj.wallet
-            + "\n"
-            + "Player Name: "   + playerObj.name
-            + "\n"
-            + "Player Id: "     + playerObj.id;
-          // display the amount in the pot
-          document.getElementById("pot").innerHTML = "Total Pot: " + obj.pot.pot;
-          document.getElementById('chips').src = "chips.png";
+            displayTime(obj, playerObj);
 
+            // display the total bets of all players
+            var playerTotalBetString = "";
+            obj.players.forEach(player =>{
+                playerTotalBetString += "id: " + player.id + " | " + player.name
+                    + " | Current Bet: " + player.currentBet
+                    + " Wallet: " + player.wallet
+                    + " ready: " + (player.ready?"Yes":"No")
+                    + "\n";
+            });
+            document.getElementById("playersTotalBets").innerHTML = playerTotalBetString;
 
-          displayTime(obj, playerObj);
-
-          // display the total bets of all players
-          var playerTotalBetString = "";
-          obj.players.forEach(player =>
-          {
-            playerTotalBetString += "id: " + player.id + " | " + player.name
-                                + " | Current Bet: " + player.currentBet
-                                + " Wallet: " + player.wallet
-                                + " ready: " + (player.ready?"Yes":"No")
-                                + "\n";
-          });
-          document.getElementById("playersTotalBets").innerHTML = playerTotalBetString;
-
-          // display the player's cards
-          displayCards(playerObj);
-      }
-
-    }
-    //console.log("the cardIdx is " + cardIdx);
-  }
-
-  // send info from the buttons where
-  // 1 is STAND
-  // 2 is Draw
-  // 3 is Bet
-  // 4 is fold
-  // passed as an argument from button
-  function sendEvent(option){
-    // send a UserEvent in JSON
-    var eventType;
-    var amount = 0;
-    var amountDraw = 0;
-    var indexes = [0, 0, 0];
-    if(option == 0)
-    {
-        eventType = "READY";
-    }
-    else if(option == 1){
-      eventType = "STAND";
-
-      var x = document.getElementById("stand_fold_display");
-
-      //if(x.style.display === "none"){ x.style.display = "block"; }
-      //else{ x.style.display = "none"; }
-    }         // event type is STAND
-    else if(option == 2){                           // event type is  FOLD
-      eventType = "FOLD";
-
-      /*
-      var x = document.getElementById("stand_fold_display");
-
-      if(x.style.display === "none"){ x.style.display = "block"; }
-      else{ x.style.display = "none"; }
-      */
-    }
-    else if(option == 3){                           // event type is BET
-      eventType = "BET";
-      amount = 5;
-    }
-    else if(option == 4){                           // event type is BET
-      eventType = "BET";
-      amount = 10;
-    }
-    else if(option == 5){                           // event type is BET
-      eventType = "BET";
-      amount = 20;
-    }
-
-    else if(option == 6){
-      eventType = "SORT";
-    }
-    else if(option == 7){                           // event type is DRAW
-      eventType = "DRAW";
-
-      if(document.getElementById('card1checkbox').checked == true)
-      {
-          for(var i = 0; i < 3; i++)
-          {
-              if(indexes[i] == 0)
-              {
-                  indexes[i] = 1;
-                  break;
-              }
-          }
-      }
-      if(document.getElementById('card2checkbox').checked == true)
-      {
-          for(var i = 0; i < 3; i++)
-          {
-              if(indexes[i] == 0)
-              {
-                  indexes[i] = 2;
-                  break;
-              }
-          }
-      }
-      if(document.getElementById('card3checkbox').checked == true)
-      {
-          for(var i = 0; i < 3; i++)
-          {
-              if(indexes[i] == 0)
-              {
-                  indexes[i] = 3;
-                  break;
-              }
-          }
-      }
-      if(document.getElementById('card4checkbox').checked == true)
-      {
-          for(var i = 0; i < 3; i++)
-          {
-              if(indexes[i] == 0)
-              {
-                  indexes[i] = 4;
-                  break;
-              }
-          }
-      }
-      if(document.getElementById('card5checkbox').checked == true)
-      {
-          for(var i = 0; i < 3; i++)
-          {
-              if(indexes[i] == 0)
-              {
-                  indexes[i] = 5;
-                  break;
-              }
-          }
-      }
-
-      for(var i; i < 3; i++)
-      {
-          if(indexes[i] != 0)
-          {
-              amountDraw++;
-              break;
-          }
-      }
-      document.getElementById('card1checkbox').checked = false;
-      document.getElementById('card2checkbox').checked = false;
-      document.getElementById('card3checkbox').checked = false;
-      document.getElementById('card4checkbox').checked = false;
-      document.getElementById('card5checkbox').checked = false;
-      // get the indexes of the cards
-    }
-    else if(option == 8)
-    {
-      eventType = "CALL";
-    }
-    // create the object to be sent to the game server
-    const msg = {
-        event: eventType,
-        name: document.getElementById("sendName").value,
-        playerID: playerID,
-        player: playerObj,
-        amount_to_bet: amount,
-        amount_to_draw: amountDraw,
-        give_card_indexes: indexes
-    };
-    connection.send(JSON.stringify(msg));
-    //console.log(JSON.stringify(msg));
-  }
-
-  function send() {
-    var msg = {
-      text: document.getElementById("send_text").value,
-    };
-    connection.send(JSON.stringify(msg));
-    //console.log(JSON.stringify(msg));
-  }
-
-  function sendName(){
-    var msg = {
-      event: "NAME",
-      name: document.getElementById("sendName").value,
-      playerID: playerID,
-      player: null,
-      amount_to_bet: 0,
-      amount_to_draw: 0,
-      give_card_indexes: [-1,-1,-1]
-    };
-    connection.send(JSON.stringify(msg));
-    //console.log(JSON.stringify(msg));
-
-    // this shows how to hid html elements.
-    // like when the name is entered
-    // it might be better to hide after the server has accepted it
-    // but this is just a demonstration
-
-    var x = document.getElementById("nameInput");
-    //console.log("X: " + x);
-    //console.log("X display: " + x.style.display);
-    if(x.style.display === "none"){ x.style.display = "block"; }
-    else{ x.style.display = "none"; }
-  }
-
-  function displayCards(playerObj)
-  {
-      var player = playerObj;
-      for(var i = 0; i < 5; i++){
-        // if cards are null str becomes empty so nothing is displayed
-        var str = "";
-        var checkboxnum = "card"+(i+1)+"checkbox";
-        if(player.Cards[i] == null) 
-        {
-          str = "";
-          document.getElementById('cards').style.display = "none";
+            // display the player's cards
+            displayCards(playerObj);
         }
-        else
-        {
-            document.getElementById('cards').style.display = "text-align:center";
-            var card = player.Cards[i];
-            if(card.value == "ACE")             str += "A";
-            else if(card.value == "TWO")        str += "2";
-            else if(card.value == "THREE")      str += "3";
-            else if(card.value == "FOUR")       str += "4";
-            else if(card.value == "FIVE")       str += "5";
-            else if(card.value == "SIX")        str += "6";
-            else if(card.value == "SEVEN")      str += "7";
-            else if(card.value == "EIGHT")      str += "8";
-            else if(card.value == "NINE")       str += "9";
-            else if(card.value == "TEN")        str += "T";
-            else if(card.value == "JACK")       str += "J";
-            else if(card.value == "QUEEN")      str += "Q";
-            else if(card.value == "KING")       str += "K";
+    }
 
-            if(card.suite == "SPADES")         str += "S";
-            else if(card.suite == "HEARTS")    str += "H";
-            else if(card.suite == "CLUBS")     str += "C";
-            else if(card.suite == "DIAMONDS")  str += "D";
 
-            str += ".svg";
-            
+    // send info from the buttons where
+    // 1 is STAND
+    // 2 is Draw
+    // 3 is Bet
+    // 4 is fold
+    // passed as an argument from button
+    function sendEvent(option){
+        // send a UserEvent in JSON
+        var eventType;
+        var amount = 0;
+        var amountDraw = 0;
+        var indexes = [0, 0, 0];
+        
+        if(option == 0) eventType = "READY";
+        else if(option == 1) {
+            eventType = "CHECK";       // event type is CHECK
         }
-        var cardnumber = "card" + (i+1);
-        document.getElementById(cardnumber).src = str;
-      }
-  }
+        else if(option == 2) eventType = "FOLD";        // event type is  FOLD
+        else if(option == 3){                           // event type is BET
+            eventType = "BET";
+            amount = 5;
+        }
+        else if(option == 4){                           // event type is BET
+            eventType = "BET";
+            amount = 10;
+        }
+        else if(option == 5){                           // event type is BET
+            eventType = "BET";
+            amount = 20;
+        }
+        else if(option == 6) eventType = "SORT";
+        else if(option == 7){                           // event type is DRAW
+            eventType = "DRAW";
 
-  function updateButtons(obj, playerObj)
-  {
-      if(obj.phase == 0)
-      {
-          document.getElementById('cards').style.display = "none";
-          document.getElementById('cardstext').style.display = "none";
-          document.getElementById("sendReady").style = "text-align:center";
-          document.getElementById('sendStand').style.display = "none";
-          document.getElementById('sendCall').style.display = "none";
-          document.getElementById('sendFold').style.display = "none";
-          document.getElementById('sendBet1').style.display = "none";
-          document.getElementById('sendBet2').style.display = "none";
-          document.getElementById('sendBet3').style.display = "none";
-          document.getElementById('sendDraw').style.display = "none";
-          document.getElementById('sendSort').style.display = "none";
-      }
-      else if(obj.phase == 1)
-      {
-          document.getElementById('cards').style = "text-align:center";
-          document.getElementById('cardstext').style = "text-align:center";
-          document.getElementById('sendReady').style.display = "none";
-          document.getElementById('sendStand').style = "text-align:center";
-          document.getElementById('sendCall').style = "text-align:center";
-          document.getElementById('sendFold').style = "text-align:center";
-          document.getElementById('sendBet1').style = "text-align:center";
-          document.getElementById('sendBet2').style = "text-align:center";
-          document.getElementById('sendBet3').style = "text-align:center";
-          document.getElementById('sendDraw').style.display = "none";
-          document.getElementById('sendSort').style = "text-align:center";
-      }
-      else if(obj.phase == 2)
-      {
-          document.getElementById('cards').style = "text-align:center";
-          document.getElementById('cardstext').style = "text-align:center";
-          document.getElementById('sendReady').style.display = "none";
-          document.getElementById('sendStand').style.display = "none";
-          document.getElementById('sendCall').style.display = "none";
-          document.getElementById('sendFold').style.display = "none";
-          document.getElementById('sendBet1').style.display = "none";
-          document.getElementById('sendBet2').style.display = "none";
-          document.getElementById('sendBet3').style.display = "none";
-          document.getElementById('sendDraw').style = "text-align:center";
-          document.getElementById('sendSort').style = "text-align:center";
-      }
-      else if(obj.phase == 3)
-      {
-          document.getElementById('cards').style = "text-align:center";
-          document.getElementById('cardstext').style = "text-align:center";
-          document.getElementById('sendReady').style.display = "none";
-          document.getElementById('sendStand').style = "text-align:center";
-          document.getElementById('sendCall').style = "text-align:center";
-          document.getElementById('sendFold').style = "text-align:center";
-          document.getElementById('sendBet1').style = "text-align:center";
-          document.getElementById('sendBet2').style = "text-align:center";
-          document.getElementById('sendBet3').style = "text-align:center";
-          document.getElementById('sendDraw').style.display = "none";
-          document.getElementById('sendSort').style = "text-align:center";
-      }
-      else if(obj.phase >= 4)
-      {
-          if(obj.winner != -1)
-          {
-              alert(obj.winningPlayer.name + " won" + " with a "
-                + obj.winningPlayer.pHand.handname);
-          }
-          else
-          {
-              alert("Tie!");
-          }
+            if(document.getElementById('card1checkbox').checked == true){
+                for(var i = 0; i < 3; i++){
+                    if(indexes[i] == 0){
+                        indexes[i] = 1;
+                        break;
+                    }
+                }
+            }
+            if(document.getElementById('card2checkbox').checked == true){
+                for(var i = 0; i < 3; i++){
+                    if(indexes[i] == 0){
+                        indexes[i] = 2;
+                        break;
+                    }
+                }
+            }
+            if(document.getElementById('card3checkbox').checked == true){
+                for(var i = 0; i < 3; i++){
+                    if(indexes[i] == 0){
+                        indexes[i] = 3;
+                        break;
+                    }
+                }
+            }
+            if(document.getElementById('card4checkbox').checked == true){
+                for(var i = 0; i < 3; i++){
+                    if(indexes[i] == 0){
+                        indexes[i] = 4;
+                        break;
+                    }
+                }
+            }
+            if(document.getElementById('card5checkbox').checked == true){
+                for(var i = 0; i < 3; i++){
+                    if(indexes[i] == 0){
+                        indexes[i] = 5;
+                        break;
+                    }
+                }
+            }
+        
+            for(var i; i < 3; i++){
+                if(indexes[i] != 0){
+                    amountDraw++;
+                    break;
+                }
+            }
+        
+            document.getElementById('card1checkbox').checked = false;
+            document.getElementById('card2checkbox').checked = false;
+            document.getElementById('card3checkbox').checked = false;
+            document.getElementById('card4checkbox').checked = false;
+            document.getElementById('card5checkbox').checked = false;
+            // get the indexes of the cards
+        }
+        else if(option == 8) eventType = "CALL";
+    
+        // create the object to be sent to the game server
+        const msg = {
+            event: eventType,
+            name: document.getElementById("sendName").value,
+            playerID: playerID,
+            player: playerObj,
+            amount_to_bet: amount,
+            amount_to_draw: amountDraw,
+            give_card_indexes: indexes
+        };
+        connection.send(JSON.stringify(msg));
+    }
 
-          document.getElementById('cards').style = "text-align:center";
-          document.getElementById('cardstext').style = "text-align:center";
-          document.getElementById("sendReady").style = "text-align:center";
-          document.getElementById('sendStand').style.display = "none";
-          document.getElementById('sendFold').style.display = "none";
-          document.getElementById('sendCall').style.display = "none";
-          document.getElementById('sendBet1').style.display = "none";
-          document.getElementById('sendBet2').style.display = "none";
-          document.getElementById('sendBet3').style.display = "none";
-          document.getElementById('sendDraw').style.display = "none";
-          document.getElementById('sendSort').style.display = "none";
-      }
+    function send() {
+        var msg = {
+            text: document.getElementById("send_text").value,
+        };
+        connection.send(JSON.stringify(msg));
+        //console.log(JSON.stringify(msg));
+    }
 
-      if(!playerObj.canCheck)
-      {
-        document.getElementById("sendStand").disabled = true;
-        document.getElementById("sendCall").disabled = false;
-      }
-      else 
-      {
-        document.getElementById("sendCall").disabled = true;
-        document.getElementById("sendStand").disabled = false;
-      }
+    function sendName(){
+        var msg = {
+            event: "NAME",
+            name: document.getElementById("sendName").value,
+            playerID: playerID,
+            player: null,
+            amount_to_bet: 0,
+            amount_to_draw: 0,
+            give_card_indexes: [-1,-1,-1]
+        };
+        connection.send(JSON.stringify(msg));
 
-      if(obj.phase != 0 && obj.currentplayer.id == playerObj.id)
-      {
-        document.getElementById("sendReady").disabled = false;
-        //document.getElementById("sendStand").disabled = false;
-        document.getElementById("sendFold").disabled = false;
-        //document.getElementById("sendCall").disabled = false;
-        document.getElementById("sendBet1").disabled = false;
-        document.getElementById("sendBet2").disabled = false;
-        document.getElementById("sendBet3").disabled = false;
-        document.getElementById("sendDraw").disabled = false;
-      }
-      else 
-      {
-        document.getElementById("sendReady").disabled = true;
-        document.getElementById("sendStand").disabled = true;
-        document.getElementById("sendFold").disabled = true;
-        document.getElementById("sendCall").disabled = true;
-        document.getElementById("sendBet1").disabled = true;
-        document.getElementById("sendBet2").disabled = true;
-        document.getElementById("sendBet3").disabled = true;
-        document.getElementById("sendDraw").disabled = true;
-      }
-      if(playerObj.folded)
-      {
-        document.getElementById("sendSort").disabled = true;
-      }
-      if(!playerObj.folded) 
-      {
-        document.getElementById("sendSort").disabled = false;
-      }
-  }
+        // this shows how to hide html elements.
+        // like when the name is entered
+        // it might be better to hide after the server has accepted it
+        // but this is just a demonstration
 
-  function toggleInfo()
-  {
-      if(infoToggle == false)
-      {
-        infoToggle = true;
-        document.getElementById('info1').style.display = "none";
-        document.getElementById('info2').style.display = "none";
-        document.getElementById('info3').style.display = "none";
-        document.getElementById('info4').style.display = "none";
-        document.getElementById('info5').style.display = "none";
-        document.getElementById('info1text').style.display = "none";
-        document.getElementById('info2text').style.display = "none";
-        document.getElementById('info3text').style.display = "none";
-        document.getElementById('info4text').style.display = "none";
-        document.getElementById('info5text').style.display = "none";
-      }
-      else 
-      {
-        infoToggle = false;
-        document.getElementById('info1').style.display = "block";
-        document.getElementById('info2').style.display = "block";
-        document.getElementById('info3').style.display = "block";
-        document.getElementById('info4').style.display = "block";
-        document.getElementById('info5').style.display = "block";
-        document.getElementById('info1text').style.display = "block";
-        document.getElementById('info2text').style.display = "block";
-        document.getElementById('info3text').style.display = "block";
-        document.getElementById('info4text').style.display = "block";
-        document.getElementById('info5text').style.display = "block";
-      }
-  }
+        var x = document.getElementById("nameInput");
 
-  function displayTime(obj, playerObj)
-  {
-      if(obj.timeRemaining > -1)
-      {
-          document.getElementById("timeRemaining").innerHTML = " Time Left: " + obj.timeRemaining;
-      }
-      else
-      {
-          document.getElementById("timeRemaining").innerHTML = "";
-      }
+        if(x.style.display === "none") x.style.display = "block"; 
+        else x.style.display = "none"; 
+    }
 
+    function displayCards(playerObj){
+        var player = playerObj;
+        for(var i = 0; i < 5; i++){
+            // if cards are null str becomes empty so nothing is displayed
+            var str = "";
+            var checkboxnum = "card"+(i+1)+"checkbox";
+            if(player.Cards[i] == null){
+                str = "";
+                document.getElementById('cards').style.display = "none";
+            }
+            else{
+                document.getElementById('cards').style.display = "text-align:center";
+                var card = player.Cards[i];
+                if(card.value == "ACE")             str += "A";
+                else if(card.value == "TWO")        str += "2";
+                else if(card.value == "THREE")      str += "3";
+                else if(card.value == "FOUR")       str += "4";
+                else if(card.value == "FIVE")       str += "5";
+                else if(card.value == "SIX")        str += "6";
+                else if(card.value == "SEVEN")      str += "7";
+                else if(card.value == "EIGHT")      str += "8";
+                else if(card.value == "NINE")       str += "9";
+                else if(card.value == "TEN")        str += "T";
+                else if(card.value == "JACK")       str += "J";
+                else if(card.value == "QUEEN")      str += "Q";
+                else if(card.value == "KING")       str += "K";
 
-      if(obj.timeRemaining <= 10 && obj.timeRemaining > -1
-          && playerObj.id == obj.currentplayer.id && obj.phase != 0)
-      {
-          document.getElementById("timeWarning").innerHTML = "Please make a choice or you will be folded!";
-      }
-      else if( obj.phase != 0 && playerObj.id == obj.currentplayer.id )
-      {
-          document.getElementById("timeWarning").innerHTML = "It is your turn!";
-      }
-      else
-      {
-          document.getElementById("timeWarning").innerHTML = "";
-      }
+                if(card.suite == "SPADES")          str += "S";
+                else if(card.suite == "HEARTS")     str += "H";
+                else if(card.suite == "CLUBS")      str += "C";
+                else if(card.suite == "DIAMONDS")   str += "D";
 
-      if(obj.phase == 1 && playerObj.id == obj.currentplayer.id)
-      {
-        document.getElementById('turnHelp').innerHTML = "Your bet must match the highest to keep playing. Total per player: " + obj.highestBet;
-      }
-      else if(obj.phase == 2 && playerObj.id == obj.currentplayer.id)
-      {
-        document.getElementById('turnHelp').innerHTML = "Draw up to 3 selected cards.";
-      }
-      else if(obj.phase == 3 && playerObj.id == obj.currentplayer.id)
-      {
-        document.getElementById('turnHelp').innerHTML = "Your bet must match the highest to keep playing. Total per player: " + obj.highestBet;
-      }
-      else 
-      {
-        document.getElementById('turnHelp').innerHTML = "";
-      }
+                str += ".svg";
+            }
+            var cardnumber = "card" + (i+1);
+            document.getElementById(cardnumber).src = str;
+        }
+    }
 
-      document.getElementById('timeWarning').style = "text-align:center";
-      document.getElementById('turnHelp').style = "text-align:center";
-  }
+    function updateButtons(obj, playerObj){
+        if(obj.phase == 0){
+            document.getElementById('cards').style.display      = "none";
+            document.getElementById('cardstext').style.display  = "none";
+            document.getElementById("sendReady").style          = "text-align:center";
+            document.getElementById('sendCheck').style.display  = "none";
+            document.getElementById('sendCall').style.display   = "none";
+            document.getElementById('sendFold').style.display   = "none";
+            document.getElementById('sendBet1').style.display   = "none";
+            document.getElementById('sendBet2').style.display   = "none";
+            document.getElementById('sendBet3').style.display   = "none";
+            document.getElementById('sendDraw').style.display   = "none";
+            document.getElementById('sendSort').style.display   = "none";
+        }
+        else if(obj.phase == 1){
+            document.getElementById('cards').style              = "text-align:center";
+            document.getElementById('cardstext').style          = "text-align:center";
+            document.getElementById('sendReady').style.display  = "none";
+            document.getElementById('sendCheck').style          = "text-align:center";
+            document.getElementById('sendCall').style           = "text-align:center";
+            document.getElementById('sendFold').style           = "text-align:center";
+            document.getElementById('sendBet1').style           = "text-align:center";
+            document.getElementById('sendBet2').style           = "text-align:center";
+            document.getElementById('sendBet3').style           = "text-align:center";
+            document.getElementById('sendDraw').style.display   = "none";
+            document.getElementById('sendSort').style           = "text-align:center";
+        }
+        else if(obj.phase == 2){
+            document.getElementById('cards').style              = "text-align:center";
+            document.getElementById('cardstext').style          = "text-align:center";
+            document.getElementById('sendReady').style.display  = "none";
+            document.getElementById('sendCheck').style.display  = "none";
+            document.getElementById('sendCall').style.display   = "none";
+            document.getElementById('sendFold').style.display   = "none";
+            document.getElementById('sendBet1').style.display   = "none";
+            document.getElementById('sendBet2').style.display   = "none";
+            document.getElementById('sendBet3').style.display   = "none";
+            document.getElementById('sendDraw').style           = "text-align:center";
+            document.getElementById('sendSort').style           = "text-align:center";
+        }
+        else if(obj.phase == 3){
+            document.getElementById('cards').style              = "text-align:center";
+            document.getElementById('cardstext').style          = "text-align:center";
+            document.getElementById('sendReady').style.display  = "none";
+            document.getElementById('sendCheck').style          = "text-align:center";
+            document.getElementById('sendCall').style           = "text-align:center";
+            document.getElementById('sendFold').style           = "text-align:center";
+            document.getElementById('sendBet1').style           = "text-align:center";
+            document.getElementById('sendBet2').style           = "text-align:center";
+            document.getElementById('sendBet3').style           = "text-align:center";
+            document.getElementById('sendDraw').style.display   = "none";
+            document.getElementById('sendSort').style           = "text-align:center";
+        }
+        else if(obj.phase >= 4){
+
+            if(obj.winner != -1) alert(obj.winningPlayer.name + " won" + " with a "+ obj.winningPlayer.pHand.handname);
+            else alert("Tie!");  
+
+            document.getElementById('cards').style              = "text-align:center";
+            document.getElementById('cardstext').style          = "text-align:center";
+            document.getElementById("sendReady").style          = "text-align:center";
+            document.getElementById('sendCheck').style.display  = "none";
+            document.getElementById('sendFold').style.display   = "none";
+            document.getElementById('sendCall').style.display   = "none";
+            document.getElementById('sendBet1').style.display   = "none";
+            document.getElementById('sendBet2').style.display   = "none";
+            document.getElementById('sendBet3').style.display   = "none";
+            document.getElementById('sendDraw').style.display   = "none";
+            document.getElementById('sendSort').style.display   = "none";
+        }
+
+        if(!playerObj.canCheck){    // if player cannot check meaning they have checked
+            document.getElementById("sendCheck").disabled   = true;
+            document.getElementById("sendCall").disabled    = false;
+        }
+        else{                       // if player has not checked
+            document.getElementById("sendCall").disabled    = true;
+            document.getElementById("sendCheck").disabled   = false;
+        }
+        // At some point after a player has check the playerId will change
+        if(obj.phase != 0 && obj.currentplayer.id == playerObj.id){
+            document.getElementById("sendReady").disabled   = false;
+            document.getElementById("sendFold").disabled    = false;
+            document.getElementById("sendBet1").disabled    = false;
+            document.getElementById("sendBet2").disabled    = false;
+            document.getElementById("sendBet3").disabled    = false;
+            document.getElementById("sendDraw").disabled    = false;
+        }
+        else{                       // If the player checked this will disable all the buttons but sort
+            document.getElementById("sendReady").disabled   = true;
+            document.getElementById("sendCheck").disabled   = true;
+            document.getElementById("sendFold").disabled    = true;
+            document.getElementById("sendCall").disabled    = true;
+            document.getElementById("sendBet1").disabled    = true;
+            document.getElementById("sendBet2").disabled    = true;
+            document.getElementById("sendBet3").disabled    = true;
+            document.getElementById("sendDraw").disabled    = true;
+        }
+
+        if(playerObj.folded) document.getElementById("sendSort").disabled   = true;    
+        if(!playerObj.folded) document.getElementById("sendSort").disabled   = false;
+    }
+
+    function toggleInfo(){
+        if(infoToggle == false){
+            infoToggle = true;
+            document.getElementById('info1').style.display = "none";
+            document.getElementById('info2').style.display = "none";
+            document.getElementById('info3').style.display = "none";
+            document.getElementById('info4').style.display = "none";
+            document.getElementById('info5').style.display = "none";
+            document.getElementById('info1text').style.display = "none";
+            document.getElementById('info2text').style.display = "none";
+            document.getElementById('info3text').style.display = "none";
+            document.getElementById('info4text').style.display = "none";
+            document.getElementById('info5text').style.display = "none";
+        }
+        else {
+            infoToggle = false;
+            document.getElementById('info1').style.display = "block";
+            document.getElementById('info2').style.display = "block";
+            document.getElementById('info3').style.display = "block";
+            document.getElementById('info4').style.display = "block";
+            document.getElementById('info5').style.display = "block";
+            document.getElementById('info1text').style.display = "block";
+            document.getElementById('info2text').style.display = "block";
+            document.getElementById('info3text').style.display = "block";
+            document.getElementById('info4text').style.display = "block";
+            document.getElementById('info5text').style.display = "block";
+        }
+    }
+
+    function displayTime(obj, playerObj){
+        if(obj.timeRemaining > -1) document.getElementById("timeRemaining").innerHTML = " Time Left: " + obj.timeRemaining;
+        else document.getElementById("timeRemaining").innerHTML = "";
+      
+        if(obj.timeRemaining <= 10 && obj.timeRemaining > -1 && playerObj.id == obj.currentplayer.id && obj.phase != 0)
+            document.getElementById("timeWarning").innerHTML = "Please make a choice or you will be folded!";
+        else if( obj.phase != 0 && playerObj.id == obj.currentplayer.id )
+            document.getElementById("timeWarning").innerHTML = "It is your turn!";
+      
+        else document.getElementById("timeWarning").innerHTML = "";
+      
+        if(obj.phase == 1 && playerObj.id == obj.currentplayer.id){
+            document.getElementById('turnHelp').innerHTML = "Your bet must match the highest to keep playing. Total per player: " + obj.highestBet;
+        }
+        else if(obj.phase == 2 && playerObj.id == obj.currentplayer.id){
+            document.getElementById('turnHelp').innerHTML = "Draw up to 3 selected cards.";
+        }
+        else if(obj.phase == 3 && playerObj.id == obj.currentplayer.id){
+            document.getElementById('turnHelp').innerHTML = "Your bet must match the highest to keep playing. Total per player: " + obj.highestBet;
+        }
+        else document.getElementById('turnHelp').innerHTML = "";
+
+        document.getElementById('timeWarning').style = "text-align:center";
+        document.getElementById('turnHelp').style = "text-align:center";
+    }
 </script>

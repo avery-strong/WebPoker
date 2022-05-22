@@ -3,10 +3,10 @@ package uta.cse3310;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-public class UserEvent {
+public class UserEvent{
 
-    public enum UserEventType {
-        READY, NAME, STAND, DRAW, BET, CALL, FOLD, SORT;
+    public enum UserEventType{
+        BET, CALL, CHECK, DRAW, FOLD, NAME, READY, SORT, STAND;
 
         private UserEventType(){}
     };
