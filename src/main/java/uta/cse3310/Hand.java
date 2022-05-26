@@ -41,15 +41,13 @@ public class Hand {
     // also assumes that input will be valid (no duplicates or invalid cards)
 
     public Hand(Card cards[]) {
-        for (int i = 0; i < cards.length; i++) {
-            this.cards[i] = cards[i];
-        }
+        for (int i = 0; i < cards.length; i++) this.cards[i] = cards[i];
     }
 
-    public static void sortHand(Card cards[]) {
+    public static void sortHand(Card cards[]){
         Card temp;
-        for (int i = 0; i < cards.length; i++) {
-            for (int j = i + 1; j < cards.length; j++) {
+        for (int i = 0; i < cards.length; i++){
+            for (int j = i + 1; j < cards.length; j++){
                 if (cards[i].value.ordinal() > cards[j].value.ordinal()) {
                     temp = cards[i];
                     cards[i] = cards[j];
@@ -61,8 +59,7 @@ public class Hand {
     // hashmaps to hold
     // enum "value" for
     // comparisons
-    public void mapping(EnumMap<Value, Integer> cardValueMap, HashMap<String, Integer> handValue)
-    {
+    public void mapping(EnumMap<Value, Integer> cardValueMap, HashMap<String, Integer> handValue){
         // use hashmap to put value to "values"
         cardValueMap.put(Value.ACE, 1);
         cardValueMap.put(Value.TWO, 2);
@@ -92,7 +89,7 @@ public class Hand {
     }
 
     // adding idea here to sort and determine hand value - alyssa
-    public int calcHand(Player p) {
+    public int calcHand(Player p){
         /* 1 - royal flush
         2 - straight flush
         3 - four of a kind

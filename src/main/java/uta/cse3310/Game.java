@@ -25,36 +25,16 @@ public class Game{
 
     **************************************/
 
-    public void addPlayer(Player p){ players.add(p); }
-
-    public void removePlayer(int id){     // Remove particular player from game
-        players.remove(get_player(id));
-    }
-
-    // Technically the player will have alreay been created but this method simply
-    // sets the player name
-    // As well as gives the playe a hand of cards
-    public void create_player(int id, UserEvent event){
-        players.get(id).set_name(event.name);
-    }
-
-    public Player getStartingPlayer(){
-        startingplayer = nonFoldedPlayers.get(0);
-        currentplayer = startingplayer;
-        return startingplayer;
-    }
-
-    public void nextPlayer(){ // swap players
-        if(currentplayer == startingplayer || nonFoldedPlayers.indexOf(currentplayer) < nonFoldedPlayers.size()-1){
+    public void player_add(Player p)            { players.add(p); }
+    public void player_next(){ // swap players
+        if(currentplayer == nonFoldedPlayers.get(0) || nonFoldedPlayers.indexOf(currentplayer) < nonFoldedPlayers.size()-1){
             currentplayer = nonFoldedPlayers.get(nonFoldedPlayers.indexOf(currentplayer) + 1); // next player
         }
         // go back to starting player / next round
         else currentplayer = startingplayer;
     }
-
-    public void player_stand(Player p){ p.set_stand(); }
     public void player_fold(Player p){
-        p.folded = true; 
+        p.set_fold(); 
         empty_hand(p); 
     }
 
@@ -71,6 +51,7 @@ public class Game{
         int i = nonFoldedPlayers.size()-1;
         boolean tie = false;
         int failingCounter = 0;
+
         while(nonFoldedPlayers.size() > 1 && i >= 1){
             if(nonFoldedPlayers.get(i).pHand.is_equal(nonFoldedPlayers.get(i-1).pHand)){
                 if(nonFoldedPlayers.size() == 2){
@@ -120,13 +101,15 @@ public class Game{
     }
 
     /***************************************
+     
                 player_queue
-    ***************************************/
 
-    public void add_player_queue(Player p)  { player_queue.add(p); }
-    public void remove_player_queue(int id) { player_queue.remove(id); }
-    public Player get_player_queue()        { return player_queue.get(0); }
-    public int get_player_queue_size()      { return player_queue.size(); }
+    ****************************************/
+
+    public void player_queue_add(Player p)  { player_queue.add(p); }
+    public void player_queue_remove(int id) { player_queue.remove(id); }
+    public Player player_queue_get()        { return player_queue.get(0); }
+    public int player_queue_get_size()      { return player_queue.size(); }
 
     /**************************************
      
@@ -163,11 +146,11 @@ public class Game{
             for(Player p : players){
                 for(int j = 0; j < 5; j++) p.add_card(draw_card());     // add cards into the players hands
                     
-                place_ante(p.id);
+                bet_place_ante(p.id);
                 p.set_cards();                                          // add cards to the cards array for javascript functionality
                 nonFoldedPlayers.add(p);
             }
-            currentplayer = getStartingPlayer();
+            currentplayer = nonFoldedPlayers.get(0);
             phase = 1;
             turn = 0;
             timeRemaining = 30;
@@ -177,13 +160,12 @@ public class Game{
         determine_player_message();
     }
     public void event_check(UserEvent event){       // (Player check) logic
-        //player_stand(currentplayer);
-        player_stand(currentplayer);
-        currentplayer.hasBet = true;
+        players.get(event.playerID).set_stand();
+        players.get(event.playerID).set_bet();
         event_move();
     }
     public void event_bet_01(UserEvent event){      // Phase 01 (First Bet Phase) logic
-        place_bet(event.playerID, event);
+        bet_place(event.playerID, event);
 
         if(turn != players.size()-1){
             turn++;                                 // Changes turn for the next player                        
@@ -200,34 +182,34 @@ public class Game{
     // Could maybe be added to event_check rather than be its own method
     public void event_move(){                       // Phase 01(changes player after checking)
         if(all_bets_equal() && nonFoldedPlayers.size() >= 1){
-            nextPlayer();
+            player_next();
             turn++;
 
              // every player made a single turn
             if(all_players_bet()){
-                set_all_hasBet();
+                set_all_bet();
                 turn = 0;
-                currentplayer = getStartingPlayer();
+                currentplayer = nonFoldedPlayers.get(0);
                 phase++;
             }
 
             timeRemaining = 30;
         }
         else{
-            currentplayer = next_player_bet_player();
-            turn = next_player_bet();
+            currentplayer = player_next_bet_player();
+            turn = player_next_bet();
             timeRemaining = 30;
         }
     }
     public void event_draw(UserEvent event){        // Phase 02 logic
         new_cards(event.playerID, event);
 
-        nextPlayer();
+        player_next();
         turn++;
         // every player made a single turn
         if(currentplayer == startingplayer){
             turn = 0;
-            currentplayer = getStartingPlayer();
+            currentplayer = nonFoldedPlayers.get(0);
             phase++;
         }
         
@@ -237,12 +219,12 @@ public class Game{
     }
     public void event_bet_03(UserEvent event){      // Phase 03 (Second Bet Phase) logic
         if(all_bets_equal() && nonFoldedPlayers.size() >= 1){
-            nextPlayer();
+            player_next();
             turn++;
             // every player made a single turn
             if(all_players_bet()){
-                set_all_hasBet();
-                currentplayer = getStartingPlayer();
+                set_all_bet();
+                currentplayer = nonFoldedPlayers.get(0);
                 turn = 0;
                 phase = 5;
                 determine_winner();
@@ -253,8 +235,8 @@ public class Game{
             if(phase != 5) timeRemaining = 30;
         }
     
-        currentplayer = next_player_bet_player();
-        turn = next_player_bet();
+        currentplayer = player_next_bet_player();
+        turn = player_next_bet();
         timeRemaining = 30;
 
         determine_player_message();
@@ -358,9 +340,8 @@ public class Game{
     */
     public boolean update(){
         while((phase == 0 || phase == 5) && players.size() < 5 && player_queue.size() > 0){
-            Player workingPlayer = player_queue.get(0);
-            remove_player_queue(0);
-            addPlayer(workingPlayer);
+            player_queue_remove(0);
+            player_add(player_queue.get(0));
             if(players.size() == 5 || player_queue.size() == 0) return true;
         }
         if(players.size() == 0){
@@ -389,11 +370,11 @@ public class Game{
             if(players.size() >= 2  && all_players_ready()){
                 for(Player p : players){
                     for(int j = 0; j < 5; j++) p.add_card(draw_card());
-                    place_ante(p.id);
+                    bet_place_ante(p.id);
                     p.set_cards();
                     nonFoldedPlayers.add(p);
                 }
-                currentplayer = getStartingPlayer();
+                currentplayer = nonFoldedPlayers.get(0);
                 phase = 1;
                 turn = 0;
                 timeRemaining = 30;
@@ -434,7 +415,7 @@ public class Game{
             
         return true;
     }
-    public int next_player_bet(){
+    public int player_next_bet(){
         Player temp = nonFoldedPlayers.get(0);
         for(int i = 1; i < nonFoldedPlayers.size(); i++){
             if(temp.get_bet() < nonFoldedPlayers.get(i).get_bet())      return temp.get_id();
@@ -446,19 +427,19 @@ public class Game{
         return 0;
     }
 
-    public Player next_player_bet_player(){
+    public Player player_next_bet_player(){
         if(all_bets_equal()){
-            for(Player p : nonFoldedPlayers) p.canCheck = true;
+            for(Player p : nonFoldedPlayers) p.set_check();
             
-            nextPlayer();
+            player_next();
         }
         else{
-            for(Player p : nonFoldedPlayers) p.canCheck = false;
+            for(Player p : nonFoldedPlayers) p.set_check();
             
-            nextPlayer();
-            while(currentplayer.wallet == 0 && !all_bets_equal()) nextPlayer();
+            player_next();
+            while(currentplayer.get_wallet() == 0 && !all_bets_equal()) player_next();
             
-            if(currentplayer.currentBet < max_player_bet()) return currentplayer;
+            if(currentplayer.get_current_bet() < max_player_bet()) return currentplayer;
         }
 
         return currentplayer;
@@ -466,22 +447,21 @@ public class Game{
 
     public boolean all_players_bet(){
         for(Player p : nonFoldedPlayers)
-            if(p.hasBet == false) return false;
+            if(p.get_bet() == false) return false;
             
         return true;
     }
 
-    public void set_all_hasBet(){
+    public void set_all_bet(){
         for(Player p : players){
-            p.hasBet = false;
-            p.canCheck = true;
+            p.reset_bet();
         }
     }
 
     public int max_player_bet(){
-        int temp = -1;
+        int temp = 0;
         for(Player p : nonFoldedPlayers)
-            if(p.currentBet > temp) temp = p.currentBet;
+            if(p.get_bet() > temp) temp = p.get_bet();
             
         return temp;
     }
@@ -503,18 +483,18 @@ public class Game{
 
     public void set_players_notReady(){
         for(int i = 0; i < players.size(); i++){
-            players.get(i).ready = false;
-            players.get(i).folded = false;
-            players.get(i).currentBet = 0;
+            players.get(i).set_raised();
+            players.get(i).set_fold();
+            players.get(i).set_current_bet(0);
         }
     }
 
     public void fold_current_player(){
-        currentplayer.folded = true;
+        currentplayer.set_fold();
         nonFoldedPlayers.remove(currentplayer);
         startingplayer = nonFoldedPlayers.get(0);
-        turn = next_player_bet();
-        currentplayer = next_player_bet_player();
+        turn = player_next_bet();
+        currentplayer = player_next_bet_player();
         timeRemaining = 30;
     }
 
@@ -529,7 +509,7 @@ public class Game{
     }
 
     public void rearrange_ids(){
-        for(int i = 0; i < players.size(); i++) players.get(i).setId(i);
+        for(int i = 0; i < players.size(); i++) players.get(i).set_id(i);
     }
 
     public int get_next_id(){
@@ -577,10 +557,10 @@ public class Game{
 
 
     /**************************************
-     *
-     * Deck Builders
-     *
-     **************************************/
+    
+                Deck Builders
+     
+    **************************************/
 
     public void sort_cards(int id, UserEvent event){
         Hand.sortHand(players.get(id).Cards);     // This actually sorts the cards
@@ -639,18 +619,18 @@ public class Game{
     }
 
     /**********************************
-     *
-     * Betting
-     *
-     **********************************/
+     
+                Betting
+     
+    ***********************************/
 
-    public void place_ante(int id){
+    public void bet_place_ante(int id){
         players.get(id).subtract_wallet(20);
         pot.add_to_pot(20);
     }
 
-    public void place_bet(int id, UserEvent event){
-        players.get(id).hasBet = true;
+    public void bet_place(int id, UserEvent event){
+        players.get(id).set_bet();
         call_bet(id, event);
 
         //Check if player is betting more than they have, change bet to whatever is left in their wallet.
@@ -662,7 +642,6 @@ public class Game{
     }
 
     public void call_bet(int id, UserEvent event){
-        players.get(id).hasBet = true;
         int betDifference = max_player_bet() - players.get(id).currentBet;
 
         if(betDifference >= 0 && (players.get(id).wallet - betDifference) >= 0) event.amount_to_bet = betDifference;

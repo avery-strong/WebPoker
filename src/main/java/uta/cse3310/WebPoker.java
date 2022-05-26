@@ -109,82 +109,54 @@ public class WebPoker extends WebSocketServer {
     System.out.println(conn + " has closed");
 
     // The state is now changed, so every client needs to be informed
-    synchronized(mutex)
-    {
+    synchronized(mutex){
         int idx = conn.getAttachment();
 
         //game.rearrange_ids();
         System.out.println("removed player index " + idx);
 
-        if(game.get_player_queue_size() > 0)
-        {
-            if(game.phase != 0 )
-            {
+        if(game.get_player_queue_size() > 0){
+            if(game.phase != 0 ){
                 // disconnected player is in game.players
-                if( game.is_id_in_players(idx) )
-                {
+                if( game.is_id_in_players(idx) ){
                     Player workingPlayer = game.get_player(idx);
-                    if(workingPlayer != null && game.nonFoldedPlayers.contains(workingPlayer))
-                    {
+                    if(workingPlayer != null && game.nonFoldedPlayers.contains(workingPlayer)){
                         game.nonFoldedPlayers.remove(game.get_player(idx));
                     }
                     game.removePlayer(idx);
                 }
-                else // player is in queue
-                {
+                else{ // player is in queue
                     // remove player with corresponding id
                     // from the queue
                     for(Player p : game.player_queue)
-                    {
-                        if(p.get_id() == idx)
-                        {
-                            game.player_queue.remove(p);
-                        }
-                    }
+                        if(p.get_id() == idx) game.player_queue.remove(p);
                 }
             }
-            else if( !game.is_id_in_players(idx)) // DCed player is in queue
-            {
-                //game.players.set(idx, game.get_player_queue());         // Set the player wiating in the queue into the removed players position
-                Player workingPlayer = game.get_player_in_queue(idx);
-                game.player_queue.remove(workingPlayer);
-                // Remove the player from the queue
-            }
-            else // DCed player is in game
-            {
-                Player workingPlayer = game.get_player(idx);
-                if(workingPlayer != null && game.nonFoldedPlayers.contains(workingPlayer))
-                {
-                    game.nonFoldedPlayers.remove(game.get_player(idx));
-                }
+            else if(!game.is_id_in_players(idx)) // DCed player is in queue
+                game.player_queue.remove(game.get_player_in_queue(idx)); // Remove the player from the queue
+            
+            else{ // DCed player is in game
+                if(game.get_player(idx) != null && game.nonFoldedPlayers.contains(game.get_player(idx))) game.nonFoldedPlayers.remove(game.get_player(idx));
+                
                 game.removePlayer(idx);
                 // add first in queue
-                Player newPlayer = game.player_queue.get(0);
-                game.player_queue.remove(newPlayer);
-                game.players.add(newPlayer);
+                game.player_queue.remove(game.player_queue.get(0));
+                game.players.add(game.player_queue.get(0));
             }
-
         }
         else{
             // must use try and catch in cases where the player that disconnected
             // is not in the arrays (could be folded)
-            try
-            {
-                game.nonFoldedPlayers.remove(game.get_player(idx));
+            try{
+              game.nonFoldedPlayers.remove(game.get_player(idx));
+            } catch(Exception e){
+              System.out.println(e);
             }
-            catch(Exception e)
-            {
-                System.out.println(e);
+            try{
+              game.removePlayer(idx);
+            } catch(Exception e){
+              System.out.println(e);
             }
-            try
-            {
-                game.removePlayer(idx);
-            }
-            catch(Exception e)
-            {
-                System.out.println(e);
-            }
-
 
           numPlayers--;
         }
@@ -197,41 +169,33 @@ public class WebPoker extends WebSocketServer {
   @Override
   public void onMessage(WebSocket conn, String message) {
     // all incoming messages are processed by the game
-    synchronized(mutex)
-    {
+    synchronized(mutex){
         game.processMessage(numPlayers, message);
         // and the results of that message are sent to everyone
         // as the "state of the game"
 
         broadcast(game.exportStateAsJSON());
     }
+
     System.out.println(conn + ": " + message);
   }
 
   @Override
-  public void onMessage(WebSocket conn, ByteBuffer message)
-  {
-      synchronized(mutex)
-      {
-          broadcast(message.array());
-      }
+  public void onMessage(WebSocket conn, ByteBuffer message){
+    synchronized(mutex){
+      broadcast(message.array());
+    }
+
     System.out.println(conn + ": " + message);
   }
 
   public class upDate extends TimerTask {
     @Override
-    public void run()
-    {
-      if (game != null)
-      {
-          synchronized(mutex)
-          {
-              if (game.update())
-              {
-                broadcast(game.exportStateAsJSON());
-              }
+    public void run(){
+      if (game != null){
+          synchronized(mutex){
+            if (game.update()) broadcast(game.exportStateAsJSON());
           }
-
       }
     }
   }
