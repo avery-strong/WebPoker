@@ -31,7 +31,7 @@ public class Game{
             currentplayer = nonFoldedPlayers.get(nonFoldedPlayers.indexOf(currentplayer) + 1); // next player
         }
         // go back to starting player / next round
-        else currentplayer = startingplayer;
+        else currentplayer = nonFoldedPlayers.get(0);
     }
     public void player_fold(Player p){
         p.set_fold(); 
@@ -140,8 +140,6 @@ public class Game{
         determine_player_message();
     }
     public void event_ready(UserEvent event){       // Phase 00 logic
-        players.get(event.playerID).set_ready();                        // Set the status of the player ot ready
-
         if(players.size() >= 2  && all_players_ready()){                // Check if all players are ready
             for(Player p : players){
                 for(int j = 0; j < 5; j++) p.add_card(draw_card());     // add cards into the players hands
@@ -202,14 +200,13 @@ public class Game{
         }
     }
     public void event_draw(UserEvent event){        // Phase 02 logic
-        new_cards(event.playerID, event);
+        new_cards(event);
 
         player_next();
         turn++;
         // every player made a single turn
-        if(currentplayer == startingplayer){
+        if(currentplayer == nonFoldedPlayers.get(0)){
             turn = 0;
-            currentplayer = nonFoldedPlayers.get(0);
             phase++;
         }
         
@@ -356,7 +353,7 @@ public class Game{
             shuffle_deck();
             winningPlayer = null;
             currentplayer = null;
-            startingplayer = null;
+            
             return true;
         }
 
@@ -492,7 +489,6 @@ public class Game{
     public void fold_current_player(){
         currentplayer.set_fold();
         nonFoldedPlayers.remove(currentplayer);
-        startingplayer = nonFoldedPlayers.get(0);
         turn = player_next_bet();
         currentplayer = player_next_bet_player();
         timeRemaining = 30;
@@ -526,13 +522,13 @@ public class Game{
         for(int i = 0; i < allPlayers.size(); i++){
             for(Player p : allPlayers){
                 // id is found in players/cant use so move on
-                if(p.get_id() != i) flag = false;
+                if(p.get_id() != i) return i;
                 else{
                     flag = true;
                     break;
                 }
             }
-            if(flag == false) return i;
+
             if(i == players.size() && player_queue.size() == 0) return i;
     
             id = i;
@@ -568,13 +564,13 @@ public class Game{
         for(int i = 0; i < 5; i++) players.get(id).hand.set(i, players.get(id).Cards[i]);
     }
 
-    public void new_cards(int id, UserEvent event){
+    public void new_cards(UserEvent event){
         int indexes[] = event.give_card_indexes;
 
         for (int i = 0; i < indexes.length; i++) // 0 is default stating the card shouldnt change
-            if (indexes[i] > 0) players.get(id).hand.set(indexes[i] - 1, draw_card()); // Remove the card at the specified index
+            if (indexes[i] > 0) players.get(event.playerID).hand.set(indexes[i] - 1, draw_card()); // Remove the card at the specified index
             
-        players.get(id).set_cards();
+        players.get(event.playerID).set_cards();
     }
 
     // gets a card from the front of passed in deck
@@ -642,10 +638,10 @@ public class Game{
     }
 
     public void call_bet(int id, UserEvent event){
-        int betDifference = max_player_bet() - players.get(id).currentBet;
+        int betDifference = max_player_bet() - players.get(id).get_current_bet();
 
-        if(betDifference >= 0 && (players.get(id).wallet - betDifference) >= 0) event.amount_to_bet = betDifference;
-        else event.amount_to_bet = players.get(id).wallet;
+        if(betDifference >= 0 && (players.get(id).get_wallet() - betDifference) >= 0) event.amount_to_bet = betDifference;
+        else event.amount_to_bet = players.get(id).get_wallet();
         
         players.get(id).subtract_wallet(event.amount_to_bet);
         players.get(id).set_current_bet(event.amount_to_bet);
@@ -682,21 +678,20 @@ public class Game{
 
 
     // turns
-    Player startingplayer;
-    Player currentplayer;
-    Player winningPlayer;
+    private Player currentplayer;
+    private Player winningPlayer;
 
     private String playerMessage;
 
 
     // round - these are used with javascript to determine certain displays
-    public int phase;
-    int turn = -1;
-    public int highestBet;
+    private int phase;
+    private int turn = -1;
+    private int highestBet;
     // do not change these or display will break
-    int winner = -1;
-    int winnings = -1;
-    String winStr = "";
+    private int winner = -1;
+    private int winnings = -1;
+    private String winStr = "";
     // 0 will be pregame
     // 1 will be first bet phase
     // 2 wil be draw phase

@@ -32,7 +32,6 @@ public class Player {
     public void set_id(int id)              { this.id = id; }
     public void set_name(String n)          { this.name = n; }
     public void set_raised()                { this.raised = !raised; }
-    public void set_ready()                 { this.ready = !ready; }
     public void set_stand()                 { this.stand = !stand; }
     public void set_wallet(int amount)      { this.wallet = amount; }
 
@@ -60,7 +59,6 @@ public class Player {
     public boolean get_check()      { return this.check; }
     public boolean get_fold()       { return this.folded; }
     public boolean get_raised()     { return this.raised; }
-    public boolean get_ready()      { return this.ready; }
     public boolean get_stand()      { return this.stand; }
     
     /*************************************
