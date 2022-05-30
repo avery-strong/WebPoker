@@ -467,8 +467,7 @@ public class Hand {
         return handName;
     }
 
-    public String get_handName()
-    {
+    public String get_handName(){
         EnumMap<Value, Integer> cardValueMap = new EnumMap<Value, Integer>(Value.class);
         HashMap<String, Integer> handValue = new HashMap<>();
 

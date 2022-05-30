@@ -1,3 +1,4 @@
+
 package uta.cse3310;
 
 import uta.cse3310.Card;
@@ -9,6 +10,7 @@ import org.junit.Test;
 /**
  * Unit test for simple App.
  */
+
 public class AppTest
 {
     /**
@@ -16,9 +18,9 @@ public class AppTest
      */
      // test if Game constructor is working
      // very basic but most important aspects
+
     @Test
-    public void shouldAnswerWithTrue()
-    {
+    public void shouldAnswerWithTrue(){
         Game game = new Game();
         assertTrue( game != null);
     }
@@ -26,17 +28,15 @@ public class AppTest
     // test the create_deck method
     // true if correct size
     @Test
-    public void shuffleTest()
-    {
+    public void shuffleTest(){
         Game game = new Game();
 
-        assertTrue( game.deck.size() == 52 );
+        assertTrue( game.deck_size() == 52 );
     }
 
     // test the sortHand method in Hand.java
     @Test
-    public void sortHandTest()
-    {
+    public void sortHandTest(){
         Card card1 = new Card();
         Card card2 = new Card();
         Card card3 = new Card();
@@ -55,146 +55,139 @@ public class AppTest
         Card cards[] = {card3,card4,card2,card5,card1};
         Card sortedCards[] = {card1,card2,card3,card4,card5};
         Hand.sortHand(cards);
-        assertTrue( cards[0] == sortedCards[0] && cards[1] == sortedCards[1] &&
+        assertTrue(cards[0] == sortedCards[0] && cards[1] == sortedCards[1] &&
             cards[2] == sortedCards[2] && cards[3] == sortedCards[3] &&
             cards[4] == sortedCards[4]);
     }
 
     // test empty_hand method in Game.java
     @Test
-    public void emptyHandTest()
-    {
+    public void emptyHandTest(){
         Game game = new Game();
         Player player = new Player(0);
-        game.addPlayer(player);
+        game.players_add(player);
         game.empty_hand(player);
-        assertTrue( player.hand.size() == 0 );
+        assertTrue(player.hand.size() == 0);
     }
 
-    // test set_players_notReady method in Game.java
+    // test players_set_notReady method in Game.java
     @Test
-    public void setPlayersNotReadyTest()
-    {
+    public void setPlayersNotReadyTest(){
         Game game = new Game();
         Player p0 = new Player(0);
-        p0.ready = true;
+        p0.set_ready(false);             
         Player p1 = new Player(1);
-        p1.ready = true;
+        p1.set_ready(false);             
         Player p2 = new Player(2);
-        p2.ready = true;
+        p2.set_ready(false);             
         Player p3 = new Player(3);
-        p3.ready = true;
-        game.players.add(p0);
-        game.players.add(p1);
-        game.players.add(p2);
-        game.players.add(p3);
-        game.set_players_notReady();
+        p3.set_ready(false);             
+        game.players_add(p0);
+        game.players_add(p1);
+        game.players_add(p2);
+        game.players_add(p3);
+        game.players_set_notReady();
 
-        assertTrue( !p0.ready && !p1.ready && !p2.ready && !p3.ready );
+        assertTrue(!p0.get_ready() && !p1.get_ready() && !p2.get_ready() && !p3.get_ready());
     }
 
     // test num_players_Ready method in Game.java
     @Test
-    public void numPlayersReadyTest()
-    {
+    public void numPlayersReadyTest(){
         Game game = new Game();
         Player p0 = new Player(0);
-        p0.ready = true;
+        p0.set_ready(true);             // = true;
         Player p1 = new Player(1);
-        p1.ready = true;
+        p1.set_ready(true);             // = true;
         Player p2 = new Player(2);
         Player p3 = new Player(3);
-        game.players.add(p0);
-        game.players.add(p1);
-        game.players.add(p2);
-        game.players.add(p3);
+        game.players_add(p0);
+        game.players_add(p1);
+        game.players_add(p2);
+        game.players_add(p3);
 
-        assertTrue( game.num_players_ready() == 2 );
+        assertTrue(game.num_players_ready() == 2);
     }
 
     // test all_players_Ready method in Game.java
     @Test
-    public void allPlayersReadyTest()
-    {
+    public void allPlayersReadyTest(){
         Game game = new Game();
         Player p0 = new Player(0);
-        p0.ready = true;
+        p0.set_ready(true);             // = true;
         Player p1 = new Player(1);
-        p1.ready = true;
+        p1.set_ready(true);             // = true;
         Player p2 = new Player(2);
-        p2.ready = true;
+        p2.set_ready(true);             // = true;
         Player p3 = new Player(3);
-        p3.ready = true;
-        game.players.add(p0);
-        game.players.add(p1);
-        game.players.add(p2);
-        game.players.add(p3);
+        p3.set_ready(true);             // = true;
+        game.players_add(p0);
+        game.players_add(p1);
+        game.players_add(p2);
+        game.players_add(p3);
 
         assertTrue( game.all_players_ready() );
     }
 
     // test all_players_Ready method in Game.java
     @Test
-    public void allPlayersReadyTest2()
-    {
+    public void allPlayersReadyTest2(){
         Game game = new Game();
         Player p0 = new Player(0);
-        p0.ready = true;
+        p0.set_ready(true);             // = true;
         Player p1 = new Player(1);
-        p1.ready = true;
+        p1.set_ready(true);             // = true;
         Player p2 = new Player(2);
-        p2.ready = true;
+        p2.set_ready(true);             // = true;
         Player p3 = new Player(3);
-        game.players.add(p0);
-        game.players.add(p1);
-        game.players.add(p2);
-        game.players.add(p3);
+        game.players_add(p0);
+        game.players_add(p1);
+        game.players_add(p2);
+        game.players_add(p3);
 
         assertTrue( !game.all_players_ready() );
     }
 
     // test all_bets_equal method in Game.java
     @Test
-    public void allBetEqualTest()
-    {
+    public void allBetEqualTest(){
         Game game = new Game();
         Player p0 = new Player(0);
-        p0.currentBet = 10;
+        p0.set_current_bet(10);
         Player p1 = new Player(1);
-        p1.currentBet = 10;
+        p1.set_current_bet(10);
         Player p2 = new Player(2);
-        p2.currentBet = 10;
+        p2.set_current_bet(10);
         Player p3 = new Player(3);
-        p3.currentBet = 10;
-        game.players.add(p0);
-        game.nonFoldedPlayers.add(p0);
-        game.players.add(p1);
-        game.nonFoldedPlayers.add(p1);
-        game.players.add(p2);
-        game.nonFoldedPlayers.add(p2);
-        game.players.add(p3);
-        game.nonFoldedPlayers.add(p3);
+        p3.set_current_bet(10);
+        game.players_add(p0);
+        game.nonFolded_add(p0);
+        game.players_add(p1);
+        game.nonFolded_add(p1);
+        game.players_add(p2);
+        game.nonFolded_add(p2);
+        game.players_add(p3);
+        game.nonFolded_add(p3);
 
-        assertTrue( game.all_bets_equal() );
+        assertTrue(game.all_bets_equal());
     }
 
-    // test fold_current_player() method in Game.java
+    // test player_fold_current() method in Game.java
     @Test
-    public void foldCurrentPlayerTest()
-    {
+    public void foldCurrentPlayerTest(){
         Game game = new Game();
 
         Player p0 = new Player(0);
         Player p1 = new Player(1);
 
-        game.players.add(p0);
-        game.players.add(p1);
-        game.nonFoldedPlayers.add(p0);
-        game.nonFoldedPlayers.add(p1);
+        game.players_add(p0);
+        game.players_add(p1);
+        game.nonFolded_add(p0);
+        game.nonFolded_add(p1);
 
-        game.currentplayer = p0;
-        game.fold_current_player();
+        game.players_set_current(p0);
+        game.player_fold_current();
 
-        assertTrue( game.players.size() == 2 && game.nonFoldedPlayers.size() == 1 );
+        assertTrue(game.players_size() == 2 && game.nonFolded_size() == 1);
     }
 }

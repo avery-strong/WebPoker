@@ -15,7 +15,6 @@ public class Game{
         create_deck();
         shuffle_deck();
         pot = new Pot();
-        playerStandFold = 0;
         phase = 0;
     }
 
@@ -25,41 +24,229 @@ public class Game{
 
     **************************************/
 
-    public void player_add(Player p)            { players.add(p); }
-    public void player_next(){ // swap players
-        if(currentplayer == nonFoldedPlayers.get(0) || nonFoldedPlayers.indexOf(currentplayer) < nonFoldedPlayers.size()-1){
-            currentplayer = nonFoldedPlayers.get(nonFoldedPlayers.indexOf(currentplayer) + 1); // next player
-        }
-        // go back to starting player / next round
-        else currentplayer = nonFoldedPlayers.get(0);
+    public void     players_add(Player p){ players.add(p); }
+    public boolean  players_contains(Player p){
+        if(this.players.contains(p)) return true; 
+
+        return false;
     }
-    public void player_fold(Player p){
-        p.set_fold(); 
+    public void     players_fold(Player p){
+        p.set_fold(false); 
         empty_hand(p); 
     }
+    public void     players_next(){ // swap players
+        if(currentPlayer == nonFoldedPlayers.get(0) || nonFoldedPlayers.indexOf(currentPlayer) < nonFoldedPlayers.size()-1){
+            currentPlayer = nonFoldedPlayers.get(nonFoldedPlayers.indexOf(currentPlayer) + 1); // next player
+        }
+        // go back to starting player / next round
+        else currentPlayer = nonFoldedPlayers.get(0);
+    }
+    public void     players_remove(Player p){ players.remove(p); }
+    public void     players_set_current(Player p){ this.currentPlayer = p; }
+    public void     players_set_notReady(){
+        for(int i = 0; i < players.size(); i++){
+            players.get(i).set_raised(false);
+            players.get(i).set_fold(false);
+            players.get(i).set_current_bet(0);
+        }
+    }
+    public int      players_size(){ return this.players.size(); }
 
-    // determine tthe winner between two players
-    // print to console the winner.
-    // only checks between first two players
-    // will need to expand for more players
+    /***************************************
+     
+                playerQueue
+
+    ****************************************/
+
+    public void     playerQueue_add(Player p)          { this.playerQueue.add(p); }
+    
+    public boolean  playerQueue_contains(Player p)  { 
+        if(this.playerQueue.contains(p)) return true; 
+
+        return false;
+    }
+    public Player   playerQueue_get()                { return this.playerQueue.get(0); }
+    public void     playerQueue_remove(Player p)       { this.playerQueue.remove(p); }
+    public int      playerQueue_size()              { return this.playerQueue.size(); }
+
+    /***************************************
+     
+                nonFoldedPlayers
+
+    ****************************************/
+
+    public void     nonFolded_add(Player p){ this.nonFoldedPlayers.add(p); }
+    public boolean  nonFolded_contains(Player p){ 
+        if(this.nonFoldedPlayers.contains(p)) return true;
+
+        return false;
+    }
+    public void     nonFolded_remove(Player p){ this.nonFoldedPlayers.remove(p); }
+    public int      nonFolded_size(){ return this.nonFoldedPlayers.size(); }
+
+    /**************************************
+    
+                    Events
+
+    **************************************/
+
+    public void event_bet_01(UserEvent event){      // Phase 01 (First Bet Phase) logic
+        bet_place(event.playerID, event);
+
+        if(turn != players.size()-1){
+            turn++;                                 // Changes turn for the next player                        
+            timeRemaining = 30;                     // Resets the timer to 30 seconds
+        }
+        else{
+            phase++;                                // Sets to draw phase
+            turn = 0;                               // Resets the turn so first player is now drawing
+        }
+
+        determine_player_message();
+    }
+    public void event_bet_03(UserEvent event){      // Phase 03 (Second Bet Phase) logic
+        if(all_bets_equal() && nonFoldedPlayers.size() >= 1){
+            players_next();
+            turn++;
+            // every player made a single turn
+            if(all_players_bet()){
+                set_all_bet();
+                currentPlayer = nonFoldedPlayers.get(0);
+                turn = 0;
+                phase = 4;
+                determine_winner();
+                turn = -1;
+                players_set_notReady();
+                timeRemaining = -1;
+            }
+            if(phase != 4) timeRemaining = 30;
+        }
+    
+        currentPlayer = player_next_bet_player();
+        turn = player_next_bet();
+        timeRemaining = 30;
+
+        determine_player_message();
+    }
+    public void event_check(UserEvent event){       // (Player check) logic
+        players.get(event.playerID).set_stand(true);
+        players.get(event.playerID).set_bet(true);
+
+        // Everything below used to be event_move but was only called by event_check
+
+        if(all_bets_equal() && nonFoldedPlayers.size() >= 1){
+            players_next();
+            turn++;
+
+             // every player made a single turn
+            if(all_players_bet()){
+                set_all_bet();
+                turn = 0;
+                currentPlayer = nonFoldedPlayers.get(0);
+                phase++;
+            }
+
+            timeRemaining = 30;
+        }
+        else{
+            currentPlayer = player_next_bet_player();
+            turn = player_next_bet();
+            timeRemaining = 30;
+        }
+    }
+    public void event_draw(UserEvent event){        // Phase 02 logic
+        new_cards(event);
+
+        players_next();
+        turn++;
+        // every player made a single turn
+        if(currentPlayer == nonFoldedPlayers.get(0)){
+            turn = 0;
+            phase++;
+        }
+        
+        timeRemaining = 30;
+        
+        determine_player_message();
+    }
+    // Not an actual event/action performed by the user but is accessed by check
+    // Could maybe be added to event_check rather than be its own method
+    public void event_name(UserEvent event){        // Phase 00 logic
+        // If there's currently more than 5 players add player 5 into a queue
+        if(event.playerID >= 5){   
+            for(int i = 0; i < playerQueue.size(); i++)
+                if(playerQueue.get(i).get_id() == event.playerID) playerQueue.get(i).set_name(event.name);
+            
+        }
+        else players.get(event.playerID).set_name(event.name);
+
+        determine_player_message();
+    }
+    public void event_ready(UserEvent event){       // Phase 00 logic
+        if(players.size() >= 2  && all_players_ready()){                // Check if all players are ready
+            for(Player p : players){
+                for(int j = 0; j < 5; j++) p.add_card(draw_card());     // add cards into the players hands
+                    
+                bet_place_ante(p.get_id());
+                p.set_cards();                                          // add cards to the cards array for javascript functionality
+                nonFoldedPlayers.add(p);
+            }
+            currentPlayer = nonFoldedPlayers.get(0);
+            phase = 1;
+            turn = 0;
+            timeRemaining = 30;
+        }
+        else if(players.size() >= 2 && num_players_ready() >= 2) timeRemaining = 10;
+        
+        determine_player_message();
+    }
+    // Not an actual event/action performed by the user 
+    public void event_reset(UserEvent event){              // Phase 04 (Reset) logic
+        timeRemaining = -1;
+        nonFoldedPlayers.clear();
+
+        for(int i = 0; i < players.size(); i++){
+            players.get(i).set_fold(false);      // false
+            empty_hand(players.get(i));
+        }
+
+        deck.clear();
+        create_deck();
+        shuffle_deck();
+
+        phase = 0;
+
+        determine_player_message();
+    }
+
+    /**************************************
+     
+                Game Logic
+     
+    **************************************/
+
+    public String exportStateAsJSON(){
+        Gson gson = new Gson();
+        return gson.toJson(this);
+    }
     public void determine_winner(){
         // SETTING TO DEFAULT PLAYER IN ARRAY BC whoWinds doesnt work
         // so other code can be added
 
-        for(Player p : nonFoldedPlayers) p.pHand = new Hand(p.Cards);
+        for(Player p : nonFoldedPlayers) p.set_player_hand(p.Cards);
 
         int i = nonFoldedPlayers.size()-1;
         boolean tie = false;
         int failingCounter = 0;
 
         while(nonFoldedPlayers.size() > 1 && i >= 1){
-            if(nonFoldedPlayers.get(i).pHand.is_equal(nonFoldedPlayers.get(i-1).pHand)){
+            if(nonFoldedPlayers.get(i).get_player_hand().is_equal(nonFoldedPlayers.get(i-1).get_player_hand())){
                 if(nonFoldedPlayers.size() == 2){
                     tie = true;
                     break;
                 }
             }
-            else if(nonFoldedPlayers.get(i).pHand.is_better_than(nonFoldedPlayers.get(i-1).pHand)) nonFoldedPlayers.remove(i-1);
+            else if(nonFoldedPlayers.get(i).get_player_hand().is_better_than(nonFoldedPlayers.get(i-1).get_player_hand())) nonFoldedPlayers.remove(i-1);
             else nonFoldedPlayers.remove(i);
             
             i--;
@@ -100,163 +287,6 @@ public class Game{
         // give players new cards starting essentially a new game
     }
 
-    /***************************************
-     
-                player_queue
-
-    ****************************************/
-
-    public void player_queue_add(Player p)  { player_queue.add(p); }
-    public void player_queue_remove(int id) { player_queue.remove(id); }
-    public Player player_queue_get()        { return player_queue.get(0); }
-    public int player_queue_get_size()      { return player_queue.size(); }
-
-    /**************************************
-     
-                Game Logic
-     
-    **************************************/
-
-    public String exportStateAsJSON(){
-        Gson gson = new Gson();
-        return gson.toJson(this);
-    }
-
-    /**************************************
-    
-                    Events
-
-    **************************************/
-
-    public void event_name(UserEvent event){        // Phase 00 logic
-        // If there's currently more than 5 players add player 5 into a queue
-        if(event.playerID >= 5){   
-            for(int i = 0; i < player_queue.size(); i++)
-                if(player_queue.get(i).get_id() == event.playerID) player_queue.get(i).set_name(event.name);
-            
-        }
-        else players.get(event.playerID).set_name(event.name);
-
-        determine_player_message();
-    }
-    public void event_ready(UserEvent event){       // Phase 00 logic
-        if(players.size() >= 2  && all_players_ready()){                // Check if all players are ready
-            for(Player p : players){
-                for(int j = 0; j < 5; j++) p.add_card(draw_card());     // add cards into the players hands
-                    
-                bet_place_ante(p.id);
-                p.set_cards();                                          // add cards to the cards array for javascript functionality
-                nonFoldedPlayers.add(p);
-            }
-            currentplayer = nonFoldedPlayers.get(0);
-            phase = 1;
-            turn = 0;
-            timeRemaining = 30;
-        }
-        else if(players.size() >= 2 && num_players_ready() >= 2) timeRemaining = 10;
-        
-        determine_player_message();
-    }
-    public void event_check(UserEvent event){       // (Player check) logic
-        players.get(event.playerID).set_stand();
-        players.get(event.playerID).set_bet();
-        event_move();
-    }
-    public void event_bet_01(UserEvent event){      // Phase 01 (First Bet Phase) logic
-        bet_place(event.playerID, event);
-
-        if(turn != players.size()-1){
-            turn++;                                 // Changes turn for the next player                        
-            timeRemaining = 30;                     // Resets the timer to 30 seconds
-        }
-        else{
-            phase++;                                // Sets to draw phase
-            turn = 0;                               // Resets the turn so first player is now drawing
-        }
-
-        determine_player_message();
-    }
-    // Not an actual event/action performed by the user but is accessed by check
-    // Could maybe be added to event_check rather than be its own method
-    public void event_move(){                       // Phase 01(changes player after checking)
-        if(all_bets_equal() && nonFoldedPlayers.size() >= 1){
-            player_next();
-            turn++;
-
-             // every player made a single turn
-            if(all_players_bet()){
-                set_all_bet();
-                turn = 0;
-                currentplayer = nonFoldedPlayers.get(0);
-                phase++;
-            }
-
-            timeRemaining = 30;
-        }
-        else{
-            currentplayer = player_next_bet_player();
-            turn = player_next_bet();
-            timeRemaining = 30;
-        }
-    }
-    public void event_draw(UserEvent event){        // Phase 02 logic
-        new_cards(event);
-
-        player_next();
-        turn++;
-        // every player made a single turn
-        if(currentplayer == nonFoldedPlayers.get(0)){
-            turn = 0;
-            phase++;
-        }
-        
-        timeRemaining = 30;
-        
-        determine_player_message();
-    }
-    public void event_bet_03(UserEvent event){      // Phase 03 (Second Bet Phase) logic
-        if(all_bets_equal() && nonFoldedPlayers.size() >= 1){
-            player_next();
-            turn++;
-            // every player made a single turn
-            if(all_players_bet()){
-                set_all_bet();
-                currentplayer = nonFoldedPlayers.get(0);
-                turn = 0;
-                phase = 5;
-                determine_winner();
-                turn = -1;
-                set_players_notReady();
-                timeRemaining = -1;
-            }
-            if(phase != 5) timeRemaining = 30;
-        }
-    
-        currentplayer = player_next_bet_player();
-        turn = player_next_bet();
-        timeRemaining = 30;
-
-        determine_player_message();
-    }
-    // Not an actual event/action performed by the user 
-    public void event_reset(UserEvent event){              // Phase 04 (Reset) logic
-        timeRemaining = -1;
-        nonFoldedPlayers.clear();
-
-        for(int i = 0; i < players.size(); i++){
-            players.get(i).folded = false;
-            empty_hand(players.get(i));
-        }
-
-        deck.clear();
-        create_deck();
-        shuffle_deck();
-
-        phase = 0;
-
-        determine_player_message();
-    }
-
     public void processMessage(int playerId, String msg){
         GsonBuilder builder = new GsonBuilder();
         Gson gson = builder.create();
@@ -269,7 +299,7 @@ public class Game{
         if(event.event == UserEventType.NAME){
             // note this does not add the player to game.players
             // only sets their name
-            for(Player p : player_queue)
+            for(Player p : playerQueue)
                 if(p.get_id() == event.playerID) p.set_name(event.name);
         }
 
@@ -295,25 +325,25 @@ public class Game{
         else if(phase == 1){
             playerMessage = "Phase: First Bet Phase"
             + "\n"
-            + "Turn: " + currentplayer.get_name();
+            + "Turn: " + currentPlayer.get_name();
         }
 
         else if(phase == 2){
             playerMessage = "Phase: Draw Phase"
             + "\n"
-            + "Turn: " + currentplayer.get_name();
+            + "Turn: " + currentPlayer.get_name();
         }
 
         else if(phase == 3){
             playerMessage = "Phase: Second Bet Phase"
             + "\n"
-            + "Turn: " + currentplayer.get_name();
+            + "Turn: " + currentPlayer.get_name();
         }
 
         else if(phase == 4){
             playerMessage = "Phase: Showdown"
             + "\n"
-            + "Turn: " + currentplayer.get_name();
+            + "Turn: " + currentPlayer.get_name();
         }
 
         else if(phase == 5){
@@ -336,30 +366,29 @@ public class Game{
         state to everyone
     */
     public boolean update(){
-        while((phase == 0 || phase == 5) && players.size() < 5 && player_queue.size() > 0){
-            player_queue_remove(0);
-            player_add(player_queue.get(0));
-            if(players.size() == 5 || player_queue.size() == 0) return true;
+        while((phase == 0 || phase == 5) && players.size() < 5 && playerQueue.size() > 0){
+            playerQueue_remove(playerQueue.get(0));
+            players_add(playerQueue.get(0));
+            if(players.size() == 5 || playerQueue.size() == 0) return true;
         }
-        if(players.size() == 0){
-            // no players in game
+        if(players.size() == 0){        // no players in game
             phase = 0;
             pot.empty_pot();
             timeRemaining = -1;
             nonFoldedPlayers.clear();
-            player_queue.clear();
+            playerQueue.clear();
             deck.clear();
             create_deck();
             shuffle_deck();
             winningPlayer = null;
-            currentplayer = null;
+            currentPlayer = null;
             
             return true;
         }
 
-        if(players.size() == 0 || timeRemaining == -1) return false;
-        if(players.size() >= 2 && timeRemaining > 0) timeRemaining--;
-        if(timeRemaining == 0 && phase != 0) fold_current_player();
+        if(players.size() == 0 || timeRemaining == -1)  return false;
+        if(players.size() >= 2 && timeRemaining > 0)    timeRemaining--;
+        if(timeRemaining == 0 && phase != 0)            player_fold_current();
         else if(timeRemaining == 0 && num_players_ready() >= 2 && phase == 0){
             kick_not_ready();
             phase = 0;
@@ -367,11 +396,11 @@ public class Game{
             if(players.size() >= 2  && all_players_ready()){
                 for(Player p : players){
                     for(int j = 0; j < 5; j++) p.add_card(draw_card());
-                    bet_place_ante(p.id);
+                    bet_place_ante(p.get_id());
                     p.set_cards();
                     nonFoldedPlayers.add(p);
                 }
-                currentplayer = nonFoldedPlayers.get(0);
+                currentPlayer = nonFoldedPlayers.get(0);
                 phase = 1;
                 turn = 0;
                 timeRemaining = 30;
@@ -387,10 +416,10 @@ public class Game{
             phase = 5;
             nonFoldedPlayers.clear();
             turn = -1;
-            set_players_notReady();
+            players_set_notReady();
             timeRemaining = -1;
-            winningPlayer.pHand = new Hand(winningPlayer.Cards);
-            winningPlayer.pHand.get_handName();
+            winningPlayer.set_player_hand(winningPlayer.Cards);
+            winningPlayer.get_player_hand().get_handName();
         }
         determine_player_message();
         return true;
@@ -408,15 +437,15 @@ public class Game{
 
     public boolean all_bets_equal(){
         for(Player p : nonFoldedPlayers)
-            if(p.currentBet != max_player_bet() && p.wallet != 0) return false;
+            if(p.get_current_bet() != max_player_bet() && p.get_wallet() != 0) return false;
             
         return true;
     }
     public int player_next_bet(){
         Player temp = nonFoldedPlayers.get(0);
         for(int i = 1; i < nonFoldedPlayers.size(); i++){
-            if(temp.get_bet() < nonFoldedPlayers.get(i).get_bet())      return temp.get_id();
-            else if(temp.get_bet() > nonFoldedPlayers.get(i).get_bet()) return nonFoldedPlayers.get(i).get_id();
+            if(temp.get_current_bet() < nonFoldedPlayers.get(i).get_current_bet())      return temp.get_id();
+            else if(temp.get_current_bet() > nonFoldedPlayers.get(i).get_current_bet()) return nonFoldedPlayers.get(i).get_id();
             
             temp = nonFoldedPlayers.get(i);
         }
@@ -426,20 +455,20 @@ public class Game{
 
     public Player player_next_bet_player(){
         if(all_bets_equal()){
-            for(Player p : nonFoldedPlayers) p.set_check();
+            for(Player p : nonFoldedPlayers) p.set_check(true);
             
-            player_next();
+            players_next();
         }
         else{
-            for(Player p : nonFoldedPlayers) p.set_check();
+            for(Player p : nonFoldedPlayers) p.set_check(false);
             
-            player_next();
-            while(currentplayer.get_wallet() == 0 && !all_bets_equal()) player_next();
+            players_next();
+            while(currentPlayer.get_wallet() == 0 && !all_bets_equal()) players_next();
             
-            if(currentplayer.get_current_bet() < max_player_bet()) return currentplayer;
+            if(currentPlayer.get_current_bet() < max_player_bet()) return currentPlayer;
         }
 
-        return currentplayer;
+        return currentPlayer;
     }
 
     public boolean all_players_bet(){
@@ -458,7 +487,7 @@ public class Game{
     public int max_player_bet(){
         int temp = 0;
         for(Player p : nonFoldedPlayers)
-            if(p.get_bet() > temp) temp = p.get_bet();
+            if(p.get_current_bet() > temp) temp = p.get_current_bet();
             
         return temp;
     }
@@ -478,19 +507,13 @@ public class Game{
         return count;
     }
 
-    public void set_players_notReady(){
-        for(int i = 0; i < players.size(); i++){
-            players.get(i).set_raised();
-            players.get(i).set_fold();
-            players.get(i).set_current_bet(0);
-        }
-    }
+    
 
-    public void fold_current_player(){
-        currentplayer.set_fold();
-        nonFoldedPlayers.remove(currentplayer);
+    public void player_fold_current(){
+        currentPlayer.set_fold(true);
+        nonFoldedPlayers.remove(currentPlayer);
         turn = player_next_bet();
-        currentplayer = player_next_bet_player();
+        currentPlayer = player_next_bet_player();
         timeRemaining = 30;
     }
 
@@ -498,7 +521,7 @@ public class Game{
         ArrayList<Player> removeList = new ArrayList<>();
         synchronized(WebPoker.mutex){
             for(int i = 0; i < players.size(); i++)
-                if(players.get(i).ready == false) removeList.add(players.get(i));
+                if(players.get(i).get_ready() == false) removeList.add(players.get(i));
 
             for(int i = 0; i < removeList.size(); i++) players.remove(removeList.get(i));
         }
@@ -508,49 +531,13 @@ public class Game{
         for(int i = 0; i < players.size(); i++) players.get(i).set_id(i);
     }
 
-    public int get_next_id(){
-        // flag to signal id is currently used
-        boolean flag = false;
-        int id = 0;
-        if(players.size() == 0) return 0;
-        
-        // temporarly store players in both game and queue
-        ArrayList<Player> allPlayers = new ArrayList<>();
-        for(Player p : players)         allPlayers.add(p);
-        for(Player p : player_queue)    allPlayers.add(p);
-
-        for(int i = 0; i < allPlayers.size(); i++){
-            for(Player p : allPlayers){
-                // id is found in players/cant use so move on
-                if(p.get_id() != i) return i;
-                else{
-                    flag = true;
-                    break;
-                }
-            }
-
-            if(i == players.size() && player_queue.size() == 0) return i;
-    
-            id = i;
-        }
-        // if all used add one to biggests id number
-        return (id+1);
-    }
-
-    public Player get_player(int id){
-        for(int i = 0; i < players.size(); i++)
-            if(players.get(i).get_id() == id) return players.get(i);
-        
-        return null;
-    }
-
+    public Player get_player(int id){ return this.players.get(id); }
     public Player get_player_in_queue(int id){
-        for(Player p : player_queue)
+        for(Player p : playerQueue)
             if(p.get_id() == id) return p;
             
         return null;
     }
-
 
     /**************************************
     
@@ -614,6 +601,8 @@ public class Game{
         }
     }
 
+    public int deck_size(){ return this.deck.size(); }
+
     /**********************************
      
                 Betting
@@ -626,7 +615,7 @@ public class Game{
     }
 
     public void bet_place(int id, UserEvent event){
-        players.get(id).set_bet();
+        players.get(id).set_bet(true);
         call_bet(id, event);
 
         //Check if player is betting more than they have, change bet to whatever is left in their wallet.
@@ -639,6 +628,7 @@ public class Game{
 
     public void call_bet(int id, UserEvent event){
         int betDifference = max_player_bet() - players.get(id).get_current_bet();
+        players.get(event.playerID).set_bet(true);
 
         if(betDifference >= 0 && (players.get(id).get_wallet() - betDifference) >= 0) event.amount_to_bet = betDifference;
         else event.amount_to_bet = players.get(id).get_wallet();
@@ -648,13 +638,21 @@ public class Game{
         pot.add_to_pot(event.amount_to_bet);
     }
 
+    /**********************************
+     
+                Phases
+     
+    ***********************************/
+
+    public int get_phase(){ return this.phase; }
+
     /****************************************************
 
                 Just gonna leave this here.....
 
     ****************************************************/
 
-    public boolean is_id_in_players(int id){
+    public boolean is_id_in_players(int id){        // Returns true if the player id is found in players list
         for(Player p : players)
             if(p.get_id() == id) return true;
 
@@ -667,42 +665,29 @@ public class Game{
 
     **********************************/
 
-    public ArrayList<Player> players = new ArrayList<>();               // players of the game
-    public ArrayList<Player> nonFoldedPlayers = new ArrayList<>();      // Players who have not folded
-    public ArrayList<Player> player_queue = new ArrayList<>();          // Players who have not entere the game due to player cap
+    private ArrayList<Player> players = new ArrayList<>();               // players of the game
+    private ArrayList<Player> nonFoldedPlayers = new ArrayList<>();      // Players who have not folded
+    private ArrayList<Player> playerQueue = new ArrayList<>();          // Players who have not entere the game due to player cap
 
-    public ArrayList<Card> deck = new ArrayList<>();                    // stored cards not in players hands
+    private ArrayList<Card> deck = new ArrayList<>();                    // stored cards not in players hands
     private ArrayList<Hand> hands = new ArrayList<>();
 
-    // store non folded players seperately
-
-
     // turns
-    private Player currentplayer;
+    private Player currentPlayer;
     private Player winningPlayer;
 
     private String playerMessage;
-
 
     // round - these are used with javascript to determine certain displays
     private int phase;
     private int turn = -1;
     private int highestBet;
+
     // do not change these or display will break
     private int winner = -1;
     private int winnings = -1;
+    private int timeRemaining = -1;
     private String winStr = "";
-    // 0 will be pregame
-    // 1 will be first bet phase
-    // 2 wil be draw phase
-    // 3 will be second bet phase
-    // 4 will be showdown
-    // 5 is winner screen
-
-    public int timeRemaining = -1;
-
-    // Count for number of players who have stand/fold
-    // This is necessary to determine when showdown begins
-    private int playerStandFold;
+ 
     private Pot pot; // total of chips being bet
 }
