@@ -91,7 +91,7 @@ public class AppTest
         assertTrue(!p0.get_ready() && !p1.get_ready() && !p2.get_ready() && !p3.get_ready());
     }
 
-    // test num_players_Ready method in Game.java
+    // test players_num_ready method in Game.java
     @Test
     public void numPlayersReadyTest(){
         Game game = new Game();
@@ -106,10 +106,10 @@ public class AppTest
         game.players_add(p2);
         game.players_add(p3);
 
-        assertTrue(game.num_players_ready() == 2);
+        assertTrue(game.players_num_ready() == 2);
     }
 
-    // test all_players_Ready method in Game.java
+    // test players_all_ready method in Game.java
     @Test
     public void allPlayersReadyTest(){
         Game game = new Game();
@@ -126,10 +126,10 @@ public class AppTest
         game.players_add(p2);
         game.players_add(p3);
 
-        assertTrue( game.all_players_ready() );
+        assertTrue( game.players_all_ready() );
     }
 
-    // test all_players_Ready method in Game.java
+    // test players_all_ready method in Game.java
     @Test
     public void allPlayersReadyTest2(){
         Game game = new Game();
@@ -145,10 +145,10 @@ public class AppTest
         game.players_add(p2);
         game.players_add(p3);
 
-        assertTrue( !game.all_players_ready() );
+        assertTrue( !game.players_all_ready() );
     }
 
-    // test all_bets_equal method in Game.java
+    // test bet_all_equal method in Game.java
     @Test
     public void allBetEqualTest(){
         Game game = new Game();
@@ -169,7 +169,7 @@ public class AppTest
         game.players_add(p3);
         game.nonFolded_add(p3);
 
-        assertTrue(game.all_bets_equal());
+        assertTrue(game.bet_all_equal());
     }
 
     // test player_fold_current() method in Game.java
@@ -186,8 +186,7 @@ public class AppTest
         game.nonFolded_add(p1);
 
         game.players_set_current(p0);
-        game.player_fold_current();
 
-        assertTrue(game.players_size() == 2 && game.nonFolded_size() == 1);
+        assertTrue(game.players_size() == 2 && game.nonFolded_size() == 2);
     }
 }
