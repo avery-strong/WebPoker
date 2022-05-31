@@ -32,9 +32,9 @@
         <div id="info_display" style="width: auto;">
             <p id="phaseNumber"       style="width: auto; white-space: pre-line;"></p>
             <p id="readyDisplay"      style="width: auto; white-space: pre-line;"></p>
-            <p id="turnNumber"        style="width: auto; white-space: pre-line;"></p>
-            <p id="timeRemaining"     style="width: auto; white-space: pre-line; font-weight: bold;"></p>
-            <p id ="timeWarning"      style="width: auto; white-space: pre-line; font-weight: bold;"></p>
+             <p id="turnNumber"        style="width: auto; white-space: pre-line;"></p>
+            <!--<p id="timeRemaining"     style="width: auto; white-space: pre-line; font-weight: bold;"></p>
+            <p id ="timeWarning"      style="width: auto; white-space: pre-line; font-weight: bold;"></p>-->
             <p id="turnHelp"          style="width: auto; white-space: pre-line;"></p>
             <p id="info"              style="width: auto; white-space: pre-line;"></p>
             <p id="playersTotalBets"  style="width: auto; white-space: pre-line;"></p>
@@ -108,7 +108,7 @@
     var inQueue;
     var infoToggle = false;
 
-    var serverUrl ="ws://" + window.location.hostname + ":8885";
+    var serverUrl ="ws://" + window.location.hostname + ":8880";
     var connection = new WebSocket(serverUrl);
   
 
@@ -167,11 +167,11 @@
                 }
             }
         }
-        if(obj.player_queue.length != 0){
-            for(var i = 0; i < obj.player_queue.length; i++){
+        if(obj.playerQueue.length != 0){
+            for(var i = 0; i < obj.playerQueue.length; i++){
                 try{
-                    if(obj.players_queue[i].id == playerID){
-                        playerObj = obj.players_queue[i];
+                    if(obj.playerQueue[i].id == playerID){
+                        playerObj = obj.playerQueue[i];
                         inQueue = true;
                         document.getElementById('bodyText').style.display = "none";
                         document.getElementById('waitingBody').style.display = "block";
@@ -473,7 +473,7 @@
             document.getElementById('sendSort').style.display   = "none";
         }
 
-        if(!playerObj.canCheck){    // if player cannot check meaning they have checked
+        if(!playerObj.check){    // if player cannot check meaning they have checked
             document.getElementById("sendCheck").disabled   = true;
             document.getElementById("sendCall").disabled    = false;
         }
@@ -501,8 +501,8 @@
             document.getElementById("sendDraw").disabled    = true;
         }
 
-        if(playerObj.folded) document.getElementById("sendSort").disabled   = true;    
-        if(!playerObj.folded) document.getElementById("sendSort").disabled   = false;
+        if(playerObj.fold) document.getElementById("sendSort").disabled   = true;    
+        if(!playerObj.fold) document.getElementById("sendSort").disabled   = false;
     }
 
     function toggleInfo(){

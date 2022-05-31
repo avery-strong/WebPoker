@@ -116,7 +116,7 @@ public class Game{
             
 
         if(event.event == UserEventType.BET){
-            bet_place()
+            bet_place(event);
             if(phase == 1)      event_bet_01(event);
             else if(phase == 3) event_bet_03(event);
         }
@@ -236,9 +236,35 @@ public class Game{
 
     **************************************/
 
-    public void event_bet_01(UserEvent event){      // Phase 01 (First Bet Phase) logic
-        bet_place(event.playerID, event);
+    public void event_bet(UserEvent event){
+        bet_place(event);
 
+        if(turn != players.size()-1){
+            turn++;                                 // Changes turn for the next player                        
+            timeRemaining = 30;                     // Resets the timer to 30 seconds
+        }
+        else{
+            phase++;                                // Sets to draw phase
+            turn = 0;                               // Resets the turn so first player is now drawing
+        } 
+    }
+    public void event_bet_01(UserEvent event){      // Phase 01 (First Bet Phase) logic
+        bet_place(event);
+/*
+        if(phase == 3){
+
+        }
+        else{
+           if(turn != players.size()-1){
+                turn++;                                 // Changes turn for the next player                        
+                timeRemaining = 30;                     // Resets the timer to 30 seconds
+            }
+            else{
+                phase++;                                // Sets to draw phase
+                turn = 0;                               // Resets the turn so first player is now drawing
+            } 
+        }
+*/
         if(turn != players.size()-1){
             turn++;                                 // Changes turn for the next player                        
             timeRemaining = 30;                     // Resets the timer to 30 seconds
@@ -266,7 +292,8 @@ public class Game{
                 players_set_notReady();
                 timeRemaining = -1;
             }
-            if(phase != 4) timeRemaining = 30;
+
+            timeRemaining = 30;
         }
     
         currentPlayer = bet_player_next();
@@ -317,7 +344,7 @@ public class Game{
         determine_player_message();
     }
     public void event_fold(UserEvent event){
-        players.get(event.playerID).set_fold();
+        players.get(event.playerID).set_fold(true);
         nonFoldedPlayers.remove(currentPlayer);
         turn++;
     }
@@ -335,7 +362,6 @@ public class Game{
         determine_player_message();
     }
     public void event_ready(UserEvent event){       // Phase 00 logicrs_num_ready() >= 2) timeRemaining = 10;
-        
         determine_player_message();
     }
     // Not an actual event/action performed by the user 
@@ -380,9 +406,10 @@ public class Game{
         empty_hand(p); 
     }
     public void     players_next(){ // swap players
-        if(currentPlayer == nonFoldedPlayers.get(0) || nonFoldedPlayers.indexOf(currentPlayer) < nonFoldedPlayers.size()-1){
+        // If player equals first player or position of player is less than size of players-1
+        if(currentPlayer == nonFoldedPlayers.get(0) || nonFoldedPlayers.indexOf(currentPlayer) < nonFoldedPlayers.size()-1)
             currentPlayer = nonFoldedPlayers.get(nonFoldedPlayers.indexOf(currentPlayer) + 1); // next player
-        }
+        
         // go back to starting player / next round
         else currentPlayer = nonFoldedPlayers.get(0);
     }
@@ -507,7 +534,7 @@ public class Game{
     }
     public void     bet_place(UserEvent event){
         players.get(event.playerID).set_bet(true);
-        bet_call(event.playerID, event);
+        bet_call(event);
 
         //Check if player is betting more than they have, change bet to whatever is left in their wallet.
         if(event.amount_to_bet > players.get(event.playerID).get_wallet()) 
@@ -517,15 +544,15 @@ public class Game{
         players.get(event.playerID).set_current_bet(event.amount_to_bet);
         pot.add_to_pot(event.amount_to_bet);
     }
-    public void     bet_call(int id, UserEvent event){
-        int betDifference = bet_max_player() - players.get(id).get_current_bet();
+    public void     bet_call(UserEvent event){
+        int betDifference = bet_max_player() - players.get(event.playerID).get_current_bet();
         players.get(event.playerID).set_bet(true);
 
-        if(betDifference >= 0 && (players.get(id).get_wallet() - betDifference) >= 0) event.amount_to_bet = betDifference;
-        else event.amount_to_bet = players.get(id).get_wallet();
+        if(betDifference >= 0 && (players.get(event.playerID).get_wallet() - betDifference) >= 0) event.amount_to_bet = betDifference;
+        else event.amount_to_bet = players.get(event.playerID).get_wallet();
         
-        players.get(id).subtract_wallet(event.amount_to_bet);
-        players.get(id).set_current_bet(event.amount_to_bet);
+        players.get(event.playerID).subtract_wallet(event.amount_to_bet);
+        players.get(event.playerID).set_current_bet(event.amount_to_bet);
         pot.add_to_pot(event.amount_to_bet);
     }
     public boolean  bet_all_equal(){

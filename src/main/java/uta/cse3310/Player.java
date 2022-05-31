@@ -95,10 +95,10 @@ public class Player {
     ArrayList<Card> hand = new ArrayList<>();               // Array list for players hand to be passed to cards
     uta.cse3310.Card Cards[] = new uta.cse3310.Card[5];
 
-    private boolean bet;
-    private boolean check;
-    private boolean fold;                                   // boolean to check if the player has folded in the round
-    private boolean raised;
-    private boolean ready;
-    private boolean stand;
+    private boolean bet = false;
+    private boolean check = true;
+    private boolean fold = false;                                   // boolean to check if the player has folded in the round
+    private boolean raised = false;
+    private boolean ready = false;
+    private boolean stand = false;
 }

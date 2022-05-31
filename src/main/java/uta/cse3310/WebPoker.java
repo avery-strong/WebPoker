@@ -112,7 +112,6 @@ public class WebPoker extends WebSocketServer {
 
     @Override
     public void onClose(WebSocket conn, int code, String reason, boolean remote) {
-
         System.out.println(conn + " has closed");
 
         // The state is now changed, so every client needs to be informed
@@ -122,18 +121,7 @@ public class WebPoker extends WebSocketServer {
             System.out.println("removed player index " + idx);
 
             Player disconnectedPlayer = game.get_player(idx);
-/*
-        // if player disconnects (onClose)
-            // if player is in players
-            if(game.players_contains(disconnectedPlayer)){
-                game.nonFolded_remove(disconnectedPlayer);              // remove from nonFolded
-                game.player_remove(disconnectedPlayer);                 // remove from players
-            }
-            // else if player is in playerQueue
-            else if(game.playerQueue_contains(disconnectedPlayer)) game.playerQueue_remove(disconnectedPlayer);
-*/
-            
-                
+
             // If there are players in playerQueue (5 players already playing)
             if(game.playerQueue_size() > 0){
                 // If player disconnects while a game is in progress
@@ -245,12 +233,12 @@ public class WebPoker extends WebSocketServer {
     public static void main(String[] args) throws InterruptedException, IOException {
         // Create and start the http server
 
-        HttpServer H = new HttpServer(8085, "./html");
+        HttpServer H = new HttpServer(8080, "./html");
         H.start();
 
         // create and start the websocket server
 
-        int port = 8885;
+        int port = 8880;
 
         WebPoker s = new WebPoker(port);
         s.start();
@@ -258,7 +246,7 @@ public class WebPoker extends WebSocketServer {
 
         // Below code reads from stdin, making for a pleasant way to exit
         BufferedReader sysin = new BufferedReader(new InputStreamReader(System.in));
-        while (true) {
+        while(true){
             String in = sysin.readLine();
             s.broadcast(in);
             if (in.equals("exit")){
