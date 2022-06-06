@@ -108,46 +108,35 @@
     var inQueue = false;
     var infoToggle = false;
 
+    document.getElementById('sendReady').style.display = "none";
+    document.getElementById('sendCheck').style.display = "none";    // Check not stand
+    document.getElementById('sendFold').style.display = "none";
+    document.getElementById('sendCall').style.display = "none";
+    document.getElementById('sendBet1').style.display = "none";
+    document.getElementById('sendBet2').style.display = "none";
+    document.getElementById('sendBet3').style.display = "none";
+    document.getElementById('sendDraw').style.display = "none";
+    document.getElementById('sendSort').style.display = "none";
+    document.getElementById('cards').style.display = "none";
+    document.getElementById('cardstext').style.display = "none";
+    document.getElementById('chips').src = "";
+    document.getElementById('infoButton').style = "text-align:center";
+    document.getElementById("info_display").style.display = "none";
+
     var serverUrl ="ws://" + window.location.hostname + ":8880";
     var connection = new WebSocket(serverUrl);
   
-    connection.onopen = function (evt){
-        console.log(evt.data);
+    connection.onopen = function(evt){
+        console.log("Open: \n" + evt.data);
     }
 
     connection.onmessage = function(evt){
-        //console.log("message: " + evt.data);
+        console.log("message: \n" + evt.data);
         var msg;
         msg = evt.data;
 
         // Take the msg and turn it into a javascript object
         const obj = JSON.parse(msg);
-
-        document.getElementById('sendReady').style.display = "none";
-        document.getElementById('sendCheck').style.display = "none";    // Check not stand
-        document.getElementById('sendFold').style.display = "none";
-        document.getElementById('sendCall').style.display = "none";
-        document.getElementById('sendBet1').style.display = "none";
-        document.getElementById('sendBet2').style.display = "none";
-        document.getElementById('sendBet3').style.display = "none";
-        document.getElementById('sendDraw').style.display = "none";
-        document.getElementById('sendSort').style.display = "none";
-        document.getElementById('cards').style.display = "none";
-        document.getElementById('cardstext').style.display = "none";
-        document.getElementById('chips').src = "";
-        document.getElementById('infoButton').style = "text-align:center";
-        document.getElementById("info_display").style.display = "none";
-
-        // This is a hack for this example.
-        // The only time the WebPoker server sends data just
-        // to this client is at the beginging, when the connection
-        // is first made.  The first communication tells us which
-        // connection number we are, which is very import.
-        // So, we detect this situation where it is not game state
-
-        
-
-        // This is specifically for functionality sent from onOpen in WebSocket.java
 
         if(obj.name == "not set"){
             playerID = obj.id;
@@ -191,7 +180,7 @@
             document.getElementById('waitingQueue').innerHTML = "Waiting for round to end...";
         }
         // Display player info after their name has been set
-        else if(obj.name == "not set"){         
+        else if(obj.name != "not set"){         
             document.getElementById("info_display").style.display = "block";
             // display whose turn it is
             document.getElementById("phaseNumber").innerHTML = obj.playerMessage;
@@ -212,7 +201,7 @@
             document.getElementById("pot").innerHTML = "Total Pot: " + obj.pot.pot;
             document.getElementById('chips').src = "chips.png";
 
-            displayTime(obj, playerObj);
+            //displayTime(obj, playerObj);
 
             // display the total bets of all players
             var playerTotalBetString = "";
@@ -236,6 +225,13 @@
     // 3 is Bet
     // 4 is fold
     // passed as an argument from button
+    function send() {
+        var msg = {
+            text: document.getElementById("send_text").value,
+        };
+        connection.send(JSON.stringify(msg));
+        //console.log(JSON.stringify(msg));
+    }
     function sendEvent(option){
         // send a UserEvent in JSON
         var eventType;
@@ -333,13 +329,7 @@
         };
         connection.send(JSON.stringify(msg));
     }
-    function send() {
-        var msg = {
-            text: document.getElementById("send_text").value,
-        };
-        connection.send(JSON.stringify(msg));
-        //console.log(JSON.stringify(msg));
-    }
+    
     function sendName(){
         var msg = {
             event: "NAME",

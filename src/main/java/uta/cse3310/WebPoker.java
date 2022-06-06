@@ -76,7 +76,7 @@ public class WebPoker extends WebSocketServer {
     }
     
     @Override
-    public void onOpen(WebSocket conn, ClientHandshake handshake) {
+    public void onOpen(WebSocket conn, ClientHandshake handshake){
         /*
             Player enters a game and is given a unique id.
             This does not represent any positions in a list.
@@ -85,7 +85,6 @@ public class WebPoker extends WebSocketServer {
         System.out.println(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " connected");
 
         numPlayers++;
-        System.out.println("\n\n" + numPlayers + "\n\n");
         synchronized(mutex){
             // Maximum amount of players currently in the mgame      
             if(game.players_size() >= 5){             
@@ -104,14 +103,13 @@ public class WebPoker extends WebSocketServer {
             }
         }
 
+        System.out.println("\n\nonOpen: \n" + player.asJSONString());
+
         conn.setAttachment(numPlayers);
         conn.send(player.asJSONString());               // We send the player to the client so the client knows who it is viewing
-
-        System.out.println("\n\n" + player.asJSONString() + "\n\n");
     }
-
     @Override
-    public void onClose(WebSocket conn, int code, String reason, boolean remote) {
+    public void onClose(WebSocket conn, int code, String reason, boolean remote){
         System.out.println(conn + " has closed");
 
         // The state is now changed, so every client needs to be informed
@@ -173,28 +171,25 @@ public class WebPoker extends WebSocketServer {
             System.out.println("the game state" + game.exportStateAsJSON());
         }
     }
-
     @Override
-    public void onMessage(WebSocket conn, String message) {
+    public void onMessage(WebSocket conn, String message){
+        System.out.println("On Message 00: \n" + conn + ": " + message);
         // all incoming messages are processed by the game
         synchronized(mutex){
-            game.processMessage(numPlayers, message);
+            game.processMessage(message);
             // and the results of that message are sent to everyone
             // as the "state of the game"
 
             broadcast(game.exportStateAsJSON());
         }
-
-        System.out.println(conn + ": " + message);
     }
-
     @Override
     public void onMessage(WebSocket conn, ByteBuffer message){
         synchronized(mutex){
             broadcast(message.array());
         }
 
-        System.out.println(conn + ": " + message);
+        System.out.println("On Message 01: \n" + conn + ": " + message);
     }
 
     public class upDate extends TimerTask {
@@ -208,28 +203,25 @@ public class WebPoker extends WebSocketServer {
         }
     }
 
-
     @Override
-    public void onError(WebSocket conn, Exception ex) {
+    public void onError(WebSocket conn, Exception ex){
         ex.printStackTrace();
         if (conn != null) {
         // some errors like port binding failed may not be assignable to a specific
         // websocket
         }
     }
-
     @Override
-    public void onStart() {
+    public void onStart(){
         System.out.println("Server started!");
         setConnectionLostTimeout(0);
         setConnectionLostTimeout(100);
         setNumPlayers(-1);
         // once a second call update
         // may want to start this in the main() function??
-        new java.util.Timer().scheduleAtFixedRate(new upDate(), 0, 1000);
+        //new java.util.Timer().scheduleAtFixedRate(new upDate(), 0, 1000);
         game = new Game();
     }
-
     public static void main(String[] args) throws InterruptedException, IOException {
         // Create and start the http server
 
@@ -249,7 +241,7 @@ public class WebPoker extends WebSocketServer {
         while(true){
             String in = sysin.readLine();
             s.broadcast(in);
-            if (in.equals("exit")){
+            if(in.equals("exit")){
                 s.stop(1000);
                 break;
             }
@@ -265,6 +257,5 @@ public class WebPoker extends WebSocketServer {
     public static int numPlayers;
     private Game game;
     public static Object mutex = new Object();
-
     private Player player;
 }

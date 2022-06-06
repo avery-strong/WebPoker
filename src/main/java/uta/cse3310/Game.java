@@ -85,13 +85,13 @@ public class Game{
         // shuffle (call shuffle_deck())
         // give players new cards starting essentially a new game
     }
-    public void processMessage(int playerId, String msg){
+    public void processMessage(String msg){
         GsonBuilder builder = new GsonBuilder();
         Gson gson = builder.create();
         // take the string we just received, and turn it into a user event
         UserEvent event = gson.fromJson(msg, UserEvent.class);
 
-        System.out.println("\n\n" + msg + "\n\n");
+        System.out.println(event.event + ": " + event.playerID);
 
         // if player is in queue and NAME event happens
         if(event.event == UserEventType.NAME){
