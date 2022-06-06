@@ -33,8 +33,8 @@
             <p id="phaseNumber"       style="width: auto; white-space: pre-line;"></p>
             <p id="readyDisplay"      style="width: auto; white-space: pre-line;"></p>
              <p id="turnNumber"        style="width: auto; white-space: pre-line;"></p>
-            <!--<p id="timeRemaining"     style="width: auto; white-space: pre-line; font-weight: bold;"></p>
-            <p id ="timeWarning"      style="width: auto; white-space: pre-line; font-weight: bold;"></p>-->
+            <p id="timeRemaining"     style="width: auto; white-space: pre-line; font-weight: bold;"></p>
+            <p id ="timeWarning"      style="width: auto; white-space: pre-line; font-weight: bold;"></p>
             <p id="turnHelp"          style="width: auto; white-space: pre-line;"></p>
             <p id="info"              style="width: auto; white-space: pre-line;"></p>
             <p id="playersTotalBets"  style="width: auto; white-space: pre-line;"></p>
@@ -105,22 +105,23 @@
     var name;
     var playerObj;
     var cardIdx = 0;
-    var inQueue;
+    var inQueue = false;
     var infoToggle = false;
 
     var serverUrl ="ws://" + window.location.hostname + ":8880";
     var connection = new WebSocket(serverUrl);
   
-
     connection.onopen = function (evt){
-        console.log("open");
+        console.log(evt.data);
     }
 
     connection.onmessage = function(evt){
         //console.log("message: " + evt.data);
         var msg;
         msg = evt.data;
-        inQueue = true;
+
+        // Take the msg and turn it into a javascript object
+        const obj = JSON.parse(msg);
 
         document.getElementById('sendReady').style.display = "none";
         document.getElementById('sendCheck').style.display = "none";    // Check not stand
@@ -135,6 +136,7 @@
         document.getElementById('cardstext').style.display = "none";
         document.getElementById('chips').src = "";
         document.getElementById('infoButton').style = "text-align:center";
+        document.getElementById("info_display").style.display = "none";
 
         // This is a hack for this example.
         // The only time the WebPoker server sends data just
@@ -143,8 +145,7 @@
         // connection number we are, which is very import.
         // So, we detect this situation where it is not game state
 
-        // Take the msg and turn it into a javascript object
-        const obj = JSON.parse(msg);
+        
 
         // This is specifically for functionality sent from onOpen in WebSocket.java
 
@@ -161,12 +162,12 @@
             for(var i = 0; i < obj.players.length; i++){
                 if(obj.players[i].id == playerID){
                     playerObj = obj.players[i];
-                    inQueue = false;
                     document.getElementById('bodyText').style.display = "block";
                     document.getElementById('waitingBody').style.display = "none";
                 }
             }
         }
+
         if(obj.playerQueue.length != 0){
             for(var i = 0; i < obj.playerQueue.length; i++){
                 try{
@@ -181,7 +182,7 @@
                 }
             }
         }
-      
+  
         if(obj.players.length == 5 && inQueue == true){
             document.getElementById('waitingText').innerHTML = "Waiting for player spot to open up..."
             + "\n" + "Players in game (" + obj.players.length + "/5)";
@@ -189,7 +190,9 @@
         else if(inQueue == true){
             document.getElementById('waitingQueue').innerHTML = "Waiting for round to end...";
         }
-        else{
+        // Display player info after their name has been set
+        else if(obj.name == "not set"){         
+            document.getElementById("info_display").style.display = "block";
             // display whose turn it is
             document.getElementById("phaseNumber").innerHTML = obj.playerMessage;
 
@@ -226,7 +229,6 @@
             displayCards(playerObj);
         }
     }
-
 
     // send info from the buttons where
     // 1 is STAND
@@ -331,7 +333,6 @@
         };
         connection.send(JSON.stringify(msg));
     }
-
     function send() {
         var msg = {
             text: document.getElementById("send_text").value,
@@ -339,7 +340,6 @@
         connection.send(JSON.stringify(msg));
         //console.log(JSON.stringify(msg));
     }
-
     function sendName(){
         var msg = {
             event: "NAME",
@@ -362,7 +362,6 @@
         if(x.style.display === "none") x.style.display = "block"; 
         else x.style.display = "none"; 
     }
-
     function displayCards(playerObj){
         var player = playerObj;
         for(var i = 0; i < 5; i++){

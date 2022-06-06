@@ -389,7 +389,6 @@ public class Game{
 
     **************************************/
 
-    public void     players_add(Player p){ players.add(p); }
     public boolean  players_all_ready(){
         for(int i = 0; i < players.size(); i++)
             if(players.get(i).get_ready() != true) return false;
@@ -401,6 +400,15 @@ public class Game{
 
         return false;
     }
+    public int      players_num_ready(){
+        int count = 0;
+        for(int i = 0; i < players.size(); i++)
+            if(players.get(i).get_ready() == true) count++;
+        
+        return count;
+    }
+    public int      players_size(){ return this.players.size(); }
+    public void     players_add(Player p){ this.players.add(p); }
     public void     players_fold(Player p){
         p.set_fold(false); 
         empty_hand(p); 
@@ -413,13 +421,6 @@ public class Game{
         // go back to starting player / next round
         else currentPlayer = nonFoldedPlayers.get(0);
     }
-    public int      players_num_ready(){
-        int count = 0;
-        for(int i = 0; i < players.size(); i++)
-            if(players.get(i).get_ready() == true) count++;
-        
-        return count;
-    }
     public void     players_remove(Player p){ players.remove(p); }
     public void     players_set_current(Player p){ this.currentPlayer = p; }
     public void     players_set_notReady(){
@@ -429,8 +430,7 @@ public class Game{
             players.get(i).set_current_bet(0);
         }
     }
-    public int      players_size(){ return this.players.size(); }
-    
+
     /***************************************
      
                 playerQueue
@@ -528,36 +528,15 @@ public class Game{
      
     ***********************************/
 
-    public void     bet_place_ante(int id){
-        players.get(id).subtract_wallet(20);
-        pot.add_to_pot(20);
-    }
-    public void     bet_place(UserEvent event){
-        players.get(event.playerID).set_bet(true);
-        bet_call(event);
-
-        //Check if player is betting more than they have, change bet to whatever is left in their wallet.
-        if(event.amount_to_bet > players.get(event.playerID).get_wallet()) 
-            event.amount_to_bet = players.get(event.playerID).get_wallet();
-        
-        players.get(event.playerID).subtract_wallet(event.amount_to_bet);
-        players.get(event.playerID).set_current_bet(event.amount_to_bet);
-        pot.add_to_pot(event.amount_to_bet);
-    }
-    public void     bet_call(UserEvent event){
-        int betDifference = bet_max_player() - players.get(event.playerID).get_current_bet();
-        players.get(event.playerID).set_bet(true);
-
-        if(betDifference >= 0 && (players.get(event.playerID).get_wallet() - betDifference) >= 0) event.amount_to_bet = betDifference;
-        else event.amount_to_bet = players.get(event.playerID).get_wallet();
-        
-        players.get(event.playerID).subtract_wallet(event.amount_to_bet);
-        players.get(event.playerID).set_current_bet(event.amount_to_bet);
-        pot.add_to_pot(event.amount_to_bet);
-    }
     public boolean  bet_all_equal(){
         for(Player p : nonFoldedPlayers)
             if(p.get_current_bet() != bet_max_player() && p.get_wallet() != 0) return false;
+            
+        return true;
+    }
+    public boolean  bet_all_players(){
+        for(Player p : nonFoldedPlayers)
+            if(p.get_bet() == false) return false;
             
         return true;
     }
@@ -571,6 +550,13 @@ public class Game{
         }
 
         return 0;
+    }
+    public int      bet_max_player(){
+        int temp = 0;
+        for(Player p : nonFoldedPlayers)
+            if(p.get_current_bet() > temp) temp = p.get_current_bet();
+            
+        return temp;
     }
     public Player   bet_player_next(){
         if(bet_all_equal()){
@@ -589,23 +575,37 @@ public class Game{
 
         return currentPlayer;
     }
-    public boolean  bet_all_players(){
-        for(Player p : nonFoldedPlayers)
-            if(p.get_bet() == false) return false;
-            
-        return true;
+    public void     bet_call(UserEvent event){
+        int betDifference = bet_max_player() - players.get(event.playerID).get_current_bet();
+        players.get(event.playerID).set_bet(true);
+
+        if(betDifference >= 0 && (players.get(event.playerID).get_wallet() - betDifference) >= 0) event.amount_to_bet = betDifference;
+        else event.amount_to_bet = players.get(event.playerID).get_wallet();
+        
+        players.get(event.playerID).subtract_wallet(event.amount_to_bet);
+        players.get(event.playerID).set_current_bet(event.amount_to_bet);
+        pot.add_to_pot(event.amount_to_bet);
+    }
+    public void     bet_place(UserEvent event){
+        players.get(event.playerID).set_bet(true);
+        bet_call(event);
+
+        //Check if player is betting more than they have, change bet to whatever is left in their wallet.
+        if(event.amount_to_bet > players.get(event.playerID).get_wallet()) 
+            event.amount_to_bet = players.get(event.playerID).get_wallet();
+        
+        players.get(event.playerID).subtract_wallet(event.amount_to_bet);
+        players.get(event.playerID).set_current_bet(event.amount_to_bet);
+        pot.add_to_pot(event.amount_to_bet);
+    }
+    public void     bet_place_ante(int id){
+        players.get(id).subtract_wallet(20);
+        pot.add_to_pot(20);
     }
     public void     bet_set_all(){
         for(Player p : players){
             p.reset_bet();
         }
-    }
-    public int      bet_max_player(){
-        int temp = 0;
-        for(Player p : nonFoldedPlayers)
-            if(p.get_current_bet() > temp) temp = p.get_current_bet();
-            
-        return temp;
     }
 
     /**********************************
