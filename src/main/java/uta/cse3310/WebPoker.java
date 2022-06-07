@@ -173,7 +173,7 @@ public class WebPoker extends WebSocketServer {
     }
     @Override
     public void onMessage(WebSocket conn, String message){
-        System.out.println("On Message 00: \n" + conn + ": " + message);
+        System.out.println("On Message 00: \n" + conn + ": " + "\n" + message);
         // all incoming messages are processed by the game
         synchronized(mutex){
             game.processMessage(message);
@@ -197,7 +197,7 @@ public class WebPoker extends WebSocketServer {
         public void run(){
             if (game != null){
                 synchronized(mutex){
-                    if (game.update()) broadcast(game.exportStateAsJSON());
+                    if(game.update()) broadcast(game.exportStateAsJSON());
                 }
             }
         }

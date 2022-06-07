@@ -91,8 +91,6 @@ public class Game{
         // take the string we just received, and turn it into a user event
         UserEvent event = gson.fromJson(msg, UserEvent.class);
 
-        System.out.println(event.event + ": " + event.playerID);
-
         // if player is in queue and NAME event happens
         if(event.event == UserEventType.NAME){
             // note this does not add the player to game.players
@@ -101,7 +99,11 @@ public class Game{
                 if(p.get_id() == event.playerID) p.set_name(event.name);
         }
         if(event.event == UserEventType.NAME && phase == 0)         event_name(event);
-        if(event.event == UserEventType.READY)                      event_ready(event);   
+        if(event.event == UserEventType.READY){
+            event_ready(event); 
+            update();
+        }                   
+              
         if(event.event == UserEventType.CHECK && bet_all_equal())   event_check(event);
         if(event.event == UserEventType.FOLD){
             event_fold(event);
@@ -111,7 +113,7 @@ public class Game{
             for(Player p : players)
                 if(p.get_fold()) foldedCount++;
 
-            if(foldedCount ==4) determine_winner();
+            if(foldedCount == 4) determine_winner();
         }                
             
 
@@ -250,21 +252,7 @@ public class Game{
     }
     public void event_bet_01(UserEvent event){      // Phase 01 (First Bet Phase) logic
         bet_place(event);
-/*
-        if(phase == 3){
 
-        }
-        else{
-           if(turn != players.size()-1){
-                turn++;                                 // Changes turn for the next player                        
-                timeRemaining = 30;                     // Resets the timer to 30 seconds
-            }
-            else{
-                phase++;                                // Sets to draw phase
-                turn = 0;                               // Resets the turn so first player is now drawing
-            } 
-        }
-*/
         if(turn != players.size()-1){
             turn++;                                 // Changes turn for the next player                        
             timeRemaining = 30;                     // Resets the timer to 30 seconds
@@ -362,6 +350,7 @@ public class Game{
         determine_player_message();
     }
     public void event_ready(UserEvent event){       // Phase 00 logicrs_num_ready() >= 2) timeRemaining = 10;
+        players.get(event.playerID).set_ready(true);
         determine_player_message();
     }
     // Not an actual event/action performed by the user 

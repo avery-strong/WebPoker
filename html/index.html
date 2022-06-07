@@ -15,30 +15,28 @@
         </p>
     </big>
     <hr style="height:5px; width:100%; border-width:0; color:black; background-color:black">
-    <p>
-        <div id="waitingBody" style="text-align:center">
-            <p id="waitingText" style="text-align:center"></p>
-            <p id="waitingQueue" style="text-align:center"></p>
-        </div>
-    </p>
+    <div id="waitingBody" style="text-align:center">
+        <p id="waitingText" style="text-align:center"></p>
+        <p id="waitingQueue" style="text-align:center"></p>
+    </div>
     <a id="bodyText">
         <div id="nameInput">
             <p style="text-align:center">
                 Name:
-                <input id="sendName" type="text" style="text-align:center">
-                <input type="button" name="sendName" value="Connect" onclick="sendName()" >
+                <input id="event_name" type="text" style="text-align:center">
+                <input type="button" name="event_name" value="Connect" onclick="event_name()" >
             </p>
         </div>
-        <div id="info_display" style="width: auto;">
+        <div id="info_display"        style="width: auto; display: none;">
             <p id="phaseNumber"       style="width: auto; white-space: pre-line;"></p>
             <p id="readyDisplay"      style="width: auto; white-space: pre-line;"></p>
-             <p id="turnNumber"        style="width: auto; white-space: pre-line;"></p>
+            <p id="turnNumber"        style="width: auto; white-space: pre-line;"></p>
             <p id="timeRemaining"     style="width: auto; white-space: pre-line; font-weight: bold;"></p>
             <p id ="timeWarning"      style="width: auto; white-space: pre-line; font-weight: bold;"></p>
             <p id="turnHelp"          style="width: auto; white-space: pre-line;"></p>
             <p id="info"              style="width: auto; white-space: pre-line;"></p>
             <p id="playersTotalBets"  style="width: auto; white-space: pre-line;"></p>
-            <img id="chips" src="chips.png" width="150px">
+            <img id="chips"           style="" src="chips.png" width="150px">
             <p id="pot"               style="width: auto; white-space: pre-line; font-weight: bold;"></p>
         </div>
         <t id="cardstext">Your Cards:</t>
@@ -54,16 +52,16 @@
             <input type="checkbox" id="card5checkbox">
             <img id="card5" src="" width="100px">
         </p>
-        <div id="check_fold_display" style="text-align:center">
-            <input type="button" id="sendReady"   value="Ready"   onclick="sendEvent(0)" style="text-align:center">
-            <input type="button" id="sendCheck"   value="Check"   onclick="sendEvent(1)" style="text-align:center">
-            <input type="button" id="sendFold"    value="Fold"    onclick="sendEvent(2)" style="text-align:center">
-            <input type="button" id="sendBet1"    value="Bet 05"  onclick="sendEvent(3)" style="text-align:center">
-            <input type="button" id="sendBet2"    value="Bet 10"  onclick="sendEvent(4)" style="text-align:center">
-            <input type="button" id="sendBet3"    value="Bet 20"  onclick="sendEvent(5)" style="text-align:center">
-            <input type="button" id="sendSort"    value="Sort"    onclick="sendEvent(6)" style="text-align:center">
-            <input type="button" id="sendDraw"    value="Draw"    onclick="sendEvent(7)" style="text-align:center">
-            <input type="button" id="sendCall"    value="Call"    onclick="sendEvent(8)" style="text-align:center">
+        <div id="buttons_display" style="text-align:center">
+            <input type="button" id="sendReady"   value="Ready"   onclick="event_ready()"  style="display: none; text-align:center">
+            <input type="button" id="sendCheck"   value="Check"   onclick="event_check()"  style="display: none; text-align:center">
+            <input type="button" id="sendFold"    value="Fold"    onclick="event_fold()"   style="display: none; text-align:center">
+            <input type="button" id="sendBet1"    value="Bet 05"  onclick="event_bet_05()" style="display: none; text-align:center">
+            <input type="button" id="sendBet2"    value="Bet 10"  onclick="event_bet_10()" style="display: none; text-align:center">
+            <input type="button" id="sendBet3"    value="Bet 20"  onclick="event_bet_20()" style="display: none; text-align:center">
+            <input type="button" id="sendSort"    value="Sort"    onclick="event_sort()"   style="display: none; text-align:center">
+            <input type="button" id="sendDraw"    value="Draw"    onclick="event_draw()"   style="display: none; text-align:center">
+            <input type="button" id="sendCall"    value="Call"    onclick="event_call()"   style="display: none; text-align:center">
         </div>
     </a>
     <hr style="height: 5px; width: 100%; border-width: 0; color: black; background-color: black">
@@ -101,27 +99,21 @@
 
 </html>
 <script>
-    var playerID;
-    var name;
-    var playerObj;
+    var amount = 0;
+    var amountDraw = 0;
     var cardIdx = 0;
-    var inQueue = false;
+    var eventType;
+    var indexes = [0, 0, 0];
     var infoToggle = false;
-
-    document.getElementById('sendReady').style.display = "none";
-    document.getElementById('sendCheck').style.display = "none";    // Check not stand
-    document.getElementById('sendFold').style.display = "none";
-    document.getElementById('sendCall').style.display = "none";
-    document.getElementById('sendBet1').style.display = "none";
-    document.getElementById('sendBet2').style.display = "none";
-    document.getElementById('sendBet3').style.display = "none";
-    document.getElementById('sendDraw').style.display = "none";
-    document.getElementById('sendSort').style.display = "none";
+    var inQueue = false;
+    var name;
+    var playerID;
+    var playerObj;
+    
     document.getElementById('cards').style.display = "none";
     document.getElementById('cardstext').style.display = "none";
     document.getElementById('chips').src = "";
     document.getElementById('infoButton').style = "text-align:center";
-    document.getElementById("info_display").style.display = "none";
 
     var serverUrl ="ws://" + window.location.hostname + ":8880";
     var connection = new WebSocket(serverUrl);
@@ -132,29 +124,65 @@
 
     connection.onmessage = function(evt){
         console.log("message: \n" + evt.data);
+
         var msg;
         msg = evt.data;
-
         // Take the msg and turn it into a javascript object
         const obj = JSON.parse(msg);
 
-        if(obj.name == "not set"){
-            playerID = obj.id;
-            console.log("Player id: " + playerID);
-        }
+        /*
+            When onOpen is called onMessage is called as well and sent just the first bit of Player JSON
+            At this point we will add playerID from obj.id so we can find what we need later on
+        */
+        if(obj.name == "not set") playerID = obj.id;
+        // From this point event_name should executed 
+        // This executes after the players has entered their name but it only creates the playerObj
         else{
-            // process the game state
-            // this will just have one card change every time a new game state comes in.
-            // the term LUT means "look up table".  you will see it sometimes in code written last
-            // century.
+            for(var i = 0; i < obj.players.length; i++)
+                if(obj.players[i].id == playerID) playerObj = obj.players[i];
+        }
 
-            for(var i = 0; i < obj.players.length; i++){
-                if(obj.players[i].id == playerID){
-                    playerObj = obj.players[i];
-                    document.getElementById('bodyText').style.display = "block";
-                    document.getElementById('waitingBody').style.display = "none";
-                }
-            }
+        // Display player info after their name has been set    phaseNumber, info, pot, chips, playersTotalBets
+        if(obj.players != undefined){         
+            document.getElementById("info_display").style.display = "block";
+
+            // display whose turn it is
+            document.getElementById("phaseNumber").innerHTML = obj.playerMessage;
+
+            // conditionals to hide or display buttons
+            updateButtons(obj, playerObj);
+
+            if(playerObj.ready) document.getElementById("sendReady").disabled = true;       // Disable ready button
+            else                document.getElementById("sendReady").disabled = false;      // Enable ready button
+          
+            document.getElementById("info").innerHTML
+                = "Player Wallet: " + playerObj.wallet
+                + "\n"
+                + "Player Name: "   + playerObj.name
+                + "\n"
+                + "Player Id: "     + playerObj.id;
+
+            // display the amount in the pot
+            document.getElementById("pot").innerHTML = "Total Pot: " + obj.pot.pot;
+            document.getElementById('chips').src = "chips.png";
+
+            // displayTime(obj, playerObj);
+
+            // display the total bets of all players
+            var playerTotalBetString = "";
+
+            obj.players.forEach(player =>{
+                playerTotalBetString += "id: " + player.id + " | " + player.name
+                    + " | Current Bet: " + player.currentBet
+                    + " Wallet: " + player.wallet
+                    + " ready: " + (player.ready?"Yes":"No")
+                    + "\n";
+            });
+
+            document.getElementById("playersTotalBets").innerHTML = playerTotalBetString;
+
+            // display the player's cards
+            displayCards(playerObj);
         }
 
         if(obj.playerQueue.length != 0){
@@ -174,48 +202,13 @@
   
         if(obj.players.length == 5 && inQueue == true){
             document.getElementById('waitingText').innerHTML = "Waiting for player spot to open up..."
-            + "\n" + "Players in game (" + obj.players.length + "/5)";
+            + "\n" 
+            + "Players in game (" 
+            + obj.players.length 
+            + "/5)";
         }
         else if(inQueue == true){
             document.getElementById('waitingQueue').innerHTML = "Waiting for round to end...";
-        }
-        // Display player info after their name has been set
-        else if(obj.name != "not set"){         
-            document.getElementById("info_display").style.display = "block";
-            // display whose turn it is
-            document.getElementById("phaseNumber").innerHTML = obj.playerMessage;
-
-            // conditionals to hide or display buttons
-            updateButtons(obj, playerObj);
-
-            if(playerObj.ready) document.getElementById("sendReady").disabled = true;
-            else document.getElementById("sendReady").disabled = false;
-          
-            document.getElementById("info").innerHTML
-                = "Player Wallet: " + playerObj.wallet
-                + "\n"
-                + "Player Name: "   + playerObj.name
-                + "\n"
-                + "Player Id: "     + playerObj.id;
-            // display the amount in the pot
-            document.getElementById("pot").innerHTML = "Total Pot: " + obj.pot.pot;
-            document.getElementById('chips').src = "chips.png";
-
-            //displayTime(obj, playerObj);
-
-            // display the total bets of all players
-            var playerTotalBetString = "";
-            obj.players.forEach(player =>{
-                playerTotalBetString += "id: " + player.id + " | " + player.name
-                    + " | Current Bet: " + player.currentBet
-                    + " Wallet: " + player.wallet
-                    + " ready: " + (player.ready?"Yes":"No")
-                    + "\n";
-            });
-            document.getElementById("playersTotalBets").innerHTML = playerTotalBetString;
-
-            // display the player's cards
-            displayCards(playerObj);
         }
     }
 
@@ -226,37 +219,143 @@
     // 4 is fold
     // passed as an argument from button
     function send() {
-        var msg = {
-            text: document.getElementById("send_text").value,
+        const msg = {
+            event: eventType,
+            name: name,
+            playerID: playerID,
+            player: playerObj,
+            amount_to_bet: amount,
+            amount_to_draw: amountDraw,
+            give_card_indexes: indexes
         };
         connection.send(JSON.stringify(msg));
-        //console.log(JSON.stringify(msg));
     }
+    function event_bet_05(){
+        eventType = "BET";
+        amount = 5;
+        send();
+    }
+    function event_bet_10(){
+        eventType = "BET";
+        amount = 10;
+        send();
+    }
+    function event_bet_20(){
+        eventType = "BET";
+        amount = 20;
+        send();
+    }
+    function event_call(){
+        eventType = "CALL";
+        send();
+    }
+    function event_check(){
+        eventType = "CHECK";
+        send();
+    }
+    function event_draw(){
+        eventType = "DRAW";
+
+        if(document.getElementById('card1checkbox').checked == true){
+            for(var i = 0; i < 3; i++){
+                if(indexes[i] == 0){
+                    indexes[i] = 1;
+                    break;
+                }
+            }
+        }
+        if(document.getElementById('card2checkbox').checked == true){
+            for(var i = 0; i < 3; i++){
+                if(indexes[i] == 0){
+                    indexes[i] = 2;
+                    break;
+                }
+            }
+        }
+        if(document.getElementById('card3checkbox').checked == true){
+            for(var i = 0; i < 3; i++){
+                if(indexes[i] == 0){
+                    indexes[i] = 3;
+                    break;
+                }
+            }
+        }
+        if(document.getElementById('card4checkbox').checked == true){
+            for(var i = 0; i < 3; i++){
+                if(indexes[i] == 0){
+                    indexes[i] = 4;
+                    break;
+                }
+            }
+        }
+        if(document.getElementById('card5checkbox').checked == true){
+            for(var i = 0; i < 3; i++){
+                if(indexes[i] == 0){
+                    indexes[i] = 5;
+                    break;
+                }
+            }
+        }
+    
+        for(var i; i < 3; i++){
+            if(indexes[i] != 0){
+                amountDraw++;
+                break;
+            }
+        }
+    
+        document.getElementById('card1checkbox').checked = false;
+        document.getElementById('card2checkbox').checked = false;
+        document.getElementById('card3checkbox').checked = false;
+        document.getElementById('card4checkbox').checked = false;
+        document.getElementById('card5checkbox').checked = false;
+        // get the indexes of the cards
+
+        send();
+    }
+    function event_fold(){
+        eventType = "FOLD";
+        send();
+    }
+    function event_name(){
+        eventType = "NAME";
+        name = document.getElementById("event_name").value;
+        document.getElementById("nameInput").style.display = "none";
+        send();    
+    }
+    function event_ready(){
+        eventType = "READY";
+        send();
+        document.getElementById("sendReady").style.display = "none";
+    }
+    function event_sort(){
+        eventType = "SORT";
+        send();
+    }
+    
+/*
     function sendEvent(option){
         // send a UserEvent in JSON
-        var eventType;
-        var amount = 0;
-        var amountDraw = 0;
-        var indexes = [0, 0, 0];
-        
-        if(option == 0) eventType = "READY";
-        else if(option == 1) {
-            eventType = "CHECK";       // event type is CHECK
-        }
-        else if(option == 2) eventType = "FOLD";        // event type is  FOLD
-        else if(option == 3){                           // event type is BET
+
+        if(option == 0)         eventType = "READY";
+        else if(option == 1)    eventType = "CHECK";                        // event type is CHECK
+        else if(option == 2)    eventType = "FOLD";                         // event type is  FOLD
+        else if(option == 3){                                               // event type is BET
             eventType = "BET";
             amount = 5;
         }
-        else if(option == 4){                           // event type is BET
+        else if(option == 4){                                               // event type is BET
             eventType = "BET";
             amount = 10;
         }
-        else if(option == 5){                           // event type is BET
+        else if(option == 5){                                               // event type is BET
             eventType = "BET";
             amount = 20;
         }
         else if(option == 6) eventType = "SORT";
+
+       
+        
         else if(option == 7){                           // event type is DRAW
             eventType = "DRAW";
 
@@ -320,7 +419,7 @@
         // create the object to be sent to the game server
         const msg = {
             event: eventType,
-            name: document.getElementById("sendName").value,
+            name: document.getElementById("event_name").value,
             playerID: playerID,
             player: playerObj,
             amount_to_bet: amount,
@@ -329,29 +428,7 @@
         };
         connection.send(JSON.stringify(msg));
     }
-    
-    function sendName(){
-        var msg = {
-            event: "NAME",
-            name: document.getElementById("sendName").value,
-            playerID: playerID,
-            player: null,
-            amount_to_bet: 0,
-            amount_to_draw: 0,
-            give_card_indexes: [-1,-1,-1]
-        };
-        connection.send(JSON.stringify(msg));
-
-        // this shows how to hide html elements.
-        // like when the name is entered
-        // it might be better to hide after the server has accepted it
-        // but this is just a demonstration
-
-        var x = document.getElementById("nameInput");
-
-        if(x.style.display === "none") x.style.display = "block"; 
-        else x.style.display = "none"; 
-    }
+*/    
     function displayCards(playerObj){
         var player = playerObj;
         for(var i = 0; i < 5; i++){
