@@ -85,47 +85,7 @@ public class Game{
         // shuffle (call shuffle_deck())
         // give players new cards starting essentially a new game
     }
-    public void processMessage(String msg){
-        GsonBuilder builder = new GsonBuilder();
-        Gson gson = builder.create();
-        // take the string we just received, and turn it into a user event
-        UserEvent event = gson.fromJson(msg, UserEvent.class);
-
-        // if player is in queue and NAME event happens
-        if(event.event == UserEventType.NAME){
-            // note this does not add the player to game.players
-            // only sets their name
-            for(Player p : playerQueue)
-                if(p.get_id() == event.playerID) p.set_name(event.name);
-        }
-        if(event.event == UserEventType.NAME && phase == 0)         event_name(event);
-        if(event.event == UserEventType.READY){
-            event_ready(event); 
-            update();
-        }                   
-              
-        if(event.event == UserEventType.CHECK && bet_all_equal())   event_check(event);
-        if(event.event == UserEventType.FOLD){
-            event_fold(event);
-
-            int foldedCount = 0;
-
-            for(Player p : players)
-                if(p.get_fold()) foldedCount++;
-
-            if(foldedCount == 4) determine_winner();
-        }                
-            
-
-        if(event.event == UserEventType.BET){
-            bet_place(event);
-            if(phase == 1)      event_bet_01(event);
-            else if(phase == 3) event_bet_03(event);
-        }
-        // any player can sort at any time
-        if(event.event == UserEventType.SORT)   sort_cards(event.playerID, event);
-        if(phase == 4)                          event_reset(event);            // Phase 04 logic (idk)
-    }
+    
     public void determine_player_message(){
         highestBet = bet_max_player();
         if(phase == 0) {
@@ -230,6 +190,51 @@ public class Game{
             if(p.get_id() == id) return p;
             
         return null;
+    }
+    public void processMessage(String msg){
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
+        // take the string we just received, and turn it into a user event
+        UserEvent event = gson.fromJson(msg, UserEvent.class);
+
+        // if player is in queue and NAME event happens
+        if(event.event == UserEventType.NAME){
+            // note this does not add the player to game.players
+            // only sets their name
+            for(Player p : playerQueue)
+                if(p.get_id() == event.playerID) p.set_name(event.name);
+        }
+        if(event.event == UserEventType.NAME && phase == 0){
+            event_name(event);
+
+            for(int i = 0; i < 5; i++) players.get(event.playerID).add_card(draw_card());
+        }        
+        if(event.event == UserEventType.READY){
+            event_ready(event); 
+
+            update();
+        }                   
+        if(event.event == UserEventType.CHECK && bet_all_equal())   event_check(event);
+        if(event.event == UserEventType.FOLD){
+            event_fold(event);
+
+            int foldedCount = 0;
+
+            for(Player p : players)
+                if(p.get_fold()) foldedCount++;
+
+            if(foldedCount == 4) determine_winner();
+        }                
+            
+
+        if(event.event == UserEventType.BET){
+            bet_place(event);
+            if(phase == 1)      event_bet_01(event);
+            else if(phase == 3) event_bet_03(event);
+        }
+        // any player can sort at any time
+        if(event.event == UserEventType.SORT)   sort_cards(event.playerID, event);
+        if(phase == 4)                          event_reset(event);            // Phase 04 logic (idk)
     }
 
     /**************************************
@@ -339,7 +344,7 @@ public class Game{
     // Not an actual event/action performed by the user but is accessed by check
     // Could maybe be added to event_check rather than be its own method
     public void event_name(UserEvent event){        // Phase 00 logic
-        // If there's currently more than 5 players add player 5 into a queue
+        // If there's currently more than 5 players add player 6+ into a queue
         if(event.playerID >= 5){   
             for(int i = 0; i < playerQueue.size(); i++)
                 if(playerQueue.get(i).get_id() == event.playerID) playerQueue.get(i).set_name(event.name);

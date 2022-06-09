@@ -103,7 +103,7 @@ public class WebPoker extends WebSocketServer {
             }
         }
 
-        System.out.println("\n\nonOpen: \n" + player.asJSONString());
+        //System.out.println("\n\nonOpen: \n" + player.asJSONString());
 
         conn.setAttachment(numPlayers);
         conn.send(player.asJSONString());               // We send the player to the client so the client knows who it is viewing
@@ -173,7 +173,7 @@ public class WebPoker extends WebSocketServer {
     }
     @Override
     public void onMessage(WebSocket conn, String message){
-        System.out.println("On Message 00: \n" + conn + ": " + "\n" + message);
+        //System.out.println("On Message 00: \n" + conn + ": " + "\n" + message);
         // all incoming messages are processed by the game
         synchronized(mutex){
             game.processMessage(message);
