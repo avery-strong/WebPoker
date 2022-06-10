@@ -21,10 +21,10 @@
     </div>
     <a id="bodyText">
         <div id="nameInput">
-            <p style="text-align:center">
+            <p style="text-align: center">
                 Name:
-                <input id="event_name" type="text" style="text-align:center">
-                <input type="button" name="event_name" value="Connect" onclick="event_name()">
+                <input id="event_name"   type="text"   style="text-align: center">
+                <input id="sendConnect"  type="button" value="Connect" onclick="event_name()">
             </p>
         </div>
         <div id="info_display"        style="width: auto; display: none;">
@@ -40,28 +40,33 @@
             <p id="pot"               style="width: auto; white-space: pre-line; font-weight: bold;"></p>
         </div>
         <t id="cardstext">Your Cards:</t>
-        <p id="cards" style="display: none; text-align:center">
-            <input type="checkbox" id="card1checkbox">
-            <img id="card1" src="" width="100px">
-            <input type="checkbox" id="card2checkbox">
-            <img id="card2" src="" width="100px">
-            <input type="checkbox" id="card3checkbox">
-            <img id="card3" src="" width="100px">
-            <input type="checkbox" id="card4checkbox">
-            <img id="card4" src="" width="100px">
-            <input type="checkbox" id="card5checkbox">
-            <img id="card5" src="" width="100px">
-        </p>
-        <div id="buttons_display" style="text-align:center">
-            <input type="button" id="sendReady"   value="Ready"   onclick="event_ready()"  style="display: none; text-align:center">
-            <input type="button" id="sendCheck"   value="Check"   onclick="event_check()"  style="display: none; text-align:center">
-            <input type="button" id="sendFold"    value="Fold"    onclick="event_fold()"   style="display: none; text-align:center">
-            <input type="button" id="sendBet1"    value="Bet 05"  onclick="event_bet_05()" style="display: none; text-align:center">
-            <input type="button" id="sendBet2"    value="Bet 10"  onclick="event_bet_10()" style="display: none; text-align:center">
-            <input type="button" id="sendBet3"    value="Bet 20"  onclick="event_bet_20()" style="display: none; text-align:center">
-            <input type="button" id="sendSort"    value="Sort"    onclick="event_sort()"   style="display: none; text-align:center">
-            <input type="button" id="sendDraw"    value="Draw"    onclick="event_draw()"   style="display: none; text-align:center">
-            <input type="button" id="sendCall"    value="Call"    onclick="event_call()"   style="display: none; text-align:center">
+        <div id="cards_display" style="display: none;">
+            <p id="cards" style="text-align:center">
+                <input type="checkbox" id="card1checkbox">
+                <img id="card1" src="" width="100px">
+                <input type="checkbox" id="card2checkbox">
+                <img id="card2" src="" width="100px">
+                <input type="checkbox" id="card3checkbox">
+                <img id="card3" src="" width="100px">
+                <input type="checkbox" id="card4checkbox">
+                <img id="card4" src="" width="100px">
+                <input type="checkbox" id="card5checkbox">
+                <img id="card5" src="" width="100px">
+            </p>
+        </div>
+        <div id="buttons_display">
+            <p style="text-align: center">
+                 
+                <input type="button" id="sendReady"   value="Ready"   onclick="event_ready()"  style="display: none; text-align: center">
+                <input type="button" id="sendCheck"   value="Check"   onclick="event_check()"  style="display: none; text-align: center">
+                <input type="button" id="sendFold"    value="Fold"    onclick="event_fold()"   style="display: none; text-align: center">
+                <input type="button" id="sendBet1"    value="Bet 05"  onclick="event_bet_05()" style="display: none; text-align: center">
+                <input type="button" id="sendBet2"    value="Bet 10"  onclick="event_bet_10()" style="display: none; text-align: center">
+                <input type="button" id="sendBet3"    value="Bet 20"  onclick="event_bet_20()" style="display: none; text-align: center">
+                <input type="button" id="sendSort"    value="Sort"    onclick="event_sort()"   style="display: none; text-align: center">
+                <input type="button" id="sendDraw"    value="Draw"    onclick="event_draw()"   style="display: none; text-align: center">
+                <input type="button" id="sendCall"    value="Call"    onclick="event_call()"   style="display: none; text-align: center">
+            </p>
         </div>
     </a>
     <hr style="height: 5px; width: 100%; border-width: 0; color: black; background-color: black">
@@ -120,6 +125,7 @@
   
     connection.onopen = function(evt){
         console.log("Open: \n" + evt.data);
+        document.getElementById("nameInput").style.display = "block";
     }
 
     connection.onmessage = function(evt){
@@ -130,20 +136,8 @@
         // Take the msg and turn it into a javascript object
         const obj = JSON.parse(msg);
 
-        /*
-            When onOpen is called onMessage is called as well and sent just the first bit of Player JSON
-            At this point we will add playerID from obj.id so we can find what we need later on
-        */
-        if(obj.name == "not set") playerID = obj.id;
-        // From this point event_name should executed 
-        // This executes after the players has entered their name but it only creates the playerObj
-        else{
-            for(var i = 0; i < obj.players.length; i++){
-                if(obj.players[i].id == playerID) playerObj = obj.players[i];
-            }
+        display_game(obj);
 
-            display_game(obj);      
-        }
 /*
         // Display player info after their name has been set    phaseMessage, info, pot, chips, playersTotalBets
         if(obj.phase == 1) display_bet_01(obj);
@@ -316,6 +310,28 @@
         
     }
     function display_game(obj){         // Most events will need to call display_game()
+        /*
+            When onOpen is called onMessage is called as well and sent just the first bit of Player JSON
+            At this point we will add playerID from obj.id so we can find what we need later on
+        */
+        if(obj.name == "not set"){
+            
+            playerID = obj.id;
+        }
+        // From this point event_name should executed 
+        // This executes after the players has entered their name but it only creates the playerObj
+        else{
+            for(var i = 0; i < obj.players.length; i++){
+                if(obj.players[i].id == playerID) playerObj = obj.players[i];
+            }   
+            
+        }
+
+        
+
+        document.getElementById("nameInput").style.display = "block";
+        document.getElementById("sendConnect").style.display = "block";
+
         document.getElementById("info_display").style.display = "block";
 
         // display whose turn it is
@@ -338,7 +354,7 @@
         // display the amount in the pot
         document.getElementById("pot").innerHTML = "Total Pot: " + obj.pot.pot;
         document.getElementById('chips').src = "chips.png";
-
+/*
         // displayTime(obj);
 
         // display the total bets of all players
@@ -353,7 +369,7 @@
         });
 
         document.getElementById("playersTotalBets").innerHTML = playerTotalBetString;
-
+*/
     }
     function display_cards(){
         for(var i = 0; i < 5; i++){
@@ -392,7 +408,7 @@
             document.getElementById(cardnumber).src = str;
         }
     }
-    function updateButtons(obj){
+    function display_buttons(obj){
 
         document.getElementById('cards').style              = "text-align:center";
         document.getElementById('cardstext').style          = "text-align:center";
