@@ -100,5 +100,4 @@ public class Player {
     private boolean fold = false;                                   // boolean to check if the player has folded in the round
     private boolean raised = false;
     private boolean ready = false;
-    private boolean stand = false;
 }

@@ -56,15 +56,15 @@
         </div>
         <div id="buttons_display"     style="display: none;">
             <p style="text-align: center">
-                <input type="button" id="sendReady"   value="Ready"   onclick="event_ready()"  style="display: none; text-align: center">
-                <input type="button" id="sendCheck"   value="Check"   onclick="event_check()"  style="display: none; text-align: center">
-                <input type="button" id="sendFold"    value="Fold"    onclick="event_fold()"   style="display: none; text-align: center">
-                <input type="button" id="sendBet1"    value="Bet 05"  onclick="event_bet_05()" style="display: none; text-align: center">
-                <input type="button" id="sendBet2"    value="Bet 10"  onclick="event_bet_10()" style="display: none; text-align: center">
-                <input type="button" id="sendBet3"    value="Bet 20"  onclick="event_bet_20()" style="display: none; text-align: center">
-                <input type="button" id="sendSort"    value="Sort"    onclick="event_sort()"   style="display: none; text-align: center">
-                <input type="button" id="sendDraw"    value="Draw"    onclick="event_draw()"   style="display: none; text-align: center">
-                <input type="button" id="sendCall"    value="Call"    onclick="event_call()"   style="display: none; text-align: center">
+                <input type="button" id="sendBet1"  value="Bet 05" onclick="event_bet_05()" style="display: none; text-align: center">
+                <input type="button" id="sendBet2"  value="Bet 10" onclick="event_bet_10()" style="display: none; text-align: center">
+                <input type="button" id="sendBet3"  value="Bet 20" onclick="event_bet_20()" style="display: none; text-align: center">
+                <input type="button" id="sendCall"  value="Call"   onclick="event_call()"   style="display: none; text-align: center">
+                <input type="button" id="sendCheck" value="Check"  onclick="event_check()"  style="display: none; text-align: center">
+                <input type="button" id="sendDraw"  value="Draw"   onclick="event_draw()"   style="display: none; text-align: center">
+                <input type="button" id="sendFold"  value="Fold"   onclick="event_fold()"   style="display: none; text-align: center">
+                <input type="button" id="sendReady" value="Ready"  onclick="event_ready()"  style="display: none; text-align: center">
+                <input type="button" id="sendSort"  value="Sort"   onclick="event_sort()"   style="display: none; text-align: center">
             </p>
         </div>
     </a>
@@ -111,6 +111,7 @@
     var infoToggle = false;
     var inQueue = false;
     var name;
+    var phase = 0;
     var playerID;
     var playerObj;
     
@@ -139,7 +140,7 @@
         const obj = JSON.parse(msg);
 
         display_info(obj);
-        display_cards();
+        if(phase > 0) display_cards();
         display_buttons(obj);
 /*
         // Display player info after their name has been set    phaseMessage, info, pot, chips, playersTotalBets
@@ -287,15 +288,14 @@
         document.getElementById("info_display").style.display = "block";
         document.getElementById("buttons_display").style.display = "block";
 
+        document.getElementById("sendReady").style.display = "inline-block";
+
         send();    
     }
     function event_ready(){
         eventType = "READY";
         
         document.getElementById("sendReady").disabled = true;
-        document.getElementById("sendReady").style.display = "none";
-
-        document.getElementById("cards_display").style.display = "block";
 
         send();
     }
@@ -315,11 +315,9 @@
         display_cards();
     }
     function display_buttons(obj){
-        if(obj.phase == 0){
-            document.getElementById("sendReady").style = "text-align:center";                   // Temporary
-        } 
+        if(obj.phase == 0) document.getElementById("sendReady").style = "text-align:center";                    // Temporary
         else if(obj.phase == 1){
-            document.getElementById("sendReady").style.display = "none";                        // Temporary
+            document.getElementById("sendReady").style.display = "none";                                        // Temporary
 
             document.getElementById('sendCheck').style          = "text-align:center";
             document.getElementById('sendCall').style           = "text-align:center";
@@ -330,7 +328,6 @@
             document.getElementById('sendDraw').style.display   = "none";
             document.getElementById('sendSort').style           = "text-align:center";
         }
-
         else if(obj.phase == 2){
             document.getElementById('cards').style              = "text-align:center";
             document.getElementById('cardstext').style          = "text-align:center";
@@ -410,34 +407,35 @@
 */
     }
     function display_cards(){
+        document.getElementById("cards_display").style.display = "block";
+
         for(var i = 0; i < 5; i++){
             // if cards are null str becomes empty so nothing is displayed
             var str = "";
-            var checkboxnum = "card"+(i+1)+"checkbox";
-            if(playerObj.Cards[i] == null) document.getElementById("cards_display").style.display = "none";
-            else{
-                var card = playerObj.Cards[i];
-                if(card.value == "ACE")             str += "A";
-                else if(card.value == "TWO")        str += "2";
-                else if(card.value == "THREE")      str += "3";
-                else if(card.value == "FOUR")       str += "4";
-                else if(card.value == "FIVE")       str += "5";
-                else if(card.value == "SIX")        str += "6";
-                else if(card.value == "SEVEN")      str += "7";
-                else if(card.value == "EIGHT")      str += "8";
-                else if(card.value == "NINE")       str += "9";
-                else if(card.value == "TEN")        str += "T";
-                else if(card.value == "JACK")       str += "J";
-                else if(card.value == "QUEEN")      str += "Q";
-                else if(card.value == "KING")       str += "K";
+            var checkboxnum = "card" + (i+1) + "checkbox";
+            var card = playerObj.Cards[i];
 
-                if(card.suite == "SPADES")          str += "S";
-                else if(card.suite == "HEARTS")     str += "H";
-                else if(card.suite == "CLUBS")      str += "C";
-                else if(card.suite == "DIAMONDS")   str += "D";
+            if(card.value == "ACE")             str += "A";
+            else if(card.value == "TWO")        str += "2";
+            else if(card.value == "THREE")      str += "3";
+            else if(card.value == "FOUR")       str += "4";
+            else if(card.value == "FIVE")       str += "5";
+            else if(card.value == "SIX")        str += "6";
+            else if(card.value == "SEVEN")      str += "7";
+            else if(card.value == "EIGHT")      str += "8";
+            else if(card.value == "NINE")       str += "9";
+            else if(card.value == "TEN")        str += "T";
+            else if(card.value == "JACK")       str += "J";
+            else if(card.value == "QUEEN")      str += "Q";
+            else if(card.value == "KING")       str += "K";
 
-                str += ".svg";
-            }
+            if(card.suite == "SPADES")          str += "S";
+            else if(card.suite == "HEARTS")     str += "H";
+            else if(card.suite == "CLUBS")      str += "C";
+            else if(card.suite == "DIAMONDS")   str += "D";
+
+            str += ".svg";
+            
             var cardnumber = "card" + (i+1);
             document.getElementById(cardnumber).src = str;
         }
@@ -448,10 +446,9 @@
             When onOpen is called onMessage is called as well and sent just the first bit of Player JSON
             At this point we will add playerID from obj.id so we can find what we need later on
         */
-        if(obj.name == "not set"){
-            playerID = obj.id;
-            playerObj = obj;
-        }
+        playerObj = obj;
+
+        if(obj.name == "not set") playerID = obj.id;
         else{
             if(obj.players[playerID].id == playerID) playerObj = obj.players[playerID];  
 
@@ -483,6 +480,8 @@
             });
 
             document.getElementById("playersTotalBets").innerHTML = playerTotalBetString;
+
+            phase = obj.phase;
         }
     }
     function display_time(obj){
