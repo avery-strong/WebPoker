@@ -42,16 +42,16 @@
         <div id="cards_display"       style="display: none;">
             <p>Your Cards:</p>
             <p style="text-align:center">
-                <input  id="card1checkbox" type="checkbox">
-                <img    id="card1" src="" width="100px">
-                <input  id="card2checkbox" type="checkbox">
-                <img    id="card2" src="" width="100px">
-                <input  id="card3checkbox" type="checkbox">
-                <img    id="card3" src="" width="100px">
-                <input  id="card4checkbox" type="checkbox">
-                <img    id="card4" src="" width="100px">
-                <input  id="card5checkbox" type="checkbox">
-                <img    id="card5" src="" width="100px">
+                <input  id="card1checkbox"  type="checkbox">
+                <img    id="card1" src=""   width="100px">
+                <input  id="card2checkbox"  type="checkbox">
+                <img    id="card2" src=""   width="100px">
+                <input  id="card3checkbox"  type="checkbox">
+                <img    id="card3" src=""   width="100px">
+                <input  id="card4checkbox"  type="checkbox">
+                <img    id="card4" src=""   width="100px">
+                <input  id="card5checkbox"  type="checkbox">
+                <img    id="card5" src=""   width="100px">
             </p>
         </div>
         <div id="buttons_display"     style="display: none;">
@@ -315,9 +315,12 @@
         display_cards();
     }
     function display_buttons(obj){
-        if(obj.phase == 0) document.getElementById("sendReady").style = "text-align:center";                    // Temporary
+        // only ready is displayed
+        if(obj.phase == 0) document.getElementById("sendReady").style = "text-align:center";                    
         else if(obj.phase == 1){
-            document.getElementById("sendReady").style.display = "none";                                        // Temporary
+            // bet 05, bet 10, bet 20, call, check, fold, sort
+            
+            document.getElementById("sendReady").style.display = "none";                                        
 
             document.getElementById('sendCheck').style          = "text-align:center";
             document.getElementById('sendCall').style           = "text-align:center";
@@ -328,10 +331,8 @@
             document.getElementById('sendDraw').style.display   = "none";
             document.getElementById('sendSort').style           = "text-align:center";
         }
-        else if(obj.phase == 2){
-            document.getElementById('cards').style              = "text-align:center";
-            document.getElementById('cardstext').style          = "text-align:center";
-            document.getElementById('sendReady').style.display  = "none";
+        else if(obj.phase == 2){    // Draw Phase
+            // Draw
             document.getElementById('sendCheck').style.display  = "none";
             document.getElementById('sendCall').style.display   = "none";
             document.getElementById('sendFold').style.display   = "none";
@@ -341,10 +342,7 @@
             document.getElementById('sendDraw').style           = "text-align:center";
             document.getElementById('sendSort').style           = "text-align:center";
         }
-        else if(obj.phase == 3){
-            document.getElementById('cards').style              = "text-align:center";
-            document.getElementById('cardstext').style          = "text-align:center";
-            document.getElementById('sendReady').style.display  = "none";
+        else if(obj.phase == 3){    // Bet 02
             document.getElementById('sendCheck').style          = "text-align:center";
             document.getElementById('sendCall').style           = "text-align:center";
             document.getElementById('sendFold').style           = "text-align:center";
@@ -354,13 +352,10 @@
             document.getElementById('sendDraw').style.display   = "none";
             document.getElementById('sendSort').style           = "text-align:center";
         }
-        else if(obj.phase >= 4){
-
+        else if(obj.phase >= 4){    // Showdown
             if(obj.winner != -1) alert(obj.winningPlayer.name + " won" + " with a "+ obj.winningPlayer.pHand.handname);
             else alert("Tie!");  
 
-            document.getElementById('cards').style              = "text-align:center";
-            document.getElementById('cardstext').style          = "text-align:center";
             document.getElementById("sendReady").style          = "text-align:center";
             document.getElementById('sendCheck').style.display  = "none";
             document.getElementById('sendFold').style.display   = "none";
@@ -371,6 +366,8 @@
             document.getElementById('sendDraw').style.display   = "none";
             document.getElementById('sendSort').style.display   = "none";
         }
+
+        if(playerObj.check)
 /*
         // if player has checked
         if(!playerObj.check){    

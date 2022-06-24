@@ -27,16 +27,15 @@ public class Player {
     public void set_cards(){        // This is redundant but I didnt feel like removing array list logic
         for(int i = 0; i < 5; i++) Cards[i] = hand.get(i);
     }
-    public void set_check(boolean b)        { this.check = b; }
-    public void set_current_bet(int bet)    { this.currentBet += bet; }
-    public void set_fold(boolean b)         { this.fold = b; }
-    public void set_id(int id)              { this.id = id; }
-    public void set_name(String n)          { this.name = n; }
-    public void set_raised(boolean b)       { this.raised = b; }
-    public void set_ready(boolean b)        { this.ready = b; }
+    public void set_check(boolean b)         { this.check = b; }
+    public void set_current_bet(int bet)     { this.currentBet += bet; }
+    public void set_fold(boolean b)          { this.fold = b; }
+    public void set_id(int id)               { this.id = id; }
+    public void set_name(String n)           { this.name = n; }
+    public void set_raised(boolean b)        { this.raised = b; }
+    public void set_ready(boolean b)         { this.ready = b; }
     public void set_player_hand(Card cards[]){ this.playerHand = new Hand(cards);}
-    public void set_stand(boolean b)        { this.stand = b; }
-    public void set_wallet(int amount)      { this.wallet = amount; }
+    public void set_wallet(int amount)       { this.wallet = amount; }
 
     public void add_card(Card card)     { this.hand.add(card); }
     public void add_wallet(int bet)     { this.wallet += bet; }
@@ -44,7 +43,7 @@ public class Player {
 
     public void reset_bet(){
         this.bet = false;
-        this.check = true;
+        this.check = false;
     }
 
     /*************************************
@@ -53,18 +52,21 @@ public class Player {
 
     *************************************/
 
-    public int get_id()             { return this.id; }
-    public int get_wallet()         { return this.wallet; }
-    public int get_current_bet()    { return this.currentBet; }
-    public String get_name()        { return this.name; }
-    public Card get_card(int i)     { return this.hand.get(i); }
     public boolean get_bet()        { return this.bet; }
     public boolean get_check()      { return this.check; }
     public boolean get_fold()       { return this.fold; }
-    public Hand get_player_hand()   { return this.playerHand; }
     public boolean get_raised()     { return this.raised; }
     public boolean get_ready()      { return this.ready; }
-    public boolean get_stand()      { return this.stand; }
+
+    public Card get_card(int i)     { return this.hand.get(i); }
+
+    public Hand get_player_hand()   { return this.playerHand; }
+
+    public int get_id()             { return this.id; }
+    public int get_wallet()         { return this.wallet; }
+    public int get_current_bet()    { return this.currentBet; }
+
+    public String get_name()        { return this.name; }
     
     /*************************************
 
@@ -95,9 +97,9 @@ public class Player {
     ArrayList<Card> hand = new ArrayList<>();               // Array list for players hand to be passed to cards
     uta.cse3310.Card Cards[] = new uta.cse3310.Card[5];
 
-    private boolean bet = false;
-    private boolean check = true;
-    private boolean fold = false;                                   // boolean to check if the player has folded in the round
-    private boolean raised = false;
-    private boolean ready = false;
+    private boolean bet     = false;                        // boolean to check if the player has bet
+    private boolean check   = false;                        // boolean to check if the player has checked
+    private boolean fold    = false;                        // boolean to check if the player has folded
+    private boolean raised  = false;                        // boolean to check if the player has raised
+    private boolean ready   = false;                        // boolean to check if the player has readied
 }

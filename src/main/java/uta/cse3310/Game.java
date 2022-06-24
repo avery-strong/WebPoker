@@ -236,6 +236,27 @@ public class Game{
         }
         // any player can sort at any time
         if(event.event == UserEventType.SORT)   sort_cards(event.playerID, event);
+        if(turn == players.size()-1){
+            // Everything below used to be event_move but was only called by event_check
+            if(bet_all_equal()){
+                turn++;
+    
+                 // every player made a single turn
+                if(bet_all_players()){
+                    bet_set_all();
+                    turn = 0;
+                    currentPlayer = nonFoldedPlayers.get(0);
+                    phase++;
+                }
+    
+                timeRemaining = 30;
+            }
+            else{
+                currentPlayer = bet_player_next();
+                turn = bet_next_player();
+                timeRemaining = 30;
+            }
+        }
         if(players_all_ready()) phase = 1;
         if(phase == 4)                          event_reset(event);            // Phase 04 logic (idk)
     }
@@ -300,27 +321,7 @@ public class Game{
     }
     public void event_check(UserEvent event){       // (Player check) logic
         players.get(event.playerID).set_check(true);
-
-        // Everything below used to be event_move but was only called by event_check
-
-        if(bet_all_equal()){
-            turn++;
-
-             // every player made a single turn
-            if(bet_all_players()){
-                bet_set_all();
-                turn = 0;
-                currentPlayer = nonFoldedPlayers.get(0);
-                phase++;
-            }
-
-            timeRemaining = 30;
-        }
-        else{
-            currentPlayer = bet_player_next();
-            turn = bet_next_player();
-            timeRemaining = 30;
-        }
+        turn++;
     }
     public void event_draw(UserEvent event){        // Phase 02 logic
         new_cards(event);
@@ -385,8 +386,14 @@ public class Game{
     **************************************/
 
     public boolean  players_all_ready(){
-        for(int i = 0; i < players.size(); i++)
-            if(!players.get(i).get_ready()) return false;
+        for(Player p : players)
+            if(!p.get_ready()) return false;
+            
+        return true;
+    }
+    public boolean  players_all_check(){
+        for(Player p : players)
+            if(!p.get_check()) return false;
             
         return true;
     }
