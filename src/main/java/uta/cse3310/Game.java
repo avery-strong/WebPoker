@@ -246,6 +246,7 @@ public class Game{
             if(players_all_draw()){
                 phase = 3;
                 turn = 0;
+                players.get(0).set_check(false);    // need to reset check (weird here I know)
             }
         }
         if(event.event == UserEventType.FOLD){
