@@ -36,7 +36,7 @@
             <p id="turnHelp"          style="width: auto; white-space: pre-line;"></p>
             <p id="info"              style="width: auto; white-space: pre-line;"></p>
             <p id="playersTotalBets"  style="width: auto; white-space: pre-line;"></p>
-            <img id="chips"           style="" src="chips.png" width="150px">
+            <!-- <img id="chips"           style="" src="chips.png" width="150px"> -->
             <p id="pot"               style="width: auto; white-space: pre-line; font-weight: bold;"></p>
         </div>
         <div id="cards_display"       style="display: none;">
@@ -115,7 +115,7 @@
     var playerID;
     var playerObj;
     
-    document.getElementById('chips').src = "";
+    //document.getElementById('chips').src = "";
     document.getElementById('infoButton').style = "text-align:center";
 
     var serverUrl ="ws://" + window.location.hostname + ":8880";
@@ -132,7 +132,7 @@
         document.getElementById("name_display").style.display = "block";
     }
     connection.onmessage = function(evt){
-        console.log("message: \n" + evt.data);
+        //console.log("message: \n" + evt.data);
 
         var msg;
         msg = evt.data;
@@ -171,7 +171,6 @@
         else if(inQueue == true){
             document.getElementById('waitingQueue').innerHTML = "Waiting for round to end...";
         }
-
 */
     }
     function send(){
@@ -316,12 +315,11 @@
     }
     function display_buttons(obj){
         // only ready is displayed
-        if(obj.phase == 0) document.getElementById("sendReady").style = "text-align:center";                    
+        if(obj.phase == 0) document.getElementById("sendReady").style = "text-align:center"; 
         else if(obj.phase == 1){
             // bet 05, bet 10, bet 20, call, check, fold, sort
             
             document.getElementById("sendReady").style.display = "none";                                        
-
             document.getElementById('sendCheck').style          = "text-align:center";
             document.getElementById('sendCall').style           = "text-align:center";
             document.getElementById('sendFold').style           = "text-align:center";
@@ -332,7 +330,6 @@
             document.getElementById('sendSort').style           = "text-align:center";
         }
         else if(obj.phase == 2){    // Draw Phase
-            // Draw
             document.getElementById('sendCheck').style.display  = "none";
             document.getElementById('sendCall').style.display   = "none";
             document.getElementById('sendFold').style.display   = "none";
@@ -366,18 +363,18 @@
             document.getElementById('sendDraw').style.display   = "none";
             document.getElementById('sendSort').style.display   = "none";
         }
-
-        if(playerObj.check)
-/*
         // if player has checked
-        if(!playerObj.check){    
-            document.getElementById("sendCheck").disabled   = true;
-            document.getElementById("sendCall").disabled    = false;
+        if(playerObj.check){    
+            document.getElementById('sendCheck').disabled = true;
+            document.getElementById('sendCall').disabled = true;
+            document.getElementById('sendFold').disabled = true;
+            document.getElementById('sendBet1').disabled = true;
+            document.getElementById('sendBet2').disabled = true;
+            document.getElementById('sendBet3').disabled = true;
+            document.getElementById('sendSort').style          = "text-align:center";
         }
-        else{                       // if player has not checked
-            document.getElementById("sendCall").disabled    = true;
-            document.getElementById("sendCheck").disabled   = false;
-        }
+/*        
+        
         // At some point after a player has check the playerId will change
         if(obj.phase != 0 && obj.id == playerObj.id){
             //document.getElementById("sendReady").disabled   = false;
@@ -397,11 +394,12 @@
             document.getElementById("sendBet2").disabled    = true;
             document.getElementById("sendBet3").disabled    = true;
             document.getElementById("sendDraw").disabled    = true;
-        }
+        
 
         if(playerObj.fold) document.getElementById("sendSort").disabled   = true;    
         if(!playerObj.fold) document.getElementById("sendSort").disabled   = false;
 */
+        
     }
     function display_cards(){
         document.getElementById("cards_display").style.display = "block";
@@ -439,6 +437,7 @@
     }
     function display_connect(obj){}
     function display_info(obj){         // Most events will need to call display_info()
+        
         /*
             When onOpen is called onMessage is called as well and sent just the first bit of Player JSON
             At this point we will add playerID from obj.id so we can find what we need later on
@@ -447,6 +446,31 @@
 
         if(obj.name == "not set") playerID = obj.id;
         else{
+            for(var i = 0; i < obj.players.length; i++){
+                console.log(
+                    "Player Name: "             + obj.players[i].name
+                    + "\n"
+                    + "Player ID: "             + obj.players[i].id
+                    + "\n"
+                    + "Player Wallet: "         + obj.players[i].wallet
+                    + "\n"
+                    + "Player Current Bet: "    + obj.players[i].currentBet
+                    + "\n"
+                    + "Player Total Bet: "      + obj.players[i].totalBet
+                    + "\n"
+                    + "Player Bet "             + obj.players[i].bet
+                    + "\n"
+                    + "Player Check: "          + obj.players[i].check
+                    + "\n"
+                    + "Player Draw: "          + obj.players[i].draw
+                    + "\n"
+                    + "Player Fold: "           + obj.players[i].fold
+                    + "\n"
+                    + "Player Raised: "         + obj.players[i].raised
+                    + "\n"
+                    + "Player Ready: "          + obj.players[i].ready
+                    + "\n");
+            }
             if(obj.players[playerID].id == playerID) playerObj = obj.players[playerID];  
 
             // display whose turn it is
@@ -461,7 +485,7 @@
 
             // display the amount in the pot
             document.getElementById("pot").innerHTML = "Total Pot: " + obj.pot.pot;
-            document.getElementById('chips').src = "chips.png";
+            //document.getElementById('chips').src = "chips.png";
 
             // display_time(obj);
 

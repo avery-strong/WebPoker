@@ -29,6 +29,7 @@ public class Player {
     }
     public void set_check(boolean b)         { this.check = b; }
     public void set_current_bet(int bet)     { this.currentBet += bet; }
+    public void set_draw(boolean b)          { this.draw = b; }
     public void set_fold(boolean b)          { this.fold = b; }
     public void set_id(int id)               { this.id = id; }
     public void set_name(String n)           { this.name = n; }
@@ -54,6 +55,7 @@ public class Player {
 
     public boolean get_bet()        { return this.bet; }
     public boolean get_check()      { return this.check; }
+    public boolean get_draw()       { return this.draw; }
     public boolean get_fold()       { return this.fold; }
     public boolean get_raised()     { return this.raised; }
     public boolean get_ready()      { return this.ready; }
@@ -99,6 +101,7 @@ public class Player {
 
     private boolean bet     = false;                        // boolean to check if the player has bet
     private boolean check   = false;                        // boolean to check if the player has checked
+    private boolean draw    = false;                        // boolean to check if the player has drawn
     private boolean fold    = false;                        // boolean to check if the player has folded
     private boolean raised  = false;                        // boolean to check if the player has raised
     private boolean ready   = false;                        // boolean to check if the player has readied

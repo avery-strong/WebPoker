@@ -147,7 +147,7 @@ public class AppTest
 
         assertTrue( !game.players_all_ready() );
     }
-
+/*
     // test bet_all_equal method in Game.java
     @Test
     public void allBetEqualTest(){
@@ -171,7 +171,7 @@ public class AppTest
 
         assertTrue(game.bet_all_equal());
     }
-
+*/
     // test player_fold_current() method in Game.java
     @Test
     public void foldCurrentPlayerTest(){
