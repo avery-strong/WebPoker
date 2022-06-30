@@ -315,66 +315,72 @@
     }
     function display_buttons(obj){
         // only ready is displayed
-        if(obj.phase == 0) document.getElementById("sendReady").style = "text-align:center"; 
-        else if(obj.phase == 1){
-            // bet 05, bet 10, bet 20, call, check, fold, sort
-            
-            document.getElementById("sendReady").style.display = "none";                                        
-            document.getElementById('sendCheck').style          = "text-align:center";
-            document.getElementById('sendCall').style           = "text-align:center";
-            document.getElementById('sendFold').style           = "text-align:center";
-            document.getElementById('sendBet1').style           = "text-align:center";
-            document.getElementById('sendBet2').style           = "text-align:center";
-            document.getElementById('sendBet3').style           = "text-align:center";
-            document.getElementById('sendDraw').style.display   = "none";
-            document.getElementById('sendSort').style           = "text-align:center";
-        }
-        else if(obj.phase == 2){    // Draw Phase
-            document.getElementById('sendCheck').style.display  = "none";
-            document.getElementById('sendCall').style.display   = "none";
-            document.getElementById('sendFold').style.display   = "none";
-            document.getElementById('sendBet1').style.display   = "none";
-            document.getElementById('sendBet2').style.display   = "none";
-            document.getElementById('sendBet3').style.display   = "none";
-            document.getElementById('sendDraw').style           = "text-align:center";
-            document.getElementById('sendSort').style           = "text-align:center";
-        }
-        else if(obj.phase == 3){    // Bet 02
-            document.getElementById('sendCheck').style          = "text-align:center";
-            document.getElementById('sendCall').style           = "text-align:center";
-            document.getElementById('sendFold').style           = "text-align:center";
-            document.getElementById('sendBet1').style           = "text-align:center";
-            document.getElementById('sendBet2').style           = "text-align:center";
-            document.getElementById('sendBet3').style           = "text-align:center";
-            document.getElementById('sendDraw').style.display   = "none";
-            document.getElementById('sendSort').style           = "text-align:center";
-        }
-        else if(obj.phase >= 4){    // Showdown
-            if(obj.winner != -1) alert(obj.winningPlayer.name + " won" + " with a "+ obj.winningPlayer.pHand.handname);
-            else alert("Tie!");  
 
-            document.getElementById("sendReady").style          = "text-align:center";
-            document.getElementById('sendCheck').style.display  = "none";
-            document.getElementById('sendFold').style.display   = "none";
-            document.getElementById('sendCall').style.display   = "none";
-            document.getElementById('sendBet1').style.display   = "none";
-            document.getElementById('sendBet2').style.display   = "none";
-            document.getElementById('sendBet3').style.display   = "none";
-            document.getElementById('sendDraw').style.display   = "none";
-            document.getElementById('sendSort').style.display   = "none";
+        switch(obj.phase){
+            case 0: 
+                document.getElementById("sendReady").style = "text-align:center";
+                
+                break;
+            case 1:
+                // bet 05, bet 10, bet 20, call, check, fold, sort
+                document.getElementById("sendReady").style.display = "none";                                        
+                document.getElementById('sendCheck').style          = "text-align:center";
+                document.getElementById('sendCall').style           = "text-align:center";
+                document.getElementById('sendFold').style           = "text-align:center";
+                document.getElementById('sendBet1').style           = "text-align:center";
+                document.getElementById('sendBet2').style           = "text-align:center";
+                document.getElementById('sendBet3').style           = "text-align:center";
+                document.getElementById('sendDraw').style.display   = "none";
+                document.getElementById('sendSort').style           = "text-align:center";
+
+                if(obj.roundBet > 0 || obj.players[0].check) document.getElementById('sendCheck').disabled = true;
+                
+                break;
+            case 2:    // Draw Phase
+                document.getElementById('sendCheck').style.display  = "none";
+                document.getElementById('sendCall').style.display   = "none";
+                document.getElementById('sendFold').style.display   = "none";
+                document.getElementById('sendBet1').style.display   = "none";
+                document.getElementById('sendBet2').style.display   = "none";
+                document.getElementById('sendBet3').style.display   = "none";
+                document.getElementById('sendDraw').style           = "text-align:center";
+                document.getElementById('sendSort').style           = "text-align:center";
+                
+                break;
+            case 3:    // Bet 02
+                document.getElementById('sendCheck').disabled = false;
+
+                document.getElementById('sendCheck').style          = "text-align:center";
+                document.getElementById('sendCall').style           = "text-align:center";
+                document.getElementById('sendFold').style           = "text-align:center";
+                document.getElementById('sendBet1').style           = "text-align:center";
+                document.getElementById('sendBet2').style           = "text-align:center";
+                document.getElementById('sendBet3').style           = "text-align:center";
+                document.getElementById('sendDraw').style.display   = "none";
+                document.getElementById('sendSort').style           = "text-align:center";
+
+                if(obj.roundBet > 0 || obj.players[0].check) document.getElementById('sendCheck').disabled = true;
+                
+                break;
+            case 4:    // Showdown
+                if(obj.winner != -1) alert(obj.winningPlayer.name + " won" + " with a "+ obj.winningPlayer.pHand.handname);
+                else alert("Tie!");  
+
+                document.getElementById("sendReady").style          = "text-align:center";
+                document.getElementById('sendCheck').style.display  = "none";
+                document.getElementById('sendFold').style.display   = "none";
+                document.getElementById('sendCall').style.display   = "none";
+                document.getElementById('sendBet1').style.display   = "none";
+                document.getElementById('sendBet2').style.display   = "none";
+                document.getElementById('sendBet3').style.display   = "none";
+                document.getElementById('sendDraw').style.display   = "none";
+                document.getElementById('sendSort').style.display   = "none";
+
+                break;
+            default:
+                break;
         }
-        // if player has checked
-        if(playerObj.check){    
-            document.getElementById('sendCheck').disabled = true;
-            document.getElementById('sendCall').disabled = true;
-            document.getElementById('sendFold').disabled = true;
-            document.getElementById('sendBet1').disabled = true;
-            document.getElementById('sendBet2').disabled = true;
-            document.getElementById('sendBet3').disabled = true;
-            document.getElementById('sendSort').style          = "text-align:center";
-        }
-/*        
-        
+/* 
         // At some point after a player has check the playerId will change
         if(obj.phase != 0 && obj.id == playerObj.id){
             //document.getElementById("sendReady").disabled   = false;
@@ -450,25 +456,25 @@
                 console.log(
                     "Player Name: "             + obj.players[i].name
                     + "\n"
-                    + "Player ID: "             + obj.players[i].id
+                    + "\tID: "             + obj.players[i].id
                     + "\n"
-                    + "Player Wallet: "         + obj.players[i].wallet
+                    + "\tWallet: "         + obj.players[i].wallet
                     + "\n"
-                    + "Player Current Bet: "    + obj.players[i].currentBet
+                    + "\tCurrent Bet: "    + obj.players[i].currentBet
                     + "\n"
-                    + "Player Total Bet: "      + obj.players[i].totalBet
+                    + "\tTotal Bet: "      + obj.players[i].totalBet
                     + "\n"
-                    + "Player Bet "             + obj.players[i].bet
+                    + "\tBet "             + obj.players[i].bet
                     + "\n"
-                    + "Player Check: "          + obj.players[i].check
+                    + "\tCheck: "          + obj.players[i].check
                     + "\n"
-                    + "Player Draw: "          + obj.players[i].draw
+                    + "\tDraw: "          + obj.players[i].draw
                     + "\n"
-                    + "Player Fold: "           + obj.players[i].fold
+                    + "\tFold: "           + obj.players[i].fold
                     + "\n"
-                    + "Player Raised: "         + obj.players[i].raised
+                    + "\tRaised: "         + obj.players[i].raised
                     + "\n"
-                    + "Player Ready: "          + obj.players[i].ready
+                    + "\tReady: "          + obj.players[i].ready
                     + "\n");
             }
             if(obj.players[playerID].id == playerID) playerObj = obj.players[playerID];  

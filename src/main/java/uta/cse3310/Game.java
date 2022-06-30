@@ -87,7 +87,6 @@ public class Game{
     }
     
     public void determine_player_message(Player p){
-        highestBet = bet_max_player();
         if(phase == 0){
             playerMessage = "Phase: PreGame"
                           + "\n"
@@ -128,14 +127,17 @@ public class Game{
         }
     }
 
-    /*
+/*
         this method is called on a periodic basis (once a second) by a timer
         it is to allow time based situations to be handled in the game
         if the game state is changed, it returns a true.
      
         expecting that returning a true will trigger a send of tghe game
         state to everyone
-    */
+*/
+/*
+    CURRENTLY NOT CALLED
+
     public boolean update(){
         if(players.size() >= 2 && players_all_ready()){
             for(Player p : players){
@@ -173,6 +175,7 @@ public class Game{
         //determine_player_message();
         return true;
     }
+*/
     public void kick_not_ready(){
         ArrayList<Player> removeList = new ArrayList<>();
         synchronized(WebPoker.mutex){
@@ -198,70 +201,107 @@ public class Game{
         // take the string we just received, and turn it into a user event
         UserEvent event = gson.fromJson(msg, UserEvent.class);
 
+        System.out.println("\n\nPlayer: " 
+            + players.get(event.playerID).get_name()
+            + "\n\nEvent: " + event.event);
+
         Player event_player = players.get(event.playerID);
 
-        if(event.event == UserEventType.BET){
-            bet_place(event);
-            if(phase == 1)      event_bet_01(event);
-            else if(phase == 3) event_bet_03(event);
-        }
+        switch(event.event){
+            case BET:
+                event_bet(event);
 
-        // Set the highest bet
-        for(Player p : players)
-            if(p.get_current_bet() > highestBet) highestBet = p.get_current_bet();
+                turn++;
 
-        // if player is in queue and NAME event happens
-        if(event.event == UserEventType.NAME){
-            // note this does not add the player to game.players
-            // only sets their name
-            for(Player p : playerQueue)
-                if(p.get_id() == event.playerID) p.set_name(event.name);
-        }
-        if(event.event == UserEventType.NAME && phase == 0){
-            event_name(event);
+                if(turn == players.size()){
+                    phase++;                                
+                    turn = 0;
+                    roundBet = 0;
+                }
+                
+                // Set the highest bet
+                for(Player p : players)
+                    if(p.get_current_bet() > highestBet) highestBet = p.get_current_bet();
 
-            for(int i = 0; i < 5; i++) players.get(event.playerID).add_card(draw_card());
+                roundBet = highestBet;
+                
+                break; 
+            case CALL:
+                event.amount_to_bet = highestBet;
+                 event_bet(event);
 
-            players.get(event.playerID).set_cards();
-        }        
-        if(event.event == UserEventType.READY){
-            event_ready(event); 
+                turn++;
 
-            if(players_all_ready()) phase = 1; 
+                if(turn == players.size() && bet_all_equal()){
+                    phase++;
+                    turn = 0;
+                }
+
+                break;
+            case CHECK:
+                event_check(event_player);
+
+                turn++;
+
+                break;
+            case DRAW:
+                event_draw(event);
+
+                turn++;
+
+                if(players_all_draw()){
+                    phase = 3;
+                    turn = 0;
+                    players.get(0).set_check(false);    // need to reset check (weird here I know)
+                }
+
+                break;
+            case FOLD:
+                event_fold(event);
+
+                turn++;
+
+                int foldedCount = 0;
+
+                for(Player p : players)
+                    if(p.get_fold()) foldedCount++;
+
+                if(foldedCount == 4) phase = 4;
+
+                break;
+            case NAME:
+                if(phase == 0){
+                    event_name(event);
+
+                    for(int i = 0; i < 5; i++) players.get(event.playerID).add_card(draw_card());
+
+                    players.get(event.playerID).set_cards();
+                }    
+                // note this does not add the player to game.players
+                // only sets their name
+                for(Player p : playerQueue)
+                    if(p.get_id() == event.playerID) p.set_name(event.name);
+                
+                break;
+            case READY:
+                event_ready(event); 
+
+                if(players_all_ready()) phase = 1;
+                
+                break;
+            case SORT:
+                sort_cards(event.playerID, event);
+
+                break;
+            default:
+
+                break;
         }              
-        if(event.event == UserEventType.CALL){
-            event_call(event_player);
-
-            if(bet_all_equal()){
-                phase++;
-                turn = 0;
-            }
-        }     
-        if(event.event == UserEventType.CHECK) event_check(event_player);
-        if(event.event == UserEventType.DRAW){
-            event_draw(event);
-
-            turn++;
-
-            if(players_all_draw()){
-                phase = 3;
-                turn = 0;
-                players.get(0).set_check(false);    // need to reset check (weird here I know)
-            }
-        }
-        if(event.event == UserEventType.FOLD){
-            event_fold(event);
-
-            int foldedCount = 0;
-
-            for(Player p : players)
-                if(p.get_fold()) foldedCount++;
-
-            if(foldedCount == 4) determine_winner();
-        }                
         
-        // any player can sort at any time
-        if(event.event == UserEventType.SORT) sort_cards(event.playerID, event);
+        if(phase == 4){
+            determine_winner();
+            event_reset(event);            // Phase 04 logic (idk)   
+        }
 /*
         if(turn == players.size()-1){
             // Everything below used to be event_move but was only called by event_check
@@ -284,8 +324,7 @@ public class Game{
                 timeRemaining = 30;
             }
         }
-*/      
-        if(phase == 4) event_reset(event);            // Phase 04 logic (idk)
+*/
         
         determine_player_message(players.get(event.playerID));
     }
@@ -296,63 +335,19 @@ public class Game{
 
     **************************************/
 
-    public void event_bet(UserEvent event){
-        bet_place(event);
+    public void event_bet(UserEvent event){      // Phase 01 (First Bet Phase) logic
+        //Check if player is betting more than they have, change bet to whatever is left in their wallet.
+        if(event.amount_to_bet > players.get(event.playerID).get_wallet()) 
+            event.amount_to_bet = players.get(event.playerID).get_wallet();
+        
+        players.get(event.playerID).subtract_wallet(event.amount_to_bet);
+        players.get(event.playerID).set_current_bet(event.amount_to_bet);
+        pot.add_to_pot(event.amount_to_bet);
 
-        if(turn != players.size()-1){
-            turn++;                                 // Changes turn for the next player                        
-            timeRemaining = 30;                     // Resets the timer to 30 seconds
-        }
-        else{
-            phase++;                                // Sets to draw phase
-            turn = 0;                               // Resets the turn so first player is now drawing
-        } 
+        players.get(event.playerID).set_bet(true);
     }
-    public void event_bet_01(UserEvent event){      // Phase 01 (First Bet Phase) logic
-        bet_place(event);
-
-        if(turn != players.size()-1){
-            turn++;                                 // Changes turn for the next player                        
-            timeRemaining = 30;                     // Resets the timer to 30 seconds
-        }
-        else{
-            phase++;                                // Sets to draw phase
-            turn = 0;                               // Resets the turn so first player is now drawing
-        }
-    }
-    public void event_bet_03(UserEvent event){      // Phase 03 (Second Bet Phase) logic
-        // Players bets are equivalent and at least 1 player has not folded
-        if(bet_all_equal() && nonFoldedPlayers.size() >= 1){
-            players_next();
-            turn++;
-            // every player made a single turn
-            if(bet_all_players()){
-                bet_set_all();
-                currentPlayer = nonFoldedPlayers.get(0);
-                turn = 0;
-                phase = 4;
-                determine_winner();
-                turn = -1;
-                players_set_notReady();
-                timeRemaining = -1;
-            }
-
-            timeRemaining = 30;
-        }
-    
-        currentPlayer = bet_player_next();
-        turn = bet_next_player();
-        timeRemaining = 30;
-    }
-    public void event_call(Player p){
-        p.set_current_bet(highestBet);
-        turn++;
-    }
-    public void event_check(Player p){              // (Player check) logic
-        p.set_check(true);
-        turn++;
-    }
-    public void event_draw(UserEvent event){        // Phase 02 logic
+    public void event_check(Player p){ p.set_check(true); }    // (Player check) logic
+    public void event_draw(UserEvent event){                    // Phase 02 logic
         new_cards(event);
 
         players.get(event.playerID).set_draw(true);
@@ -360,7 +355,6 @@ public class Game{
     public void event_fold(UserEvent event){
         players.get(event.playerID).set_fold(true);
         nonFoldedPlayers.remove(currentPlayer);
-        turn++;
     }
     public void event_name(UserEvent event){        // Phase 00 logic
         // If there's currently more than 5 players add player 6+ into a queue
@@ -371,9 +365,7 @@ public class Game{
         }
         else players.get(event.playerID).set_name(event.name);
     }
-    public void event_ready(UserEvent event){       // Phase 00 logicrs_num_ready() >= 2) timeRemaining = 10;
-        players.get(event.playerID).set_ready(true);
-    }
+    public void event_ready(UserEvent event){ players.get(event.playerID).set_ready(true); }// Phase 00 
     public void event_reset(UserEvent event){       // Phase 04 (Reset) logic
         // Not an actual event/action performed by the user    
         timeRemaining = -1;
@@ -409,7 +401,7 @@ public class Game{
             
         return true;
     }
-    public boolean players_all_draw(){
+    public boolean  players_all_draw(){
         for(Player p : players)
             if(!p.get_draw()) return false;
 
@@ -607,16 +599,7 @@ public class Game{
         pot.add_to_pot(event.amount_to_bet);
     }
     public void     bet_place(UserEvent event){
-        players.get(event.playerID).set_bet(true);
-        bet_call(event);
-
-        //Check if player is betting more than they have, change bet to whatever is left in their wallet.
-        if(event.amount_to_bet > players.get(event.playerID).get_wallet()) 
-            event.amount_to_bet = players.get(event.playerID).get_wallet();
         
-        players.get(event.playerID).subtract_wallet(event.amount_to_bet);
-        players.get(event.playerID).set_current_bet(event.amount_to_bet);
-        pot.add_to_pot(event.amount_to_bet);
     }
     public void     bet_place_ante(int id){
         players.get(id).subtract_wallet(20);
@@ -665,6 +648,7 @@ public class Game{
     private int phase = 0;
     private int turn = 0;
     private int highestBet = 0;
+    private int roundBet = 0;
 
     // do not change these or display will break
     private int winner = -1;
