@@ -191,7 +191,7 @@ public class WebPoker extends WebSocketServer {
 
         System.out.println("On Message 01: \n" + conn + ": " + message);
     }
-
+/*
     public class upDate extends TimerTask {
         @Override
         public void run(){
@@ -202,6 +202,7 @@ public class WebPoker extends WebSocketServer {
             }
         }
     }
+*/
 
     @Override
     public void onError(WebSocket conn, Exception ex){

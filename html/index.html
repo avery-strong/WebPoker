@@ -454,27 +454,17 @@
         else{
             for(var i = 0; i < obj.players.length; i++){
                 console.log(
-                    "Player Name: "             + obj.players[i].name
-                    + "\n"
-                    + "\tID: "             + obj.players[i].id
-                    + "\n"
-                    + "\tWallet: "         + obj.players[i].wallet
-                    + "\n"
-                    + "\tCurrent Bet: "    + obj.players[i].currentBet
-                    + "\n"
-                    + "\tTotal Bet: "      + obj.players[i].totalBet
-                    + "\n"
-                    + "\tBet "             + obj.players[i].bet
-                    + "\n"
-                    + "\tCheck: "          + obj.players[i].check
-                    + "\n"
-                    + "\tDraw: "          + obj.players[i].draw
-                    + "\n"
-                    + "\tFold: "           + obj.players[i].fold
-                    + "\n"
-                    + "\tRaised: "         + obj.players[i].raised
-                    + "\n"
-                    + "\tReady: "          + obj.players[i].ready
+                    "Player Name: "       + obj.players[i].name
+                    + "\n\tID: "          + obj.players[i].id
+                    + "\n\tWallet: "      + obj.players[i].wallet
+                    + "\n\tCurrent Bet: " + obj.players[i].currentBet
+                    + "\n\tTotal Bet: "   + obj.players[i].totalBet
+                    + "\n\tBet "          + obj.players[i].bet
+                    + "\n\tCheck: "       + obj.players[i].check
+                    + "\n\tDraw: "        + obj.players[i].draw
+                    + "\n\tFold: "        + obj.players[i].fold
+                    + "\n\tRaised: "      + obj.players[i].raised
+                    + "\n\tReady: "       + obj.players[i].ready
                     + "\n");
             }
             if(obj.players[playerID].id == playerID) playerObj = obj.players[playerID];  
@@ -482,12 +472,10 @@
             // display whose turn it is
             document.getElementById("phaseMessage").innerHTML = obj.playerMessage;
               
-            document.getElementById("info").innerHTML
-                = "Player Wallet: " + playerObj.wallet
-                + "\n"
-                + "Player Name: "   + playerObj.name
-                + "\n"
-                + "Player Id: "     + playerObj.id;
+            document.getElementById("info").innerHTML = 
+                "Player Wallet: "   + playerObj.wallet
+                + "\nPlayer Name: " + playerObj.name
+                + "\nPlayer Id: "   + playerObj.id;
 
             // display the amount in the pot
             document.getElementById("pot").innerHTML = "Total Pot: " + obj.pot.pot;
@@ -537,7 +525,7 @@
         document.getElementById('turnHelp').style = "text-align:center";
     }
     function toggleInfo(){
-        if(infoToggle == false){
+        if(!infoToggle){
             infoToggle = true;
             document.getElementById('info1').style.display = "none";
             document.getElementById('info2').style.display = "none";
@@ -550,7 +538,7 @@
             document.getElementById('info4text').style.display = "none";
             document.getElementById('info5text').style.display = "none";
         }
-        else {
+        else{
             infoToggle = false;
             document.getElementById('info1').style.display = "block";
             document.getElementById('info2').style.display = "block";

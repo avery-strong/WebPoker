@@ -128,15 +128,16 @@ public class Game{
     }
 
 /*
+    CURRENTLY NOT CALLED
+
         this method is called on a periodic basis (once a second) by a timer
         it is to allow time based situations to be handled in the game
         if the game state is changed, it returns a true.
      
         expecting that returning a true will trigger a send of tghe game
         state to everyone
-*/
-/*
-    CURRENTLY NOT CALLED
+
+
 
     public boolean update(){
         if(players.size() >= 2 && players_all_ready()){
@@ -228,7 +229,7 @@ public class Game{
                 break; 
             case CALL:
                 event.amount_to_bet = highestBet;
-                 event_bet(event);
+                event_bet(event);
 
                 turn++;
 
@@ -302,6 +303,8 @@ public class Game{
             determine_winner();
             event_reset(event);            // Phase 04 logic (idk)   
         }
+        
+        determine_player_message(players.get(event.playerID));
 /*
         if(turn == players.size()-1){
             // Everything below used to be event_move but was only called by event_check
@@ -325,8 +328,6 @@ public class Game{
             }
         }
 */
-        
-        determine_player_message(players.get(event.playerID));
     }
 
     /**************************************
@@ -335,7 +336,7 @@ public class Game{
 
     **************************************/
 
-    public void event_bet(UserEvent event){      // Phase 01 (First Bet Phase) logic
+    public void event_bet(UserEvent event){                     // Phase 01 (First Bet Phase) logic
         //Check if player is betting more than they have, change bet to whatever is left in their wallet.
         if(event.amount_to_bet > players.get(event.playerID).get_wallet()) 
             event.amount_to_bet = players.get(event.playerID).get_wallet();
@@ -346,7 +347,7 @@ public class Game{
 
         players.get(event.playerID).set_bet(true);
     }
-    public void event_check(Player p){ p.set_check(true); }    // (Player check) logic
+    public void event_check(Player p){ p.set_check(true); }     // (Player check) logic
     public void event_draw(UserEvent event){                    // Phase 02 logic
         new_cards(event);
 
@@ -356,7 +357,7 @@ public class Game{
         players.get(event.playerID).set_fold(true);
         nonFoldedPlayers.remove(currentPlayer);
     }
-    public void event_name(UserEvent event){        // Phase 00 logic
+    public void event_name(UserEvent event){                    // Phase 00 logic
         // If there's currently more than 5 players add player 6+ into a queue
         if(event.playerID >= 5){   
             for(int i = 0; i < playerQueue.size(); i++)
@@ -365,8 +366,8 @@ public class Game{
         }
         else players.get(event.playerID).set_name(event.name);
     }
-    public void event_ready(UserEvent event){ players.get(event.playerID).set_ready(true); }// Phase 00 
-    public void event_reset(UserEvent event){       // Phase 04 (Reset) logic
+    public void event_ready(UserEvent event){ players.get(event.playerID).set_ready(true); }    // Phase 00 
+    public void event_reset(UserEvent event){                   // Phase 04 (Reset) logic
         // Not an actual event/action performed by the user    
         timeRemaining = -1;
         nonFoldedPlayers.clear();
