@@ -37,27 +37,36 @@ public class AppTest
     // test the sortHand method in Hand.java
     @Test
     public void sortHandTest(){
-        Card card1 = new Card();
-        Card card2 = new Card();
-        Card card3 = new Card();
-        Card card4 = new Card();
-        Card card5 = new Card();
-        card1.value = Card.Value.FIVE;
-        card1.suite = Card.Suite.SPADES;
-        card2.value = Card.Value.SIX;
-        card2.suite = Card.Suite.SPADES;
-        card3.value = Card.Value.SEVEN;
-        card3.suite = Card.Suite.SPADES;
-        card4.value = Card.Value.EIGHT;
-        card4.suite = Card.Suite.SPADES;
-        card5.value = Card.Value.NINE;
-        card5.suite = Card.Suite.SPADES;
-        Card cards[] = {card3,card4,card2,card5,card1};
-        Card sortedCards[] = {card1,card2,card3,card4,card5};
-        Hand.sortHand(cards);
-        assertTrue(cards[0] == sortedCards[0] && cards[1] == sortedCards[1] &&
-            cards[2] == sortedCards[2] && cards[3] == sortedCards[3] &&
-            cards[4] == sortedCards[4]);
+        Card c = new Card();
+        Card cards[] = new Card[5];
+
+        c.value = Card.Value.NINE;
+        c.suite = Card.Suite.SPADES;
+        cards[0] = c;
+        c.value = Card.Value.SIX;
+        c.suite = Card.Suite.SPADES;
+        cards[1] = c;
+        c.value = Card.Value.SEVEN;
+        c.suite = Card.Suite.SPADES;
+        cards[2] = c;
+        c.value = Card.Value.EIGHT;
+        c.suite = Card.Suite.SPADES;
+        cards[3] = c;
+        c.value = Card.Value.FIVE;
+        c.suite = Card.Suite.SPADES;
+        cards[4] = c;
+
+
+        Hand hand = new Hand(cards);
+        
+        Card sortedCards[] = {cards[4], cards[1], cards[2], cards[3], cards[0]};
+        hand.sort_by_value();
+
+        assertTrue(cards[0] == sortedCards[0] 
+            && cards[1] == sortedCards[1] 
+            && cards[2] == sortedCards[2] 
+            && cards[3] == sortedCards[3] 
+            &&cards[4] == sortedCards[4]);
     }
 
     // test empty_hand method in Game.java
@@ -66,8 +75,8 @@ public class AppTest
         Game game = new Game();
         Player player = new Player(0);
         game.players_add(player);
-        game.empty_hand(player);
-        assertTrue(player.hand.size() == 0);
+        game.players_empty_hand(player);
+        assertTrue(player.get_player_hand().cards[0] == null);
     }
 
     // test players_set_notReady method in Game.java

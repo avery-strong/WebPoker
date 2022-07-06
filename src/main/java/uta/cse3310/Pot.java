@@ -16,9 +16,8 @@ public class Pot{
                     Setters
     ***********************************/
 
-    public void add_to_pot(int amount)  { pot += amount; }
-    public void empty_pot()             { pot = 0; }
-    public int reward_pot()             { return pot; }
+    public void add_to_pot(int amount){ this.pot += amount; }
+    public void empty_pot()           { this.pot = 0; }
 
     /***********************************
                     Attributes

@@ -10,11 +10,13 @@ public class Player {
         this.id = id;
         this.name = "not set";
         this.wallet = 100;
+        this.playerHand = new Hand();
     }
 
     public Player(){
         this.name = "not set";
         this.wallet = 100;
+        this.playerHand = new Hand();
     }
 
     /*************************************
@@ -24,21 +26,17 @@ public class Player {
     *************************************/
 
     public void set_bet(boolean b){ this.bet = b; }
-    public void set_cards(){        // This is redundant but I didnt feel like removing array list logic
-        for(int i = 0; i < 5; i++) Cards[i] = hand.get(i);
-    }
-    public void set_check(boolean b)         { this.check = b; }
-    public void set_current_bet(int bet)     { this.currentBet += bet; }
-    public void set_draw(boolean b)          { this.draw = b; }
-    public void set_fold(boolean b)          { this.fold = b; }
-    public void set_id(int id)               { this.id = id; }
-    public void set_name(String n)           { this.name = n; }
-    public void set_raised(boolean b)        { this.raised = b; }
-    public void set_ready(boolean b)         { this.ready = b; }
-    public void set_player_hand(Card cards[]){ this.playerHand = new Hand(cards);}
-    public void set_wallet(int amount)       { this.wallet = amount; }
+    public void set_check(boolean b)               { this.check = b; }
+    public void set_current_bet(int bet)           { this.currentBet += bet; }
+    public void set_draw(boolean b)                { this.draw = b;   }
+    public void set_fold(boolean b)                { this.fold = b; }
+    public void set_id(int id)                     { this.id = id; }
+    public void set_name(String n)                 { this.name = n; }
+    public void set_raised(boolean b)              { this.raised = b; }
+    public void set_ready(boolean b)               { this.ready = b; }
+    public void set_wallet(int amount)             { this.wallet = amount; }
 
-    public void add_card(Card card)     { this.hand.add(card); }
+    public void add_card(Card c, int i) { this.playerHand.cards[i] = c; }
     public void add_wallet(int bet)     { this.wallet += bet; }
     public void subtract_wallet(int bet){ this.wallet -= bet; }
 
@@ -60,7 +58,7 @@ public class Player {
     public boolean get_raised()     { return this.raised; }
     public boolean get_ready()      { return this.ready; }
 
-    public Card get_card(int i)     { return this.hand.get(i); }
+    public Card get_card(int i)     { return this.playerHand.cards[i]; }
 
     public Hand get_player_hand()   { return this.playerHand; }
 
@@ -95,9 +93,6 @@ public class Player {
     private String name;                                    // Player name
 
     private Hand playerHand;
-
-    ArrayList<Card> hand = new ArrayList<>();               // Array list for players hand to be passed to cards
-    uta.cse3310.Card Cards[] = new uta.cse3310.Card[5];
 
     private boolean bet     = false;                        // boolean to check if the player has bet
     private boolean check   = false;                        // boolean to check if the player has checked

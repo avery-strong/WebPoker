@@ -414,7 +414,8 @@
             // if cards are null str becomes empty so nothing is displayed
             var str = "";
             var checkboxnum = "card" + (i+1) + "checkbox";
-            var card = playerObj.Cards[i];
+            var card = playerObj.playerHand.cards[i];
+            //var card = playerObj.Cards[i];
 
             if(card.value == "ACE")             str += "A";
             else if(card.value == "TWO")        str += "2";
