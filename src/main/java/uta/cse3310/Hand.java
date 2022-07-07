@@ -158,7 +158,7 @@ public class Hand{
 
         return false;
     }
-    public int determineHand(Hand h){
+    public static int determineHand(Hand h){
         if(is_flush(h)){
             if(is_straight_flush(h)){
                 if(is_royal_flush(h)) return Handenum.ROYAL.ordinal();       // Royal Flush

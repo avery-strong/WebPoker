@@ -33,12 +33,6 @@ public class Game{
         // SETTING TO DEFAULT PLAYER IN ARRAY BC whoWinds doesnt work
         // so other code can be added
 
-        for(Player p : nonFoldedPlayers) p.set_player_hand(p.Cards);
-
-        int i = nonFoldedPlayers.size()-1;
-        boolean tie = false;
-        int failingCounter = 0;
-
         for(Player p01 : players){
             // if the player has folded
             if(p01.get_fold()) continue;
@@ -302,8 +296,8 @@ public class Game{
 
                     for(int i = 0; i < 5; i++) players.get(event.playerID).add_card(players_draw_card(), i);
 
-                    players.get(event.playerID).get_player_hand().strength = players.get(event.playerID).get_player_hand().determineHand();
-                    players.get(event.playerID).get_player_hand().hand = Card.Handenum.ordinal(strength);
+                    players.get(event.playerID).get_player_hand().strength = Hand.determineHand(players.get(event.playerID).get_player_hand());
+                    players.get(event.playerID).get_player_hand().hand = Card.Handenum.valueOf(players.get(event.playerID).get_player_hand().strength);
                 }    
                 
                 for(Player p : playerQueue)
@@ -416,45 +410,45 @@ public class Game{
 
     **************************************/
 
-    public boolean  players_all_check(){
+    public boolean players_all_check(){
         for(Player p : players)
             if(!p.get_check()) return false;
             
         return true;
     }
-    public boolean  players_all_ready(){
+    public boolean players_all_ready(){
         for(Player p : players)
             if(!p.get_ready()) return false;
             
         return true;
     }
-    public boolean  players_all_draw(){
+    public boolean players_all_draw(){
         for(Player p : players)
             if(!p.get_draw()) return false;
 
         return true;
     }
-    public boolean  players_contains(Player p){
+    public boolean players_contains(Player p){
         if(this.players.contains(p)) return true; 
 
         return false;
     }
-    public Card     players_draw_card(){
+    public Card    players_draw_card(){
         // gets a card from the front of passed in deck
         Card card = deck.get(0);
         deck.remove(0);
         return card;
     }  
-    public int      players_num_ready(){
+    public int     players_num_ready(){
         int count = 0;
         for(int i = 0; i < players.size(); i++)
             if(players.get(i).get_ready() == true) count++;
         
         return count;
     }
-    public int      players_size(){ return this.players.size(); }
-    public void     players_add(Player p){ this.players.add(p); }
-    public void     players_empty_hand(Player p){
+    public int     players_size()       { return this.players.size(); }
+    public void    players_add(Player p){ this.players.add(p); }
+    public void    players_empty_hand(Player p){
         // remove all player's Cards
         // and randomize the order in the deck_shuffle
         // will be 52 cards in size
@@ -462,11 +456,11 @@ public class Game{
         
         p.get_player_hand().cards = new Card[5];
     }
-    public void     players_fold(Player p){
+    public void    players_fold(Player p){
         p.set_fold(false); 
         players_empty_hand(p); 
     }
-    public void     players_next(){ // swap players
+    public void    players_next(){ // swap players
         // If player equals first player or position of player is less than size of players-1
         if(currentPlayer == nonFoldedPlayers.get(0) || nonFoldedPlayers.indexOf(currentPlayer) < nonFoldedPlayers.size()-1)
             currentPlayer = nonFoldedPlayers.get(nonFoldedPlayers.indexOf(currentPlayer) + 1); // next player
@@ -474,16 +468,16 @@ public class Game{
         // go back to starting player / next round
         else currentPlayer = nonFoldedPlayers.get(0);
     }
-    public void     players_remove(Player p){ this.players.remove(p); }
-    public void     players_set_current(Player p){ this.currentPlayer = p; }
-    public void     players_set_notReady(){
+    public void    players_remove(Player p){ this.players.remove(p); }
+    public void    players_set_current(Player p){ this.currentPlayer = p; }
+    public void    players_set_notReady(){
         for(int i = 0; i < players.size(); i++){
             players.get(i).set_raised(false);
             players.get(i).set_fold(false);
             players.get(i).set_current_bet(0);
         }
     }
-    public void     player_sort_cards(Player p){ p.get_player_hand().sort_by_value(); }
+    public void    player_sort_cards(Player p){ p.get_player_hand().sort_by_value(); }
     
     /***************************************
      
