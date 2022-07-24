@@ -57,6 +57,7 @@ public class Game{
                 }
             }
         }
+
         winningPlayer.add_wallet(pot.get_pot());
         winStr = String.valueOf(pot.get_pot());
         pot.empty_pot();
@@ -295,9 +296,6 @@ public class Game{
                     event_name(event);
 
                     for(int i = 0; i < 5; i++) players.get(event.playerID).add_card(players_draw_card(), i);
-
-                    players.get(event.playerID).get_player_hand().strength = Hand.determineHand(players.get(event.playerID).get_player_hand());
-                    players.get(event.playerID).get_player_hand().hand = Card.Handenum.valueOf(players.get(event.playerID).get_player_hand().strength);
                 }    
                 
                 for(Player p : playerQueue)
@@ -323,6 +321,9 @@ public class Game{
             determine_winner();
             event_reset(event);            // Phase 04 logic (idk)   
         }
+
+        players.get(event.playerID).get_player_hand().strength = Hand.determineHand(players.get(event.playerID).get_player_hand());
+        players.get(event.playerID).get_player_hand().hand = Card.Handenum.values()[players.get(event.playerID).get_player_hand().strength].toString();
         
         determine_player_message(players.get(event.playerID));
 /*
@@ -477,7 +478,10 @@ public class Game{
             players.get(i).set_current_bet(0);
         }
     }
-    public void    player_sort_cards(Player p){ p.get_player_hand().sort_by_value(); }
+    public void    player_sort_cards(Player p){ 
+        p.get_player_hand().sort_by_value(); 
+        //p.get_player_hand().sort_by_suit();
+    }
     
     /***************************************
      

@@ -43,15 +43,15 @@
             <p>Your Cards:</p>
             <p style="text-align:center">
                 <input  id="card1checkbox"  type="checkbox">
-                <img    id="card1" src=""   width="100px">
+                <img    id="card1" src=""   width="80px">
                 <input  id="card2checkbox"  type="checkbox">
-                <img    id="card2" src=""   width="100px">
+                <img    id="card2" src=""   width="80px">
                 <input  id="card3checkbox"  type="checkbox">
-                <img    id="card3" src=""   width="100px">
+                <img    id="card3" src=""   width="80px">
                 <input  id="card4checkbox"  type="checkbox">
-                <img    id="card4" src=""   width="100px">
+                <img    id="card4" src=""   width="80px">
                 <input  id="card5checkbox"  type="checkbox">
-                <img    id="card5" src=""   width="100px">
+                <img    id="card5" src=""   width="80px">
             </p>
         </div>
         <div id="buttons_display"     style="display: none;">
@@ -410,12 +410,15 @@
     function display_cards(){
         document.getElementById("cards_display").style.display = "block";
 
+        
+
         for(var i = 0; i < 5; i++){
             // if cards are null str becomes empty so nothing is displayed
             var str = "";
             var checkboxnum = "card" + (i+1) + "checkbox";
             var card = playerObj.playerHand.cards[i];
-            //var card = playerObj.Cards[i];
+
+            for(var i = 0; i < 5; i++) console.log(card.value);
 
             if(card.value == "ACE")             str += "A";
             else if(card.value == "TWO")        str += "2";
@@ -476,7 +479,8 @@
             document.getElementById("info").innerHTML = 
                 "Player Wallet: "   + playerObj.wallet
                 + "\nPlayer Name: " + playerObj.name
-                + "\nPlayer Id: "   + playerObj.id;
+                + "\nPlayer Id: "   + playerObj.id
+                + "Player Hand: " + playerObj.playerHand.hand;
 
             // display the amount in the pot
             document.getElementById("pot").innerHTML = "Total Pot: " + obj.pot.pot;
@@ -488,7 +492,8 @@
             var playerTotalBetString = "";
 
             obj.players.forEach(player =>{
-                playerTotalBetString += "id: " + player.id + " | " + player.name
+                playerTotalBetString += "id: " + player.id 
+                    + " | " + player.name
                     + " | Current Bet: " + player.currentBet
                     + " Wallet: " + player.wallet
                     + " ready: " + (player.ready?"Yes":"No")

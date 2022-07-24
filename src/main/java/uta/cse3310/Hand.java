@@ -31,17 +31,21 @@ public class Hand{
               Sorting Methods
     *********************************/
 
-    public void sort_by_value(){      // 
-        for(int i = 0; i < cards.length; i++){
-            for(int j = i+1; j < cards.length; j++){
-                if(cards[j].value.ordinal() < cards[i].value.ordinal()){
-                    Card temp = cards[i];
-                    cards[i] = cards[j];
-                    cards[j] = temp;
+    public void sort_by_value(){      // Bubble sort :D
+        for(int i = 0; i < cards.length-1; i++){
+            for(int h = 0; h < cards.length; h++) System.out.print(cards[h].value.ordinal() + " ");
+            System.out.println("\n");
+            for (int j = 0; j < cards.length-i-1; j++){
+                if(cards[j+1].value.ordinal() < cards[j].value.ordinal()){
+                    Card temp = cards[j];
+                    cards[j] = cards[j+1];
+                    cards[j+1] = temp;
                 }
             }
         }
 
+        for(int i = 0; i < cards.length; i++) System.out.println(cards[i].value);
+/*
         // Resets the position of each card in the event the there is a straight with 10, jack, queen, king, ace
         if(cards[0].value.ordinal() == 0 && cards[1].value.ordinal() == 9 && cards[4].value.ordinal() == 12){
             Card temp = cards[0];
@@ -51,6 +55,7 @@ public class Hand{
             cards[3] = cards[4];
             cards[4] = temp;
         }
+*/
     }   
     public void sort_by_suit(){
         for(int i = 0; i < cards.length; i++){
@@ -59,6 +64,7 @@ public class Hand{
                     Card temp = cards[i];
                     cards[i] = cards[j];
                     cards[j] = temp; 
+
                 }
             }
         }
@@ -86,9 +92,7 @@ public class Hand{
         return(h.cards[0].suite == h.cards[4].suite);     
     }
     public static boolean is_straight(Hand h){          // Method for finding a straight
-        if(h.cards.length != 5) return(false);  
-
-        h.sort_by_value();  
+        if(h.cards.length != 5) return(false);    
 
         if(h.cards[4].value.ordinal() == 0) return true;    // Straight 10, jack, queen, king, ace
 
@@ -107,8 +111,6 @@ public class Hand{
     public static boolean three_of_kind(Hand h){
         if(h.cards.length != 5) return(false);
 
-        h.sort_by_value();         // Sort by value
-
         if(h.cards[0].value.ordinal() == h.cards[2].value.ordinal()) return true;
         if(h.cards[1].value.ordinal() == h.cards[3].value.ordinal()) return true;
         if(h.cards[2].value.ordinal() == h.cards[4].value.ordinal()) return true;
@@ -118,8 +120,6 @@ public class Hand{
     public static boolean four_of_kind(Hand h){
         if(h.cards.length != 5) return(false);
 
-        h.sort_by_value();         // Sort by value
-
         if(h.cards[0].value.ordinal() == h.cards[3].value.ordinal()) return true;
         if(h.cards[1].value.ordinal() == h.cards[4].value.ordinal()) return true;
 
@@ -127,8 +127,6 @@ public class Hand{
     }
     public static boolean is_full_house(Hand h){
         if(h.cards.length != 5) return(false);
-
-        h.sort_by_value();
 
         if(h.cards[0].value.ordinal() == h.cards[1].value.ordinal() && h.cards[1].value.ordinal() != h.cards[2].value.ordinal()) return true;
         if(h.cards[3].value.ordinal() == h.cards[4].value.ordinal() && h.cards[3].value.ordinal() != h.cards[2].value.ordinal()) return true;
@@ -138,8 +136,6 @@ public class Hand{
     public static boolean is_two_pairs(Hand h){
         if(h.cards.length != 5) return(false);
 
-        h.sort_by_value();
-
         if(h.cards[0].value.ordinal() == h.cards[1].value.ordinal() && h.cards[2].value.ordinal() == h.cards[3].value.ordinal()) return true;
         if(h.cards[0].value.ordinal() == h.cards[1].value.ordinal() && h.cards[3].value.ordinal() == h.cards[4].value.ordinal()) return true;
         if(h.cards[1].value.ordinal() == h.cards[2].value.ordinal() && h.cards[3].value.ordinal() == h.cards[4].value.ordinal()) return true;
@@ -148,8 +144,6 @@ public class Hand{
     }
     public static boolean is_one_pair(Hand h){
         if(h.cards.length != 5) return(false);
-
-        h.sort_by_value();
 
         if(h.cards[0].value.ordinal() == h.cards[1].value.ordinal()) return true;
         if(h.cards[1].value.ordinal() == h.cards[2].value.ordinal()) return true;
