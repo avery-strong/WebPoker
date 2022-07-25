@@ -416,7 +416,7 @@
             var checkboxnum = "card" + (i+1) + "checkbox";
             var card = playerObj.playerHand.cards[i];
 
-            for(var i = 0; i < 5; i++) console.log(card.value);
+            for(var i = 0; i < playerObj.playerHand.cards.length; i++) console.log(card.value);
 
             if(card.value == "ACE")             str += "A";
             else if(card.value == "TWO")        str += "2";
@@ -478,7 +478,7 @@
                 "Player Wallet: "   + playerObj.wallet
                 + "\nPlayer Name: " + playerObj.name
                 + "\nPlayer Id: "   + playerObj.id
-                + "Player Hand: " + playerObj.playerHand.hand;
+                + "Player Hand: "   + playerObj.playerHand.hand;
 
             // display the amount in the pot
             document.getElementById("pot").innerHTML = "Total Pot: " + obj.pot.pot;

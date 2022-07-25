@@ -322,11 +322,8 @@ public class Game{
             event_reset(event);            // Phase 04 logic (idk)   
         }
 
-        players.get(event.playerID).determineHand();
+        players.get(event.playerID).get_player_hand().determine_hand();
 
-        //players.get(event.playerID).get_player_hand().hand = Hand.determineHand(players.get(event.playerID).get_player_hand());
-        //players.get(event.playerID).get_player_hand().hand = Card.Handenum.values()[players.get(event.playerID).get_player_hand().strength].toString();
-        
         determine_player_message(players.get(event.playerID));
 /*
         if(turn == players.size()-1){

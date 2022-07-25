@@ -84,31 +84,31 @@ public class Hand{
               Hand Methods
     *********************************/
 
-    public static boolean is_flush(Card[] c){             // Method for finding a flush
+    public boolean is_flush(){             // Method for finding a flush
         if(cards.length != 5) return(false);   
 
-        h.sort_by_suit();     
+        sort_by_suit();     
 
         return(cards[0].suite == cards[4].suite);     
     }
-    public static boolean is_royal_flush(Card[] c){       // Method for finding a royal flush
-        if(is_flush(h) && is_straight(h) && cards[4].value.ordinal() == 0) return true;
+    public boolean is_royal_flush(){       // Method for finding a royal flush
+        if(is_flush() && is_straight() && cards[4].value.ordinal() == 0) return true;
 
         return false;
     }
-    public static boolean is_straight_flush(Card[] c){
-        if(is_flush(h) && is_straight(h)) return true;
+    public boolean is_straight_flush(){
+        if(is_flush() && is_straight()) return true;
 
         return false;
     }
     
-    public static boolean is_straight(Card[] c){          // Method for finding a straight
+    public boolean is_straight(){          // Method for finding a straight
         if(cards.length != 5) return(false);    
 
         if(cards[4].value.ordinal() == 0) return true;    // Straight 10, jack, queen, king, ace
 
         else{
-            int test_value = cards[0].value.ordinal() + 1;
+            int test_value = cards[0].value.ordinal()+1;
 
             for (int i = 1; i < 5; i++ ){
                 if(cards[i].value.ordinal() != test_value) return(false);        // Straight fails if values are not eqaul
@@ -119,7 +119,7 @@ public class Hand{
             return true;        
         }
     }
-    public static boolean three_of_kind(Card[] c){
+    public boolean three_of_kind(){
         if(cards.length != 5) return(false);
 
         if(cards[0].value.ordinal() == cards[2].value.ordinal()) return true;
@@ -128,7 +128,7 @@ public class Hand{
 
         return false;
     }
-    public static boolean four_of_kind(Card[] c){
+    public boolean four_of_kind(){
         if(cards.length != 5) return(false);
 
         if(cards[0].value.ordinal() == cards[3].value.ordinal()) return true;
@@ -136,7 +136,7 @@ public class Hand{
 
         return false;
     }
-    public static boolean is_full_house(Card[] c){
+    public boolean full_house(){
         if(cards.length != 5) return(false);
 
         if(cards[0].value.ordinal() == cards[1].value.ordinal() && cards[1].value.ordinal() != cards[2].value.ordinal()) return true;
@@ -144,7 +144,7 @@ public class Hand{
 
         return false;
     }
-    public static boolean is_two_pairs(Card[] c){
+    public boolean two_pairs(){
         if(cards.length != 5) return(false);
 
         if(cards[0].value.ordinal() == cards[1].value.ordinal() && cards[2].value.ordinal() == cards[3].value.ordinal()) return true;
@@ -153,7 +153,7 @@ public class Hand{
 
         return false;
     }
-    public static boolean is_one_pair(Card[] c){
+    public boolean one_pair(){
         if(cards.length != 5) return(false);
 
         if(cards[0].value.ordinal() == cards[1].value.ordinal()) return true;
@@ -163,25 +163,50 @@ public class Hand{
 
         return false;
     }
-    public String determineHand(){
-        if(is_flush(cards)){
-            if(is_straight_flush(cards)){
-                if(is_royal_flush(cards)) hand = Handenum.ROYAL.ordinal();       // Royal Flush
-                else hand = Handenum.STRAIGHTFLUSH.toString(); // Straight Flush
+    public void determine_hand(){
+        if(is_flush()){
+            if(is_straight_flush()){
+                if(is_royal_flush()){ // Royal Flush
+                    hand = Handenum.ROYAL.toString();         
+                    strength = Handenum.ROYAL.ordinal();
+                }  
+                else{ // Straight Flush
+                    hand = Handenum.STRAIGHTFLUSH.toString();
+                    strength = Handenum.STRAIGHTFLUSH.ordinal();
+                }                    
             }
-            else hand = Handenum.FLUSH.toString();                                 // Flush
+            else{ // Flush
+                hand = Handenum.FLUSH.toString();
+                strength = Handenum.FLUSH.ordinal();
+            }                                 
         }             
-
-        if(is_straight(cards)) return Handenum.STRAIGHT.ordinal();               // Straight
-        if(three_of_kind(cards)){
-            if(four_of_kind(cards)) return Handenum.FOUR.ordinal();              // Four of a kind
-            if(is_full_house(cards)) return Handenum.HOUSE.ordinal();            // Full House
-            else hand = Handenum.THREE.toString();                                 // Three of a kind
+        if(is_straight()){ // Straight
+            hand = Handenum.STRAIGHT.toString();
+            strength = Handenum.STRAIGHT.ordinal();
+        }
+        if(three_of_kind()){
+            if(four_of_kind()){  // Four of a kind
+               hand = Handenum.FOUR.toString(); 
+               strength = Handenum.FOUR.ordinal();
+            } 
+            if(full_house()){ // Full House
+                hand = Handenum.HOUSE.toString();
+                strength = Handenum.HOUSE.ordinal();
+            } 
+            else{ // Three of a kind
+                hand = Handenum.THREE.toString();
+                strength = Handenum.THREE.ordinal();
+            }               
         }        
-
-        if(is_one_pair(cards)){
-            if(is_two_pairs(cards)) hand = Handenum.TWO.ordinal();               // Two Pairs 
-            else hand = Handenum.ONE.toString();                                   // One Pair
+        if(one_pair()){
+            if(two_pairs()){ // Two Pairs 
+               hand = Handenum.TWO.toString();
+               strength = Handenum.TWO.ordinal(); 
+            } 
+            else{ // One Pair
+                hand = Handenum.ONE.toString();
+                strength = Handenum.ONE.ordinal();
+            }
         }    
     }
 
@@ -190,7 +215,7 @@ public class Hand{
     *****************************************/
 
     public boolean is_better_than(Hand h){ 
-        if(Handenum.hand.ordinal() > Handenum.h.hand.ordinal()) return true; 
+        if(strength > h.strength) return true; 
 
         return false;
     }
