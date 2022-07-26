@@ -32,7 +32,7 @@ public class Hand{
         this.cards = new Card[5];
         this.hand = ""; 
     }
-    public Hand(Card c[]){ 
+    public Hand(Card[] c){ 
         this.cards = c; 
         this.hand = "";
     }
