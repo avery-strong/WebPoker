@@ -276,7 +276,9 @@ public class AppTest{
         Hand hand = new Hand(cards);
         
         hand.sort_by_value();
-        hand.sort_by_suit();
+
+        for(int i = 0; i < hand.cards.length; i++) System.out.println(hand.cards[i].value + "\n" + hand.cards[i].suite);
+        //hand.sort_by_suit();
         
         assertTrue(hand.is_royal_flush());
     }

@@ -51,9 +51,14 @@ public class Hand{
                 }
             }
         }
-/*
+
         // Resets the position of each card in the event the there is a straight with 10, jack, queen, king, ace
-        if(cards[0].value.ordinal() == 0 && cards[1].value.ordinal() == 9 && cards[4].value.ordinal() == 12){
+        if(cards[0].value.ordinal() == 0 
+        && cards[1].value.ordinal() == 9
+        && cards[2].value.ordinal() == 10
+        && cards[3].value.ordinal() == 11
+        && cards[4].value.ordinal() == 12){
+
             Card temp = cards[0];
             cards[0] = cards[1];
             cards[1] = cards[2];
@@ -61,7 +66,7 @@ public class Hand{
             cards[3] = cards[4];
             cards[4] = temp;
         }
-*/
+
     }   
     public void sort_by_suit(){
         for(int i = 0; i < cards.length; i++){
