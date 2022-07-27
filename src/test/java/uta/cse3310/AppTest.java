@@ -11,8 +11,7 @@ import org.junit.Test;
  * Unit test for simple App.
  */
 
-public class AppTest
-{
+public class AppTest{
     /**
      * Rigorous Test :-)
      */
@@ -20,7 +19,7 @@ public class AppTest
      // very basic but most important aspects
 
     @Test
-    public void shouldAnswerWithTrue(){
+    public void answers_true(){
         Game game = new Game();
         assertTrue( game != null);
     }
@@ -28,7 +27,7 @@ public class AppTest
     // test the create_deck method
     // true if correct size
     @Test
-    public void shuffleTest(){
+    public void shuffle_test(){
         Game game = new Game();
 
         assertTrue( game.deck_size() == 52 );
@@ -36,26 +35,35 @@ public class AppTest
 
     // test the sortHand method in Hand.java
     @Test
-    public void sortHandTest(){
+    public void sort_value_test(){
+        Game game = new Game();
         Card c = new Card();
-        Card cards[] = new Card[5];
+        Card[] cards = new Card[5];
 
-        c.value = Card.Value.NINE;
-        c.suite = Card.Suite.SPADES;
-        cards[0] = c;
-        c.value = Card.Value.SIX;
-        c.suite = Card.Suite.SPADES;
-        cards[1] = c;
-        c.value = Card.Value.SEVEN;
-        c.suite = Card.Suite.SPADES;
-        cards[2] = c;
-        c.value = Card.Value.EIGHT;
-        c.suite = Card.Suite.SPADES;
-        cards[3] = c;
-        c.value = Card.Value.FIVE;
-        c.suite = Card.Suite.SPADES;
-        cards[4] = c;
+        Card c_00 = new Card();
+        c_00.value = Card.Value.NINE;
+        c_00.suite = Card.Suite.SPADES;
+        cards[0] = c_00;
 
+        Card c_01 = new Card();
+        c_01.value = Card.Value.SIX;
+        c_01.suite = Card.Suite.SPADES;
+        cards[1] = c_01;
+
+        Card c_02 = new Card();
+        c_02.value = Card.Value.SEVEN;
+        c_02.suite = Card.Suite.SPADES;
+        cards[2] = c_02;
+
+        Card c_03 = new Card();
+        c_03.value = Card.Value.EIGHT;
+        c_03.suite = Card.Suite.SPADES;
+        cards[3] = c_03;
+
+        Card c_04 = new Card();
+        c_04.value = Card.Value.FIVE;
+        c_04.suite = Card.Suite.SPADES;
+        cards[4] = c_04;
 
         Hand hand = new Hand(cards);
         
@@ -71,7 +79,7 @@ public class AppTest
 
     // test empty_hand method in Game.java
     @Test
-    public void emptyHandTest(){
+    public void empty_hand(){
         Game game = new Game();
         Player player = new Player(0);
         game.players_add(player);
@@ -81,7 +89,7 @@ public class AppTest
 
     // test players_set_notReady method in Game.java
     @Test
-    public void setPlayersNotReadyTest(){
+    public void set_players_not_ready(){
         Game game = new Game();
         Player p0 = new Player(0);
         p0.set_ready(false);             
@@ -102,7 +110,7 @@ public class AppTest
 
     // test players_num_ready method in Game.java
     @Test
-    public void numPlayersReadyTest(){
+    public void num_players_ready(){
         Game game = new Game();
         Player p0 = new Player(0);
         p0.set_ready(true);             // = true;
@@ -120,7 +128,7 @@ public class AppTest
 
     // test players_all_ready method in Game.java
     @Test
-    public void allPlayersReadyTest(){
+    public void all_players_ready(){
         Game game = new Game();
         Player p0 = new Player(0);
         p0.set_ready(true);             // = true;
@@ -140,7 +148,7 @@ public class AppTest
 
     // test players_all_ready method in Game.java
     @Test
-    public void allPlayersReadyTest2(){
+    public void all_players_ready_2(){
         Game game = new Game();
         Player p0 = new Player(0);
         p0.set_ready(true);             // = true;
@@ -197,5 +205,79 @@ public class AppTest
         game.players_set_current(p0);
 
         assertTrue(game.players_size() == 2 && game.nonFolded_size() == 2);
+    }
+    @Test
+    public void flush(){
+        Game game = new Game();
+        Card[] cards = new Card[5];
+
+        Card c_00 = new Card();
+        c_00.value = Card.Value.NINE;
+        c_00.suite = Card.Suite.SPADES;
+        cards[0] = c_00;
+
+        Card c_01 = new Card();
+        c_01.value = Card.Value.SIX;
+        c_01.suite = Card.Suite.SPADES;
+        cards[1] = c_01;
+
+        Card c_02 = new Card();
+        c_02.value = Card.Value.SEVEN;
+        c_02.suite = Card.Suite.SPADES;
+        cards[2] = c_02;
+
+        Card c_03 = new Card();
+        c_03.value = Card.Value.EIGHT;
+        c_03.suite = Card.Suite.SPADES;
+        cards[3] = c_03;
+
+        Card c_04 = new Card();
+        c_04.value = Card.Value.FIVE;
+        c_04.suite = Card.Suite.SPADES;
+        cards[4] = c_04;
+
+        Hand hand = new Hand(cards);
+        
+        hand.sort_by_value();
+        hand.sort_by_suit();
+        
+        assertTrue(hand.is_flush());
+    }
+    @Test
+    public void royal_flush(){
+        Game game = new Game();
+        Card[] cards = new Card[5];
+
+        Card c_00 = new Card();
+        c_00.value = Card.Value.ACE;
+        c_00.suite = Card.Suite.HEARTS;
+        cards[0] = c_00;
+
+        Card c_01 = new Card();
+        c_01.value = Card.Value.QUEEN;
+        c_01.suite = Card.Suite.HEARTS;
+        cards[1] = c_01;
+
+        Card c_02 = new Card();
+        c_02.value = Card.Value.JACK;
+        c_02.suite = Card.Suite.HEARTS;
+        cards[2] = c_02;
+
+        Card c_03 = new Card();
+        c_03.value = Card.Value.TEN;
+        c_03.suite = Card.Suite.HEARTS;
+        cards[3] = c_03;
+
+        Card c_04 = new Card();
+        c_04.value = Card.Value.KING;
+        c_04.suite = Card.Suite.HEARTS;
+        cards[4] = c_04;
+
+        Hand hand = new Hand(cards);
+        
+        hand.sort_by_value();
+        hand.sort_by_suit();
+        
+        assertTrue(hand.is_royal_flush());
     }
 }

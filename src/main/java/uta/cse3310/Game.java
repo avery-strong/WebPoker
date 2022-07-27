@@ -310,7 +310,7 @@ public class Game{
                 break;
             case SORT:
                 player_sort_cards(players.get(event.playerID));
-
+                
                 break;
             default:
 
@@ -323,6 +323,7 @@ public class Game{
         }
 
         players.get(event.playerID).get_player_hand().determine_hand();
+        System.out.println(players.get(event.playerID).get_player_hand().hand);
 
         determine_player_message(players.get(event.playerID));
 /*
@@ -437,6 +438,7 @@ public class Game{
         // gets a card from the front of passed in deck
         Card card = deck.get(0);
         deck.remove(0);
+        
         return card;
     }  
     public int     players_num_ready(){

@@ -33,7 +33,7 @@ public class Hand{
         this.hand = ""; 
     }
     public Hand(Card[] c){ 
-        this.cards = c; 
+        this.cards = c;
         this.hand = "";
     }
 
@@ -43,8 +43,6 @@ public class Hand{
 
     public void sort_by_value(){      // Bubble sort :D
         for(int i = 0; i < cards.length-1; i++){
-            for(int h = 0; h < cards.length; h++) System.out.print(cards[h].value.ordinal() + " ");
-            System.out.println("\n");
             for (int j = 0; j < cards.length-i-1; j++){
                 if(cards[j+1].value.ordinal() < cards[j].value.ordinal()){
                     Card temp = cards[j];
@@ -53,8 +51,6 @@ public class Hand{
                 }
             }
         }
-
-        for(int i = 0; i < cards.length; i++) System.out.println(cards[i].value);
 /*
         // Resets the position of each card in the event the there is a straight with 10, jack, queen, king, ace
         if(cards[0].value.ordinal() == 0 && cards[1].value.ordinal() == 9 && cards[4].value.ordinal() == 12){
@@ -86,8 +82,6 @@ public class Hand{
 
     public boolean is_flush(){             // Method for finding a flush
         if(cards.length != 5) return(false);   
-
-        sort_by_suit();     
 
         return(cards[0].suite == cards[4].suite);     
     }
@@ -166,48 +160,50 @@ public class Hand{
     public void determine_hand(){
         if(is_flush()){
             if(is_straight_flush()){
-                if(is_royal_flush()){ // Royal Flush
-                    hand = Handenum.ROYAL.toString();         
-                    strength = Handenum.ROYAL.ordinal();
+                if(is_royal_flush()){                                   // Royal Flush
+                    this.hand     = Handenum.ROYAL.toString();         
+                    this.strength = Handenum.ROYAL.ordinal();
                 }  
-                else{ // Straight Flush
-                    hand = Handenum.STRAIGHTFLUSH.toString();
-                    strength = Handenum.STRAIGHTFLUSH.ordinal();
+                else{                                                   // Straight Flush
+                    this.hand     = Handenum.STRAIGHTFLUSH.toString();
+                    this.strength = Handenum.STRAIGHTFLUSH.ordinal();
                 }                    
             }
-            else{ // Flush
-                hand = Handenum.FLUSH.toString();
-                strength = Handenum.FLUSH.ordinal();
+            else{                                                       // Flush
+                this.hand     = Handenum.FLUSH.toString();
+                this.strength = Handenum.FLUSH.ordinal();
             }                                 
         }             
-        if(is_straight()){ // Straight
-            hand = Handenum.STRAIGHT.toString();
-            strength = Handenum.STRAIGHT.ordinal();
+        if(is_straight()){                                              // Straight
+            this.hand     = Handenum.STRAIGHT.toString();
+            this.strength = Handenum.STRAIGHT.ordinal();
         }
         if(three_of_kind()){
-            if(four_of_kind()){  // Four of a kind
-               hand = Handenum.FOUR.toString(); 
-               strength = Handenum.FOUR.ordinal();
+            if(four_of_kind()){                                         // Four of a kind
+               this.hand     = Handenum.FOUR.toString(); 
+               this.strength = Handenum.FOUR.ordinal();
             } 
-            if(full_house()){ // Full House
-                hand = Handenum.HOUSE.toString();
-                strength = Handenum.HOUSE.ordinal();
+            if(full_house()){                                           // Full House
+                this.hand     = Handenum.HOUSE.toString();
+                this.strength = Handenum.HOUSE.ordinal();
             } 
-            else{ // Three of a kind
-                hand = Handenum.THREE.toString();
-                strength = Handenum.THREE.ordinal();
+            else{                                                       // Three of a kind
+                this.hand     = Handenum.THREE.toString();
+                this.strength = Handenum.THREE.ordinal();
             }               
         }        
         if(one_pair()){
-            if(two_pairs()){ // Two Pairs 
-               hand = Handenum.TWO.toString();
-               strength = Handenum.TWO.ordinal(); 
+            if(two_pairs()){                                            // Two Pairs 
+               this.hand     = Handenum.TWO.toString();
+               this.strength = Handenum.TWO.ordinal(); 
             } 
-            else{ // One Pair
-                hand = Handenum.ONE.toString();
-                strength = Handenum.ONE.ordinal();
+            else{                                                       // One Pair
+                this.hand     = Handenum.ONE.toString();
+                this.strength = Handenum.ONE.ordinal();
             }
-        }    
+        }  
+
+        System.out.println(hand + "\n" + strength); 
     }
 
     /****************************************

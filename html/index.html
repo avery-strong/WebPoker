@@ -132,8 +132,6 @@
         document.getElementById("name_display").style.display = "block";
     }
     connection.onmessage = function(evt){
-        //console.log("message: \n" + evt.data);
-
         var msg;
         msg = evt.data;
         // Take the msg and turn it into a javascript object
@@ -379,33 +377,7 @@
                 break;
             default:
                 break;
-        }
-/* 
-        // At some point after a player has check the playerId will change
-        if(obj.phase != 0 && obj.id == playerObj.id){
-            //document.getElementById("sendReady").disabled   = false;
-            document.getElementById("sendFold").disabled    = false;
-            document.getElementById("sendBet1").disabled    = false;
-            document.getElementById("sendBet2").disabled    = false;
-            document.getElementById("sendBet3").disabled    = false;
-            document.getElementById("sendDraw").disabled    = false;
-        }
-        // If the player checked this will disable all the buttons but sort
-        else{                       
-            //document.getElementById("sendReady").disabled   = true;
-            document.getElementById("sendCheck").disabled   = true;
-            document.getElementById("sendFold").disabled    = true;
-            document.getElementById("sendCall").disabled    = true;
-            document.getElementById("sendBet1").disabled    = true;
-            document.getElementById("sendBet2").disabled    = true;
-            document.getElementById("sendBet3").disabled    = true;
-            document.getElementById("sendDraw").disabled    = true;
-        
-
-        if(playerObj.fold) document.getElementById("sendSort").disabled   = true;    
-        if(!playerObj.fold) document.getElementById("sendSort").disabled   = false;
-*/
-        
+        }    
     }
     function display_cards(){
         document.getElementById("cards_display").style.display = "block";
@@ -414,28 +386,27 @@
             // if cards are null str becomes empty so nothing is displayed
             var str = "";
             var checkboxnum = "card" + (i+1) + "checkbox";
-            var card = playerObj.playerHand.cards[i];
 
-            for(var i = 0; i < playerObj.playerHand.cards.length; i++) console.log(card.value);
+            //for(var j = 0; j < playerObj.playerHand.cards.length; j++) console.log(card.value);
 
-            if(card.value == "ACE")             str += "A";
-            else if(card.value == "TWO")        str += "2";
-            else if(card.value == "THREE")      str += "3";
-            else if(card.value == "FOUR")       str += "4";
-            else if(card.value == "FIVE")       str += "5";
-            else if(card.value == "SIX")        str += "6";
-            else if(card.value == "SEVEN")      str += "7";
-            else if(card.value == "EIGHT")      str += "8";
-            else if(card.value == "NINE")       str += "9";
-            else if(card.value == "TEN")        str += "T";
-            else if(card.value == "JACK")       str += "J";
-            else if(card.value == "QUEEN")      str += "Q";
-            else if(card.value == "KING")       str += "K";
+            if(playerObj.playerHand.cards[i].value == "ACE")             str += "A";
+            else if(playerObj.playerHand.cards[i].value == "TWO")        str += "2";
+            else if(playerObj.playerHand.cards[i].value == "THREE")      str += "3";
+            else if(playerObj.playerHand.cards[i].value == "FOUR")       str += "4";
+            else if(playerObj.playerHand.cards[i].value == "FIVE")       str += "5";
+            else if(playerObj.playerHand.cards[i].value == "SIX")        str += "6";
+            else if(playerObj.playerHand.cards[i].value == "SEVEN")      str += "7";
+            else if(playerObj.playerHand.cards[i].value == "EIGHT")      str += "8";
+            else if(playerObj.playerHand.cards[i].value == "NINE")       str += "9";
+            else if(playerObj.playerHand.cards[i].value == "TEN")        str += "T";
+            else if(playerObj.playerHand.cards[i].value == "JACK")       str += "J";
+            else if(playerObj.playerHand.cards[i].value == "QUEEN")      str += "Q";
+            else if(playerObj.playerHand.cards[i].value == "KING")       str += "K";
 
-            if(card.suite == "SPADES")          str += "S";
-            else if(card.suite == "HEARTS")     str += "H";
-            else if(card.suite == "CLUBS")      str += "C";
-            else if(card.suite == "DIAMONDS")   str += "D";
+            if(playerObj.playerHand.cards[i].suite == "SPADES")          str += "S";
+            else if(playerObj.playerHand.cards[i].suite == "HEARTS")     str += "H";
+            else if(playerObj.playerHand.cards[i].suite == "CLUBS")      str += "C";
+            else if(playerObj.playerHand.cards[i].suite == "DIAMONDS")   str += "D";
 
             str += ".svg";
             
@@ -445,32 +416,37 @@
     }
     function display_connect(obj){}
     function display_info(obj){         // Most events will need to call display_info()
-        
         /*
             When onOpen is called onMessage is called as well and sent just the first bit of Player JSON
             At this point we will add playerID from obj.id so we can find what we need later on
+
+            It appears when onOpen/onMessage are called the first time the object that exists is solely a player object.
+            After a name has been set the objects coming in are now the entire game
         */
-        playerObj = obj;
-
-        if(obj.name == "not set") playerID = obj.id;
+        if(obj.name == "not set"){
+            playerID = obj.id;
+            playerObj = obj;
+        }
+        // Essentially after a name is set display_info will move here every time
         else{
-            for(var i = 0; i < obj.players.length; i++){
-                console.log(
-                    "Player Name: "       + obj.players[i].name
-                    + "\n\tID: "          + obj.players[i].id
-                    + "\n\tWallet: "      + obj.players[i].wallet
-                    + "\n\tCurrent Bet: " + obj.players[i].currentBet
-                    + "\n\tTotal Bet: "   + obj.players[i].totalBet
-                    + "\n\tBet "          + obj.players[i].bet
-                    + "\n\tCheck: "       + obj.players[i].check
-                    + "\n\tDraw: "        + obj.players[i].draw
-                    + "\n\tFold: "        + obj.players[i].fold
-                    + "\n\tRaised: "      + obj.players[i].raised
-                    + "\n\tReady: "       + obj.players[i].ready
-                    + "\n");
-            }
-            if(obj.players[playerID].id == playerID) playerObj = obj.players[playerID];  
+            playerObj = obj.players[playerID];
+            
+            console.log(
+                "Player Name: "       + playerObj.name
+                + "\n\tID: "          + playerObj.id
+                + "\n\tWallet: "      + playerObj.wallet
+                + "\n\tCurrent Bet: " + playerObj.currentBet
+                + "\n\tTotal Bet: "   + playerObj.totalBet
+                + "\n\tBet "          + playerObj.bet
+                + "\n\tCheck: "       + playerObj.check
+                + "\n\tDraw: "        + playerObj.draw
+                + "\n\tFold: "        + playerObj.fold
+                + "\n\tRaised: "      + playerObj.raised
+                + "\n\tReady: "       + playerObj.ready
+                + "\n");
 
+            for(var i = 0; i < playerObj.playerHand.cards.length; i++) console.log(playerObj.playerHand.cards[i].value);
+            
             // display whose turn it is
             document.getElementById("phaseMessage").innerHTML = obj.playerMessage;
               
@@ -478,7 +454,7 @@
                 "Player Wallet: "   + playerObj.wallet
                 + "\nPlayer Name: " + playerObj.name
                 + "\nPlayer Id: "   + playerObj.id
-                + "Player Hand: "   + playerObj.playerHand.hand;
+                + "\nPlayer Hand: " + playerObj.playerHand.hand;
 
             // display the amount in the pot
             document.getElementById("pot").innerHTML = "Total Pot: " + obj.pot.pot;
