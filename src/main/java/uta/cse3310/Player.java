@@ -25,16 +25,16 @@ public class Player {
 
     *************************************/
 
-    public void set_bet(boolean b){ this.bet = b; }
-    public void set_check(boolean b)               { this.check = b; }
-    public void set_current_bet(int bet)           { this.currentBet += bet; }
-    public void set_draw(boolean b)                { this.draw = b;   }
-    public void set_fold(boolean b)                { this.fold = b; }
-    public void set_id(int id)                     { this.id = id; }
-    public void set_name(String n)                 { this.name = n; }
-    public void set_raised(boolean b)              { this.raised = b; }
-    public void set_ready(boolean b)               { this.ready = b; }
-    public void set_wallet(int amount)             { this.wallet = amount; }
+    public void set_bet(boolean b)      { this.bet = b; }
+    public void set_check(boolean b)    { this.check = b; }
+    public void set_current_bet(int bet){ this.currentBet += bet; }
+    public void set_draw(boolean b)     { this.draw = b;   }
+    public void set_fold(boolean b)     { this.fold = b; }
+    public void set_id(int id)          { this.id = id; }
+    public void set_name(String n)      { this.name = n; }
+    public void set_raised(boolean b)   { this.raised = b; }
+    public void set_ready(boolean b)    { this.ready = b; }
+    public void set_wallet(int amount)  { this.wallet = amount; }
 
     public void add_card(Card c, int i) { this.playerHand.cards[i] = c; }
     public void add_wallet(int bet)     { this.wallet += bet; }
@@ -51,20 +51,20 @@ public class Player {
 
     *************************************/
 
-    public boolean get_bet()        { return this.bet; }
-    public boolean get_check()      { return this.check; }
-    public boolean get_draw()       { return this.draw; }
-    public boolean get_fold()       { return this.fold; }
-    public boolean get_raised()     { return this.raised; }
-    public boolean get_ready()      { return this.ready; }
+    public boolean get_bet()   { return this.bet; }
+    public boolean get_check() { return this.check; }
+    public boolean get_draw()  { return this.draw; }
+    public boolean get_fold()  { return this.fold; }
+    public boolean get_raised(){ return this.raised; }
+    public boolean get_ready() { return this.ready; }
 
-    public Card get_card(int i)     { return this.playerHand.cards[i]; }
+    public Card get_card(int i){ return this.playerHand.cards[i]; }
 
-    public Hand get_player_hand()   { return this.playerHand; }
+    public Hand get_player_hand(){ return this.playerHand; }
 
-    public int get_id()             { return this.id; }
-    public int get_wallet()         { return this.wallet; }
-    public int get_current_bet()    { return this.currentBet; }
+    public int get_id()         { return this.id; }
+    public int get_wallet()     { return this.wallet; }
+    public int get_current_bet(){ return this.currentBet; }
 
     public String get_name()        { return this.name; }
     

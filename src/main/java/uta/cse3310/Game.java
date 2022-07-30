@@ -17,6 +17,14 @@ public class Game{
         pot = new Pot();
         phase = 0;
     }
+    public Game(String test){
+        // App Tests
+        System.out.println("Game" + " " + test);
+        deck_create();
+        deck_shuffle();
+        pot = new Pot();
+        phase = 0;
+    }
 
     /**************************************
      

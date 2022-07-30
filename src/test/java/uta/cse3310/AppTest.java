@@ -20,7 +20,7 @@ public class AppTest{
 
     @Test
     public void answers_true(){
-        Game game = new Game();
+        game = new Game("Answers true");
         assertTrue( game != null);
     }
 
@@ -28,7 +28,7 @@ public class AppTest{
     // true if correct size
     @Test
     public void shuffle_test(){
-        Game game = new Game();
+        game = new Game("Shuffle");
 
         assertTrue( game.deck_size() == 52 );
     }
@@ -36,7 +36,7 @@ public class AppTest{
     // test the sortHand method in Hand.java
     @Test
     public void sort_value_test(){
-        Game game = new Game();
+        game = new Game("Sort value");
         Card c = new Card();
         Card[] cards = new Card[5];
 
@@ -80,7 +80,7 @@ public class AppTest{
     // test empty_hand method in Game.java
     @Test
     public void empty_hand(){
-        Game game = new Game();
+        game = new Game("Empty hand");
         Player player = new Player(0);
         game.players_add(player);
         game.players_empty_hand(player);
@@ -90,7 +90,7 @@ public class AppTest{
     // test players_set_notReady method in Game.java
     @Test
     public void set_players_not_ready(){
-        Game game = new Game();
+        game = new Game("Players not ready");
         Player p0 = new Player(0);
         p0.set_ready(false);             
         Player p1 = new Player(1);
@@ -111,7 +111,7 @@ public class AppTest{
     // test players_num_ready method in Game.java
     @Test
     public void num_players_ready(){
-        Game game = new Game();
+        game = new Game("Number of players ready");
         Player p0 = new Player(0);
         p0.set_ready(true);             // = true;
         Player p1 = new Player(1);
@@ -129,7 +129,7 @@ public class AppTest{
     // test players_all_ready method in Game.java
     @Test
     public void all_players_ready(){
-        Game game = new Game();
+        game = new Game("All players ready");
         Player p0 = new Player(0);
         p0.set_ready(true);             // = true;
         Player p1 = new Player(1);
@@ -149,7 +149,7 @@ public class AppTest{
     // test players_all_ready method in Game.java
     @Test
     public void all_players_ready_2(){
-        Game game = new Game();
+        game = new Game("All players ready 2");
         Player p0 = new Player(0);
         p0.set_ready(true);             // = true;
         Player p1 = new Player(1);
@@ -192,7 +192,7 @@ public class AppTest{
     // test player_fold_current() method in Game.java
     @Test
     public void foldCurrentPlayerTest(){
-        Game game = new Game();
+        game = new Game("Fold current players");
 
         Player p0 = new Player(0);
         Player p1 = new Player(1);
@@ -207,79 +207,297 @@ public class AppTest{
         assertTrue(game.players_size() == 2 && game.nonFolded_size() == 2);
     }
     @Test
-    public void flush(){
-        Game game = new Game();
-        Card[] cards = new Card[5];
+    public void royal_flush(){
+        game = new Game("Royal flush");
+        cards = new Card[5];
 
-        Card c_00 = new Card();
-        c_00.value = Card.Value.NINE;
-        c_00.suite = Card.Suite.SPADES;
-        cards[0] = c_00;
+        c = new Card();
+        c.value = Card.Value.ACE;
+        c.suite = Card.Suite.HEARTS;
+        cards[0] = c;
 
-        Card c_01 = new Card();
-        c_01.value = Card.Value.SIX;
-        c_01.suite = Card.Suite.SPADES;
-        cards[1] = c_01;
+        c = new Card();
+        c.value = Card.Value.KING;
+        c.suite = Card.Suite.HEARTS;
+        cards[1] = c;
 
-        Card c_02 = new Card();
-        c_02.value = Card.Value.SEVEN;
-        c_02.suite = Card.Suite.SPADES;
-        cards[2] = c_02;
+        c = new Card();
+        c.value = Card.Value.JACK;
+        c.suite = Card.Suite.HEARTS;
+        cards[2] = c;
 
-        Card c_03 = new Card();
-        c_03.value = Card.Value.EIGHT;
-        c_03.suite = Card.Suite.SPADES;
-        cards[3] = c_03;
+        c = new Card();
+        c.value = Card.Value.QUEEN;
+        c.suite = Card.Suite.HEARTS;
+        cards[3] = c;
 
-        Card c_04 = new Card();
-        c_04.value = Card.Value.FIVE;
-        c_04.suite = Card.Suite.SPADES;
-        cards[4] = c_04;
+        c = new Card();
+        c.value = Card.Value.TEN;
+        c.suite = Card.Suite.HEARTS;
+        cards[4] = c;
 
-        Hand hand = new Hand(cards);
-        
+        hand = new Hand(cards);
+
         hand.sort_by_value();
-        hand.sort_by_suit();
-        
-        assertTrue(hand.is_flush());
+
+        assertTrue(hand.royal_flush());
     }
     @Test
-    public void royal_flush(){
-        Game game = new Game();
-        Card[] cards = new Card[5];
+    public void straight_flush(){
+        game = new Game("Straight flush");
+        cards = new Card[5];
 
-        Card c_00 = new Card();
-        c_00.value = Card.Value.ACE;
-        c_00.suite = Card.Suite.HEARTS;
-        cards[0] = c_00;
+        c = new Card();
+        c.value = Card.Value.TWO;
+        c.suite = Card.Suite.DIAMONDS;
+        cards[0] = c;
 
-        Card c_01 = new Card();
-        c_01.value = Card.Value.QUEEN;
-        c_01.suite = Card.Suite.HEARTS;
-        cards[1] = c_01;
+        c = new Card();
+        c.value = Card.Value.FIVE;
+        c.suite = Card.Suite.DIAMONDS;
+        cards[1] = c;
 
-        Card c_02 = new Card();
-        c_02.value = Card.Value.JACK;
-        c_02.suite = Card.Suite.HEARTS;
-        cards[2] = c_02;
+        c = new Card();
+        c.value = Card.Value.FOUR;
+        c.suite = Card.Suite.DIAMONDS;
+        cards[2] = c;
 
-        Card c_03 = new Card();
-        c_03.value = Card.Value.TEN;
-        c_03.suite = Card.Suite.HEARTS;
-        cards[3] = c_03;
+        c = new Card();
+        c.value = Card.Value.THREE;
+        c.suite = Card.Suite.DIAMONDS;
+        cards[3] = c;
 
-        Card c_04 = new Card();
-        c_04.value = Card.Value.KING;
-        c_04.suite = Card.Suite.HEARTS;
-        cards[4] = c_04;
+        c = new Card();
+        c.value = Card.Value.ACE;
+        c.suite = Card.Suite.DIAMONDS;
+        cards[4] = c;
 
-        Hand hand = new Hand(cards);
+        hand = new Hand(cards);
+        
+        hand.sort_by_value();
+        
+        assertTrue(hand.straight_flush());
+    }
+    @Test
+    public void four_kind(){
+        game = new Game("Four of a kind");
+        cards = new Card[5];
+
+        c = new Card();
+        c.value = Card.Value.ACE;
+        c.suite = Card.Suite.CLUBS;
+        cards[0] = c;
+
+        c = new Card();
+        c.value = Card.Value.SIX;
+        c.suite = Card.Suite.CLUBS;
+        cards[1] = c;
+
+        c = new Card();
+        c.value = Card.Value.ACE;
+        c.suite = Card.Suite.CLUBS;
+        cards[2] = c;
+
+        c = new Card();
+        c.value = Card.Value.ACE;
+        c.suite = Card.Suite.CLUBS;
+        cards[3] = c;
+
+        c = new Card();
+        c.value = Card.Value.ACE;
+        c.suite = Card.Suite.CLUBS;
+        cards[4] = c;
+
+        hand = new Hand(cards);
+        
+        hand.sort_by_value();
+        
+        assertTrue(hand.four_of_kind());
+    }
+    @Test
+    public void flush(){
+        game = new Game("Flush");
+        cards = new Card[5];
+
+        c = new Card();
+        c.value = Card.Value.TWO;
+        c.suite = Card.Suite.SPADES;
+        cards[0] = c;
+
+        c = new Card();
+        c.value = Card.Value.FIVE;
+        c.suite = Card.Suite.SPADES;
+        cards[1] = c;
+
+        c = new Card();
+        c.value = Card.Value.FOUR;
+        c.suite = Card.Suite.SPADES;
+        cards[2] = c;
+
+        c = new Card();
+        c.value = Card.Value.THREE;
+        c.suite = Card.Suite.SPADES;
+        cards[3] = c;
+
+        c = new Card();
+        c.value = Card.Value.ACE;
+        c.suite = Card.Suite.SPADES;
+        cards[4] = c;
+
+        hand = new Hand(cards);
+        
+        hand.sort_by_value();
+        
+        assertTrue(hand.flush());
+    }
+    @Test
+    public void straight(){
+        game = new Game("Straight");
+        cards = new Card[5];
+
+        c = new Card();
+        c.value = Card.Value.NINE;
+        c.suite = Card.Suite.SPADES;
+        cards[0] = c;
+
+        c = new Card();
+        c.value = Card.Value.SIX;
+        c.suite = Card.Suite.HEARTS;
+        cards[1] = c;
+
+        c = new Card();
+        c.value = Card.Value.SEVEN;
+        c.suite = Card.Suite.HEARTS;
+        cards[2] = c;
+
+        c = new Card();
+        c.value = Card.Value.EIGHT;
+        c.suite = Card.Suite.CLUBS;
+        cards[3] = c;
+
+        c = new Card();
+        c.value = Card.Value.FIVE;
+        c.suite = Card.Suite.DIAMONDS;
+        cards[4] = c;
+
+        hand = new Hand(cards);
+        
+        hand.sort_by_value();
+        
+        assertTrue(hand.straight());
+    }
+    @Test
+    public void three_kind(){
+        game = new Game("Three of a kind");
+        cards = new Card[5];
+
+        c = new Card();
+        c.value = Card.Value.ACE;
+        c.suite = Card.Suite.SPADES;
+        cards[0] = c;
+
+        c = new Card();
+        c.value = Card.Value.ACE;
+        c.suite = Card.Suite.HEARTS;
+        cards[1] = c;
+
+        c = new Card();
+        c.value = Card.Value.SEVEN;
+        c.suite = Card.Suite.HEARTS;
+        cards[2] = c;
+
+        c = new Card();
+        c.value = Card.Value.KING;
+        c.suite = Card.Suite.CLUBS;
+        cards[3] = c;
+
+        c = new Card();
+        c.value = Card.Value.ACE;
+        c.suite = Card.Suite.DIAMONDS;
+        cards[4] = c;
+
+        hand = new Hand(cards);
         
         hand.sort_by_value();
 
-        for(int i = 0; i < hand.cards.length; i++) System.out.println(hand.cards[i].value + "\n" + hand.cards[i].suite);
-        //hand.sort_by_suit();
-        
-        assertTrue(hand.is_royal_flush());
+        assertTrue(hand.three_of_kind());
     }
+    @Test
+    public void two_pairs(){
+        game = new Game("Two pairs");
+        cards = new Card[5];
+
+        c = new Card();
+        c.value = Card.Value.ACE;
+        c.suite = Card.Suite.SPADES;
+        cards[0] = c;
+
+        c = new Card();
+        c.value = Card.Value.FOUR;
+        c.suite = Card.Suite.HEARTS;
+        cards[1] = c;
+
+        c = new Card();
+        c.value = Card.Value.SEVEN;
+        c.suite = Card.Suite.HEARTS;
+        cards[2] = c;
+
+        c = new Card();
+        c.value = Card.Value.ACE;
+        c.suite = Card.Suite.CLUBS;
+        cards[3] = c;
+
+        c = new Card();
+        c.value = Card.Value.FOUR;
+        c.suite = Card.Suite.DIAMONDS;
+        cards[4] = c;
+
+        hand = new Hand(cards);
+        
+        hand.sort_by_value();
+
+        assertTrue(hand.two_pairs());
+    }
+    @Test
+    public void one_pair(){
+        game = new Game("One Pair");
+        cards = new Card[5];
+
+        c = new Card();
+        c.value = Card.Value.ACE;
+        c.suite = Card.Suite.SPADES;
+        cards[0] = c;
+
+        c = new Card();
+        c.value = Card.Value.JACK;
+        c.suite = Card.Suite.HEARTS;
+        cards[1] = c;
+
+        c = new Card();
+        c.value = Card.Value.SEVEN;
+        c.suite = Card.Suite.HEARTS;
+        cards[2] = c;
+
+        c = new Card();
+        c.value = Card.Value.FOUR;
+        c.suite = Card.Suite.CLUBS;
+        cards[3] = c;
+
+        c = new Card();
+        c.value = Card.Value.ACE;
+        c.suite = Card.Suite.DIAMONDS;
+        cards[4] = c;
+
+        hand = new Hand(cards);
+        
+        hand.sort_by_value();
+
+        assertTrue(hand.one_pair());
+    }
+
+    private Game game;
+    private Card[] cards;
+    private Card c;
+    private Hand hand;
 }
+//for(int i = 0; i < hand.cards.length; i++) System.out.println(hand.cards[i].value + "\n" + hand.cards[i].suite);
