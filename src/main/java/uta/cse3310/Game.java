@@ -237,93 +237,101 @@ public class Game{
 
         Player event_player = players.get(event.playerID);
 
-        switch(event.event){
-            case BET:
-                event_bet(event);
+    
+            switch(event.event){
+                case BET:
+                    event_bet(event);
 
-                turn++;
+                    turn++;
 
-                if(turn == players.size()){
-                    phase++;                                
-                    turn = 0;
-                    roundBet = 0;
-                }
+                    if(players.get(event.playerID+1).get_bet()) turn +=2;
+                    if(turn > players.size()) turn = players.size();
+
+                    // Determines wherther skip to the next turn or the next phase
+                    if(turn == players.size()){                       
+                        turn = 0;
+                        roundBet = 0;
+
+                        if(bet_all_equal()) phase++;
+                    }
+                    
                 
-                // Set the highest bet
-                for(Player p : players)
-                    if(p.get_current_bet() > highestBet) highestBet = p.get_current_bet();
+                    // Set the highest bet
+                    for(Player p : players)
+                        if(p.get_current_bet() > highestBet) highestBet = p.get_current_bet();
 
-                roundBet = highestBet;
+                    roundBet = highestBet;
                 
-                break; 
-            case CALL:
-                event.amount_to_bet = highestBet;
-                event_bet(event);
+                    break; 
+                case CALL:
+                    event.amount_to_bet = highestBet;
+                    event_bet(event);
 
-                turn++;
+                    turn++;
 
-                if(turn == players.size() && bet_all_equal()){
-                    phase++;
-                    turn = 0;
-                }
+                    if(turn == players.size() && bet_all_equal()){
+                        phase++;
+                        turn = 0;
+                    }
 
-                break;
-            case CHECK:
-                event_check(event_player);
+                    break;
+                case CHECK:
+                    event_check(event_player);
 
-                turn++;
+                    turn++;
 
-                break;
-            case DRAW:
-                event_draw(event);
+                    break;
+                case DRAW:
+                    event_draw(event);
 
-                turn++;
+                    turn++;
 
-                if(players_all_draw()){
-                    phase = 3;
-                    turn = 0;
-                    players.get(0).set_check(false);    // need to reset check (weird here I know)
-                }
+                    if(players_all_draw()){
+                        phase = 3;
+                        turn = 0;
+                        players.get(0).set_check(false);    // need to reset check (weird here I know)
+                    }
 
-                break;
-            case FOLD:
-                event_fold(event);
+                    break;
+                case FOLD:
+                    event_fold(event);
 
-                turn++;
+                    turn++;
 
-                int foldedCount = 0;
+                    int foldedCount = 0;
 
-                for(Player p : players)
-                    if(p.get_fold()) foldedCount++;
+                    for(Player p : players)
+                        if(p.get_fold()) foldedCount++;
 
-                if(foldedCount == 4) phase = 4;
+                    if(foldedCount == 4) phase = 4;
 
-                break;
-            case NAME:
-                if(phase == 0){
-                    event_name(event);
+                    break;
+                case NAME:
+                    if(phase == 0){
+                        event_name(event);
 
-                    for(int i = 0; i < 5; i++) players.get(event.playerID).add_card(players_draw_card(), i);
-                }    
+                        for(int i = 0; i < 5; i++) players.get(event.playerID).add_card(players_draw_card(), i);
+                    }    
                 
-                for(Player p : playerQueue)
-                    if(p.get_id() == event.playerID) p.set_name(event.name);
+                    for(Player p : playerQueue)
+                        if(p.get_id() == event.playerID) p.set_name(event.name);
                 
-                break;
-            case READY:
-                event_ready(event); 
+                    break;
+                case READY:
+                    event_ready(event); 
 
-                if(players_all_ready()) phase = 1;
+                    if(players_all_ready()) phase = 1;
                 
-                break;
-            case SORT:
-                player_sort_cards(players.get(event.playerID));
+                    break;
+                case SORT:
+                    player_sort_cards(players.get(event.playerID));
                 
-                break;
-            default:
+                    break;
+                default:
 
-                break;
-        }              
+                    break;
+            }    
+              
         
         if(phase == 4){
             determine_winner();
