@@ -15,6 +15,7 @@ public class Game{
         deck_create();
         deck_shuffle();
         pot = new Pot();
+        turn = new Player();
         phase = 0;
     }
     public Game(String test){
@@ -23,6 +24,7 @@ public class Game{
         deck_create();
         deck_shuffle();
         pot = new Pot();
+        turn = new Player();
         phase = 0;
     }
 
@@ -131,19 +133,19 @@ public class Game{
         else if(phase == 1){
             playerMessage = "Phase: First Bet Phase"
             + "\n"
-            + "Turn: " + players.get(turn).get_name();
+            + "Turn: " + turn.get_name();
         }
 
         else if(phase == 2){
             playerMessage = "Phase: Draw Phase"
             + "\n"
-            + "Turn: " + players.get(turn).get_name();
+            + "Turn: " + turn.get_name();
         }
 
         else if(phase == 3){
             playerMessage = "Phase: Second Bet Phase"
             + "\n"
-            + "Turn: " + players.get(turn).get_name();
+            + "Turn: " + turn.get_name();
         }
         else if(phase == 4){
             // tie situation
@@ -237,25 +239,23 @@ public class Game{
 
         Player event_player = players.get(event.playerID);
 
+        if(event.event == UserEventType.BET)
+
     
             switch(event.event){
                 case BET:
                     event_bet(event);
 
-                    turn++;
-
-                    if(players.get(event.playerID+1).get_bet()) turn +=2;
-                    if(turn > players.size()) turn = players.size();
+                    turn = players.get(event.playerID+1);
 
                     // Determines wherther skip to the next turn or the next phase
-                    if(turn == players.size()){                       
-                        turn = 0;
+                    if(turn.get_id() == players.size()-1){                       
+                        turn = players.get(0);
                         roundBet = 0;
 
                         if(bet_all_equal()) phase++;
                     }
                     
-                
                     // Set the highest bet
                     for(Player p : players)
                         if(p.get_current_bet() > highestBet) highestBet = p.get_current_bet();
@@ -267,28 +267,28 @@ public class Game{
                     event.amount_to_bet = highestBet;
                     event_bet(event);
 
-                    turn++;
+                    turn = players.get(event.playerID+1);
 
-                    if(turn == players.size() && bet_all_equal()){
+                    if(turn == players.get(players.size()) && bet_all_equal()){
                         phase++;
-                        turn = 0;
+                        turn = players.get(0);
                     }
 
                     break;
                 case CHECK:
                     event_check(event_player);
 
-                    turn++;
+                    turn = players.get(event.playerID+1);;
 
                     break;
                 case DRAW:
                     event_draw(event);
 
-                    turn++;
+                    turn = players.get(event.playerID+1);;
 
                     if(players_all_draw()){
                         phase = 3;
-                        turn = 0;
+                        turn = players.get(0);
                         players.get(0).set_check(false);    // need to reset check (weird here I know)
                     }
 
@@ -296,7 +296,7 @@ public class Game{
                 case FOLD:
                     event_fold(event);
 
-                    turn++;
+                    turn = players.get(event.playerID+1);;
 
                     int foldedCount = 0;
 
@@ -681,12 +681,13 @@ public class Game{
     // turns
     private Player currentPlayer;
     private Player winningPlayer;
+    private Player turn;
 
     private String playerMessage;
 
     // round - these are used with javascript to determine certain displays
     private int phase = 0;
-    private int turn = 0;
+    //private int turn = 0;
     private int highestBet = 0;
     private int roundBet = 0;
 
