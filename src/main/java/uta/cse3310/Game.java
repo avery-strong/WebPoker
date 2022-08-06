@@ -239,99 +239,98 @@ public class Game{
 
         Player event_player = players.get(event.playerID);
 
-        if(event.event == UserEventType.BET)
+        switch(event.event){
+            case BET:
+                event_bet(event);
 
-    
-            switch(event.event){
-                case BET:
-                    event_bet(event);
+                turn = players.get(event.playerID+1);
 
-                    turn = players.get(event.playerID+1);
+                // Determines wherther skip to the next turn or the next phase
+                if(turn.get_id() == players.size()-1){                       
+                    turn = players.get(0);
+                    roundBet = 0;
 
-                    // Determines wherther skip to the next turn or the next phase
-                    if(turn.get_id() == players.size()-1){                       
-                        turn = players.get(0);
-                        roundBet = 0;
-
-                        if(bet_all_equal()) phase++;
-                    }
+                    if(bet_all_equal()) phase++;
+                }
                     
                     // Set the highest bet
-                    for(Player p : players)
-                        if(p.get_current_bet() > highestBet) highestBet = p.get_current_bet();
+                for(Player p : players)
+                    if(p.get_current_bet() > highestBet) highestBet = p.get_current_bet();
 
-                    roundBet = highestBet;
+                roundBet = highestBet;
                 
-                    break; 
-                case CALL:
-                    event.amount_to_bet = highestBet;
-                    event_bet(event);
+                break; 
+            case CALL:
+                event.amount_to_bet = highestBet;
+                event_bet(event);
 
-                    turn = players.get(event.playerID+1);
+                turn = players.get(event.playerID+1);
 
-                    if(turn == players.get(players.size()) && bet_all_equal()){
+                if(turn == players.get(players.size()) && bet_all_equal()){
                         phase++;
                         turn = players.get(0);
-                    }
+                }
 
                     break;
-                case CHECK:
-                    event_check(event_player);
+            case CHECK:
+                event_check(event_player);
 
-                    turn = players.get(event.playerID+1);;
+                turn = players.get(event.playerID+1);;
 
-                    break;
-                case DRAW:
-                    event_draw(event);
+                break;
+            case DRAW:
+                event_draw(event);
 
-                    turn = players.get(event.playerID+1);;
+                turn = players.get(event.playerID+1);;
 
-                    if(players_all_draw()){
-                        phase = 3;
-                        turn = players.get(0);
-                        players.get(0).set_check(false);    // need to reset check (weird here I know)
-                    }
+                if(players_all_draw()){
+                    phase = 3;
+                    turn = players.get(0);
+                    players.get(0).set_check(false);    // need to reset check (weird here I know)
+                }
 
-                    break;
-                case FOLD:
-                    event_fold(event);
+                break;
+            case FOLD:
+                event_fold(event);
 
-                    turn = players.get(event.playerID+1);;
+                turn = players.get(event.playerID+1);;
 
-                    int foldedCount = 0;
+                int foldedCount = 0;
 
-                    for(Player p : players)
-                        if(p.get_fold()) foldedCount++;
+                for(Player p : players)
+                    if(p.get_fold()) foldedCount++;
 
-                    if(foldedCount == 4) phase = 4;
+                if(foldedCount == 4) phase = 4;
 
-                    break;
-                case NAME:
-                    if(phase == 0){
-                        event_name(event);
+                break;
+            case NAME:
+                if(phase == 0){
+                    event_name(event);
 
-                        for(int i = 0; i < 5; i++) players.get(event.playerID).add_card(players_draw_card(), i);
-                    }    
+                    for(int i = 0; i < 5; i++) players.get(event.playerID).add_card(players_draw_card(), i);
+                }    
                 
-                    for(Player p : playerQueue)
-                        if(p.get_id() == event.playerID) p.set_name(event.name);
+                for(Player p : playerQueue)
+                    if(p.get_id() == event.playerID) p.set_name(event.name);
                 
-                    break;
-                case READY:
-                    event_ready(event); 
+                break;
+            case READY:
+                event_ready(event); 
 
-                    if(players_all_ready()) phase = 1;
+                if(players_all_ready()){
+                    phase = 1;
+                    turn = players.get(0);
+                }
                 
-                    break;
-                case SORT:
-                    player_sort_cards(players.get(event.playerID));
+                break;
+            case SORT:
+                player_sort_cards(players.get(event.playerID));
                 
-                    break;
-                default:
+                break;
+            default:
 
-                    break;
-            }    
-              
+                break;
+        }    
         
         if(phase == 4){
             determine_winner();
@@ -636,9 +635,7 @@ public class Game{
         players.get(event.playerID).set_current_bet(event.amount_to_bet);
         pot.add_to_pot(event.amount_to_bet);
     }
-    public void     bet_place(UserEvent event){
-        
-    }
+    public void     bet_place(UserEvent event){ }
     public void     bet_place_ante(int id){
         players.get(id).subtract_wallet(20);
         pot.add_to_pot(20);
