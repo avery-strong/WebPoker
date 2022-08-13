@@ -124,6 +124,16 @@ public class Game{
         // give players new cards starting essentially a new game
     }
 */    
+    public void determine_player(UserEvent event, Player event_player){
+        switch(event.event){
+            case BET:
+                int i = 0;
+                while(!players.get(event_player.get_id()+i).get_bet()){
+                    turn = players.get(event_player.get_id()+i+1);
+                    i++;
+                }
+        }
+    }
     public void determine_player_message(Player p){
         if(phase == 0){
             playerMessage = "Phase: PreGame"
@@ -243,15 +253,16 @@ public class Game{
             case BET:
                 event_bet(event);
 
-                turn = players.get(event.playerID+1);
+                determine_player(event, event_player);
 
-                // Determines wherther skip to the next turn or the next phase
+                // Determines whether skip to the next turn or the next phase
                 if(turn.get_id() == players.size()-1){                       
                     turn = players.get(0);
                     roundBet = 0;
 
                     if(bet_all_equal()) phase++;
                 }
+                else turn = players.get(event.playerID+1);
                     
                     // Set the highest bet
                 for(Player p : players)
@@ -267,8 +278,8 @@ public class Game{
                 turn = players.get(event.playerID+1);
 
                 if(turn == players.get(players.size()) && bet_all_equal()){
-                        phase++;
-                        turn = players.get(0);
+                    phase++;
+                    turn = players.get(0);
                 }
 
                     break;
