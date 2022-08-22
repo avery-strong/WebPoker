@@ -124,14 +124,27 @@ public class Game{
         // give players new cards starting essentially a new game
     }
 */    
-    public void determine_player(UserEvent event, Player event_player){
+    public void determine_player(UserEvent event){
         switch(event.event){
             case BET:
-                int i = 0;
-                while(!players.get(event_player.get_id()+i).get_bet()){
-                    turn = players.get(event_player.get_id()+i+1);
-                    i++;
+                while(turn.get_bet() && !bet_all_equal()){
+                    if(turn.equals(players.get(players.size()-1))){
+                        turn = players.get(0);
+
+                        if(!bet_all_equal()){
+                            for(Player p : players)
+                                if(p.get_current_bet() != highestBet) p.set_bet(false);
+                        }
+                    }
+                    else turn = players.get(turn.get_id()+1);
                 }
+
+                if(bet_all_equal()){
+                    turn = players.get(0);
+                    phase++;
+                }
+                
+            default:
         }
     }
     public void determine_player_message(Player p){
@@ -253,20 +266,11 @@ public class Game{
             case BET:
                 event_bet(event);
 
-                determine_player(event, event_player);
-
-                // Determines whether skip to the next turn or the next phase
-                if(turn.get_id() == players.size()-1){                       
-                    turn = players.get(0);
-                    roundBet = 0;
-
-                    if(bet_all_equal()) phase++;
-                }
-                else turn = players.get(event.playerID+1);
-                    
-                    // Set the highest bet
+                // Set the highest bet
                 for(Player p : players)
                     if(p.get_current_bet() > highestBet) highestBet = p.get_current_bet();
+
+                determine_player(event);
 
                 roundBet = highestBet;
                 
@@ -385,14 +389,13 @@ public class Game{
 
     public void event_bet(UserEvent event){                     // Phase 01 (First Bet Phase) logic
         //Check if player is betting more than they have, change bet to whatever is left in their wallet.
-        if(event.amount_to_bet > players.get(event.playerID).get_wallet()) 
-            event.amount_to_bet = players.get(event.playerID).get_wallet();
+        if(event.amount_to_bet > turn.get_wallet()) event.amount_to_bet = turn.get_wallet();
         
-        players.get(event.playerID).subtract_wallet(event.amount_to_bet);
-        players.get(event.playerID).set_current_bet(event.amount_to_bet);
+        turn.subtract_wallet(event.amount_to_bet);
+        turn.set_current_bet(event.amount_to_bet);
         pot.add_to_pot(event.amount_to_bet);
 
-        players.get(event.playerID).set_bet(true);
+        turn.set_bet(true);
     }
     public void event_check(Player p){ p.set_check(true); }     // (Player check) logic
     public void event_draw(UserEvent event){                    // Phase 02 logic
@@ -590,7 +593,7 @@ public class Game{
 
     public boolean  bet_all_equal(){
         for(Player p : players)
-            if(p.get_current_bet() != highestBet) return false;
+            if(p.get_current_bet() != highestBet || !p.get_bet()) return false;
         
         return true;
     }

@@ -11,12 +11,14 @@ public class Player {
         this.name = "not set";
         this.wallet = 100;
         this.playerHand = new Hand();
+        this.currentBet = 0;
     }
 
     public Player(){
         this.name = "not set";
         this.wallet = 100;
         this.playerHand = new Hand();
+        this.currentBet = 0;
     }
 
     /*************************************
@@ -27,7 +29,7 @@ public class Player {
 
     public void set_bet(boolean b)      { this.bet = b; }
     public void set_check(boolean b)    { this.check = b; }
-    public void set_current_bet(int bet){ this.currentBet += bet; }
+    public void set_current_bet(int bet){ this.currentBet += bet;}
     public void set_draw(boolean b)     { this.draw = b;   }
     public void set_fold(boolean b)     { this.fold = b; }
     public void set_id(int id)          { this.id = id; }
