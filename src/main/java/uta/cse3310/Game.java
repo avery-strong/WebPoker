@@ -143,8 +143,45 @@ public class Game{
                     turn = players.get(0);
                     phase++;
                 }
-                
+                break;
+            case CALL:
+                turn = players.get(event.playerID+1);
+
+                if(turn == players.get(players.size()-1) && bet_all_equal()){
+                    phase++;
+                    turn = players.get(0);
+                }
+                break;
+            case CHECK:
+                turn = players.get(event.playerID+1);
+
+                break;
+            case DRAW:
+                turn = players.get(event.playerID+1);;
+
+                if(players_all_draw()){
+                    phase = 3;
+                    turn = players.get(0);
+                    players.get(0).set_check(false);    // need to reset check (weird here I know)
+                }
+                break;
+            case FOLD:
+                turn = players.get(event.playerID+1);
+
+                break;
+            case READY:
+                if(players_all_ready()){
+                    phase = 1;
+                    turn = players.get(0);
+                }
+
+                break;
+            case SORT:
+
+                break;
             default:
+
+                break;
         }
     }
     public void determine_player_message(Player p){
@@ -279,36 +316,25 @@ public class Game{
                 event.amount_to_bet = highestBet;
                 event_bet(event);
 
-                turn = players.get(event.playerID+1);
+                determine_player(event);
 
-                if(turn == players.get(players.size()) && bet_all_equal()){
-                    phase++;
-                    turn = players.get(0);
-                }
-
-                    break;
+                break;
             case CHECK:
                 event_check(event_player);
 
-                turn = players.get(event.playerID+1);;
+                determine_player(event);
 
                 break;
             case DRAW:
                 event_draw(event);
 
-                turn = players.get(event.playerID+1);;
-
-                if(players_all_draw()){
-                    phase = 3;
-                    turn = players.get(0);
-                    players.get(0).set_check(false);    // need to reset check (weird here I know)
-                }
+                determine_player(event);
 
                 break;
             case FOLD:
                 event_fold(event);
 
-                turn = players.get(event.playerID+1);;
+                determine_player(event);
 
                 int foldedCount = 0;
 
@@ -332,10 +358,7 @@ public class Game{
             case READY:
                 event_ready(event); 
 
-                if(players_all_ready()){
-                    phase = 1;
-                    turn = players.get(0);
-                }
+                determine_player(event);
                 
                 break;
             case SORT:
