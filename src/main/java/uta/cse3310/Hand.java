@@ -53,12 +53,12 @@ public class Hand{
         }
 
         // Resets the position of each card in the event the there is a straight with 10, jack, queen, king, ace
-        //
         if(cards[0].value.ordinal() == 0 
         && cards[1].value.ordinal() == 9
         && cards[2].value.ordinal() == 10
         && cards[3].value.ordinal() == 11
         && cards[4].value.ordinal() == 12){
+
             Card temp = cards[0];
             cards[0] = cards[1];
             cards[1] = cards[2];
@@ -66,6 +66,7 @@ public class Hand{
             cards[3] = cards[4];
             cards[4] = temp;
         }
+
     }   
     public void sort_by_suit(){
         for(int i = 0; i < cards.length; i++){
@@ -83,38 +84,31 @@ public class Hand{
     /*********************************
               Hand Methods
     *********************************/
-    public boolean royal_flush(){       // Method for finding a royal flush
-        if(flush() && straight() && cards[4].value.ordinal() == 0) return true;
+
+    public boolean is_flush(){             // Method for finding a flush
+        if(cards.length != 5) return(false);  
+        if(cards[0].suite == cards[1].suite && 
+           cards[0].suite == cards[2].suite &&
+           cards[0].suite == cards[3].suite &&
+           cards[0].suite == cards[4].suite){
+
+            return true;
+        }   
+
+        return false; 
+    }
+    public boolean is_royal_flush(){       // Method for finding a royal flush
+        if(is_flush() && is_straight() && cards[4].value.ordinal() == 0) return true;
 
         return false;
     }
-    public boolean straight_flush(){
-        if(flush() && straight()) return true;
+    public boolean is_straight_flush(){
+        if(is_flush() && is_straight()) return true;
 
         return false;
     }
-    public boolean four_of_kind(){
-        if(cards.length != 5) return(false);
-
-        if(cards[0].value.ordinal() == cards[3].value.ordinal()) return true;
-        if(cards[1].value.ordinal() == cards[4].value.ordinal()) return true;
-
-        return false;
-    }
-    public boolean full_house(){
-        if(cards.length != 5) return(false);
-
-        if(cards[0].value.ordinal() == cards[1].value.ordinal() && cards[1].value.ordinal() != cards[2].value.ordinal()) return true;
-        if(cards[3].value.ordinal() == cards[4].value.ordinal() && cards[3].value.ordinal() != cards[2].value.ordinal()) return true;
-
-        return false;
-    }
-    public boolean flush(){             // Method for finding a flush
-        if(cards.length != 5) return(false);   
-
-        return(cards[0].suite == cards[4].suite);     
-    }
-    public boolean straight(){          // Method for finding a straight
+    
+    public boolean is_straight(){          // Method for finding a straight
         if(cards.length != 5) return(false);    
 
         if(cards[4].value.ordinal() == 0) return true;    // Straight 10, jack, queen, king, ace
@@ -140,6 +134,22 @@ public class Hand{
 
         return false;
     }
+    public boolean four_of_kind(){
+        if(cards.length != 5) return(false);
+
+        if(cards[0].value.ordinal() == cards[3].value.ordinal()) return true;
+        if(cards[1].value.ordinal() == cards[4].value.ordinal()) return true;
+
+        return false;
+    }
+    public boolean full_house(){
+        if(cards.length != 5) return(false);
+
+        if(cards[0].value.ordinal() == cards[1].value.ordinal() && cards[1].value.ordinal() != cards[2].value.ordinal()) return true;
+        if(cards[3].value.ordinal() == cards[4].value.ordinal() && cards[3].value.ordinal() != cards[2].value.ordinal()) return true;
+
+        return false;
+    }
     public boolean two_pairs(){
         if(cards.length != 5) return(false);
 
@@ -160,9 +170,9 @@ public class Hand{
         return false;
     }
     public void determine_hand(){
-        if(flush()){
-            if(straight_flush()){
-                if(royal_flush()){                                   // Royal Flush
+        if(is_flush()){
+            if(is_straight_flush()){
+                if(is_royal_flush()){                                   // Royal Flush
                     this.hand     = Handenum.ROYAL.toString();         
                     this.strength = Handenum.ROYAL.ordinal();
                 }  
@@ -176,11 +186,11 @@ public class Hand{
                 this.strength = Handenum.FLUSH.ordinal();
             }                                 
         }             
-        else if(straight()){                                              // Straight
+        if(is_straight()){                                              // Straight
             this.hand     = Handenum.STRAIGHT.toString();
             this.strength = Handenum.STRAIGHT.ordinal();
         }
-        else if(three_of_kind()){
+        if(three_of_kind()){
             if(four_of_kind()){                                         // Four of a kind
                this.hand     = Handenum.FOUR.toString(); 
                this.strength = Handenum.FOUR.ordinal();
@@ -194,7 +204,7 @@ public class Hand{
                 this.strength = Handenum.THREE.ordinal();
             }               
         }        
-        else if(one_pair()){
+        if(one_pair()){
             if(two_pairs()){                                            // Two Pairs 
                this.hand     = Handenum.TWO.toString();
                this.strength = Handenum.TWO.ordinal(); 
@@ -204,25 +214,21 @@ public class Hand{
                 this.strength = Handenum.ONE.ordinal();
             }
         }  
-        else{
-            this.hand     = Handenum.HIGH.toString();
-            this.strength = Handenum.HIGH.ordinal();
-        }
 
-        System.out.println(this.hand + "\n" + this.strength); 
+        System.out.println(hand + "\n" + strength); 
     }
 
     /****************************************
               Better Than Methods
     *****************************************/
 
-    public boolean better_than(Hand h){ 
+    public boolean is_better_than(Hand h){ 
         if(strength > h.strength) return true; 
 
         return false;
     }
 
-    public boolean equal(Hand H){ return false; }
+    public boolean is_equal(Hand H){ return false; }
 
     /***************************************
                     Attributes

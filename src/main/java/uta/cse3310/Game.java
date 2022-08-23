@@ -145,19 +145,21 @@ public class Game{
                 }
                 break;
             case CALL:
-                turn = players.get(event.playerID+1);
-
-                if(turn == players.get(players.size()-1) && bet_all_equal()){
-                    phase++;
+                if(turn.equals(players.get(players.size()-1))){
                     turn = players.get(0);
+
+                    if(bet_all_equal()) phase++;
                 }
+                else turn = players.get(event.playerID+1);
+
                 break;
             case CHECK:
                 turn = players.get(event.playerID+1);
 
                 break;
             case DRAW:
-                turn = players.get(event.playerID+1);;
+                if(turn.equals(players.get(players.size()-1))) turn = players.get(0);
+                else turn = players.get(event.playerID+1);
 
                 if(players_all_draw()){
                     phase = 3;
@@ -174,9 +176,6 @@ public class Game{
                     phase = 1;
                     turn = players.get(0);
                 }
-
-                break;
-            case SORT:
 
                 break;
             default:
@@ -375,6 +374,7 @@ public class Game{
             event_reset(event);            // Phase 04 logic (idk)   
         }
 
+        players.get(event.playerID).get_player_hand().sort_by_value();
         players.get(event.playerID).get_player_hand().determine_hand();
         System.out.println(players.get(event.playerID).get_player_hand().hand);
 
@@ -672,7 +672,6 @@ public class Game{
         players.get(event.playerID).set_current_bet(event.amount_to_bet);
         pot.add_to_pot(event.amount_to_bet);
     }
-    public void     bet_place(UserEvent event){ }
     public void     bet_place_ante(int id){
         players.get(id).subtract_wallet(20);
         pot.add_to_pot(20);

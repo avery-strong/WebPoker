@@ -240,7 +240,7 @@ public class AppTest{
 
         hand.sort_by_value();
 
-        assertTrue(hand.royal_flush());
+        assertTrue(hand.is_royal_flush());
     }
     @Test
     public void straight_flush(){
@@ -276,7 +276,7 @@ public class AppTest{
         
         hand.sort_by_value();
         
-        assertTrue(hand.straight_flush());
+        assertTrue(hand.is_straight_flush());
     }
     @Test
     public void four_kind(){
@@ -348,7 +348,7 @@ public class AppTest{
         
         hand.sort_by_value();
         
-        assertTrue(hand.flush());
+        assertTrue(hand.is_flush());
     }
     @Test
     public void straight(){
@@ -384,7 +384,7 @@ public class AppTest{
         
         hand.sort_by_value();
         
-        assertTrue(hand.straight());
+        assertTrue(hand.is_straight());
     }
     @Test
     public void three_kind(){
