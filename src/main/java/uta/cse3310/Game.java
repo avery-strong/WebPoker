@@ -42,15 +42,17 @@ public class Game{
     public void determine_winner(){
         // SETTING TO DEFAULT PLAYER IN ARRAY BC whoWinds doesnt work
         // so other code can be added
-
         for(Player p01 : players){
             // if the player has folded
             if(p01.get_fold()) continue;
+
             for(Player p02 : players){
                 // if the player has folded
                 if(p02.get_fold()) continue;
+
                 // if the players are the same
                 if(p01.get_name().equals(p02.get_name())) continue;
+
                 // if the players hands are equal
                 if(p01.get_player_hand().strength == p02.get_player_hand().strength){
                     tie = true;
@@ -128,6 +130,7 @@ public class Game{
         switch(event.event){
             case BET:
                 while(turn.get_bet() && !bet_all_equal()){
+                    // if it is currently the turn of the last player
                     if(turn.equals(players.get(players.size()-1))){
                         turn = players.get(0);
 
@@ -148,11 +151,7 @@ public class Game{
                 if(turn.equals(players.get(players.size()-1))){
                     turn = players.get(0);
 
-                    if(bet_all_equal()){
-                        phase++;
-                        System.out.println("\n\n" + "I did go off" + "\n\n");
-                    } 
-                        
+                    if(bet_all_equal()) phase++;
                 }
                 else turn = players.get(event.playerID+1);
 
@@ -298,7 +297,8 @@ public class Game{
 
         System.out.println("\n\nPlayer: " 
             + players.get(event.playerID).get_name()
-            + "\n\nEvent: " + event.event);
+            + "\n\nEvent: " + event.event
+            + "\n\nPhase: " + this.phase);
 
         Player event_player = players.get(event.playerID);
 
@@ -373,38 +373,16 @@ public class Game{
                 break;
         }    
         
+        // Automatically sort the hand and set it to be displayed by index.html
+        players.get(event.playerID).get_player_hand().sort_by_value();
+        players.get(event.playerID).get_player_hand().determine_hand();
+
         if(phase == 4){
             determine_winner();
             event_reset(event);            // Phase 04 logic (idk)   
         }
 
-        players.get(event.playerID).get_player_hand().sort_by_value();
-        players.get(event.playerID).get_player_hand().determine_hand();
-
         determine_player_message(players.get(event.playerID));
-/*
-        if(turn == players.size()-1){
-            // Everything below used to be event_move but was only called by event_check
-            if(bet_all_equal()){
-                turn++;
-    
-                 // every player made a single turn
-                if(bet_all_players()){
-                    bet_set_all();
-                    turn = 0;
-                    currentPlayer = nonFoldedPlayers.get(0);
-                    phase++;
-                }
-    
-                timeRemaining = 30;
-            }
-            else{
-                currentPlayer = bet_player_next();
-                turn = bet_next_player();
-                timeRemaining = 30;
-            }
-        }
-*/
     }
 
     /**************************************
@@ -623,7 +601,7 @@ public class Game{
                 System.out.println("\n\n" 
                     + p.get_current_bet() + "\n\n"
                     + highestBet + "\n\n");
-                
+
                 return false;
             }
             
