@@ -148,7 +148,11 @@ public class Game{
                 if(turn.equals(players.get(players.size()-1))){
                     turn = players.get(0);
 
-                    if(bet_all_equal()) phase++;
+                    if(bet_all_equal()){
+                        phase++;
+                        System.out.println("\n\n" + "I did go off" + "\n\n");
+                    } 
+                        
                 }
                 else turn = players.get(event.playerID+1);
 
@@ -376,7 +380,6 @@ public class Game{
 
         players.get(event.playerID).get_player_hand().sort_by_value();
         players.get(event.playerID).get_player_hand().determine_hand();
-        System.out.println(players.get(event.playerID).get_player_hand().hand);
 
         determine_player_message(players.get(event.playerID));
 /*
@@ -616,8 +619,15 @@ public class Game{
 
     public boolean  bet_all_equal(){
         for(Player p : players)
-            if(p.get_current_bet() != highestBet || !p.get_bet()) return false;
-        
+            if(p.get_current_bet() != highestBet){
+                System.out.println("\n\n" 
+                    + p.get_current_bet() + "\n\n"
+                    + highestBet + "\n\n");
+                
+                return false;
+            }
+            
+
         return true;
     }
     public boolean  bet_all_players(){

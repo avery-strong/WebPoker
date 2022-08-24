@@ -85,6 +85,8 @@ public class Hand{
               Hand Methods
     *********************************/
 
+
+
     public boolean is_flush(){             // Method for finding a flush
         if(cards.length != 5) return(false);  
         if(cards[0].suite == cards[1].suite && 
@@ -186,11 +188,11 @@ public class Hand{
                 this.strength = Handenum.FLUSH.ordinal();
             }                                 
         }             
-        if(is_straight()){                                              // Straight
+        else if(is_straight()){                                              // Straight
             this.hand     = Handenum.STRAIGHT.toString();
             this.strength = Handenum.STRAIGHT.ordinal();
         }
-        if(three_of_kind()){
+        else if(three_of_kind()){
             if(four_of_kind()){                                         // Four of a kind
                this.hand     = Handenum.FOUR.toString(); 
                this.strength = Handenum.FOUR.ordinal();
@@ -204,7 +206,7 @@ public class Hand{
                 this.strength = Handenum.THREE.ordinal();
             }               
         }        
-        if(one_pair()){
+        else if(one_pair()){
             if(two_pairs()){                                            // Two Pairs 
                this.hand     = Handenum.TWO.toString();
                this.strength = Handenum.TWO.ordinal(); 
@@ -213,9 +215,11 @@ public class Hand{
                 this.hand     = Handenum.ONE.toString();
                 this.strength = Handenum.ONE.ordinal();
             }
+        } 
+        else{
+            this.hand     = Handenum.HIGH.toString();
+            this.strength = Handenum.HIGH.ordinal(); 
         }  
-
-        System.out.println(hand + "\n" + strength); 
     }
 
     /****************************************
