@@ -45,7 +45,7 @@ public class Game{
         for(Player p01 : players){
             // if the player has folded
             if(p01.get_fold()) continue;
-
+            
             for(Player p02 : players){
                 // if the player has folded
                 if(p02.get_fold()) continue;
@@ -67,8 +67,11 @@ public class Game{
                     winningPlayer = p02;
                     p01.set_fold(true);
                 }
+
             }
         }
+
+        System.out.println("\n\n" + winningPlayer.get_name() + "\n\n");
 
         winningPlayer.add_wallet(pot.get_pot());
         winStr = String.valueOf(pot.get_pot());
@@ -185,6 +188,8 @@ public class Game{
 
                 break;
         }
+
+        System.out.println("\n\n" + phase + "\n\n");
     }
     public void determine_player_message(Player p){
         if(phase == 0){
