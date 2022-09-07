@@ -54,9 +54,8 @@ public class Game{
                 if(p01.get_name().equals(p02.get_name())) continue;
 
                 // if the players hands are equal
-                if(p01.get_player_hand().strength == p02.get_player_hand().strength){
-                    tie = true;
-                }
+                if(p01.get_player_hand().strength == p02.get_player_hand().strength) tie = true;
+                
                 // if the first players hand is stronger than the second
                 else if(p01.get_player_hand().strength > p02.get_player_hand().strength){
                     winningPlayer = p01;
@@ -67,56 +66,24 @@ public class Game{
                     winningPlayer = p02;
                     p01.set_fold(true);
                 }
-
             }
         }
 
         System.out.println("\n\n" + winningPlayer.get_name() + "\n\n");
 
         winningPlayer.add_wallet(pot.get_pot());
-        winStr = String.valueOf(pot.get_pot());
-        pot.empty_pot();
-    }
-/*
-        while(nonFoldedPlayers.size() > 1 && i >= 1){
-            // if the players hands are equal
-            if(nonFoldedPlayers.get(i).get_player_hand().is_equal(nonFoldedPlayers.get(i-1).get_player_hand())){
-                if(nonFoldedPlayers.size() == 2){
-                    tie = true;
-                    break;
-                }
-            }
-            // if player i's hand is stronger than player i-1
-            else if(nonFoldedPlayers.get(i).get_player_hand().is_better_than(nonFoldedPlayers.get(i-1).get_player_hand())) nonFoldedPlayers.remove(i-1);
-            // if player i-1's hand is stronger than player i
-            else nonFoldedPlayers.remove(i);
-            
-            i--;
-            // shouldn't be needed but just in case.
-            failingCounter++;
-            if(failingCounter >= 25) break;
-            
-        }
-        if(!tie){
-            winningPlayer = nonFoldedPlayers.get(0);
-            winner = winningPlayer.get_id();
-        }
-        else winner = -1;
 
-        // update winner wallet
-        winnings = pot.reward_pot();
-        if(winner != -1){
-            Player workingPlayer = get_player(winner);
-            workingPlayer.add_wallet(winnings);
-            winStr = String.valueOf(winnings);
-            pot.empty_pot();
-        }
+        // weird situation with this not going of in determine_player_message so move to here "temporarily"
+        if(tie) playerMessage = "Tie! Both Players" + " won " + winnings/2 + " chips"; 
         else{
-            nonFoldedPlayers.get(0).add_wallet(pot.reward_pot()/2);
-            nonFoldedPlayers.get(1).add_wallet(pot.reward_pot()/2);
-            winStr = String.valueOf(winnings/2);
-            pot.empty_pot();
+            playerMessage = "Winner: Player "
+            + winningPlayer.get_id() + " (" + winningPlayer.get_name() + ")"
+            + " won " + String.valueOf(pot.get_pot()) + " chips";
         }
+
+        System.out.println("\n\n" + playerMessage + "\n\n");
+    }
+
 
         // After we determine the winner we need to
         // Save the winner
@@ -127,8 +94,7 @@ public class Game{
         // add cards back to deck (call deck_create())
         // shuffle (call deck_shuffle())
         // give players new cards starting essentially a new game
-    }
-*/    
+        
     public void determine_player(UserEvent event){
         switch(event.event){
             case BET:
@@ -189,7 +155,7 @@ public class Game{
                 break;
         }
 
-        System.out.println("\n\n" + phase + "\n\n");
+        if(turn.get_fold()) turn = players.get(turn.get_id()+1);
     }
     public void determine_player_message(Player p){
         if(phase == 0){
@@ -214,67 +180,7 @@ public class Game{
             + "\n"
             + "Turn: " + turn.get_name();
         }
-        else if(phase == 4){
-            // tie situation
-            if(tie) playerMessage = "Tie! Both Players" + " won " + winnings/2 + " chips"; 
-            else{
-              playerMessage = "Winner: Player "
-              + winningPlayer.get_id() + " (" + winningPlayer.get_name() + ")"
-              + " won " + winStr + " chips";
-            }
-        }
     }
-
-/*
-    CURRENTLY NOT CALLED
-
-        this method is called on a periodic basis (once a second) by a timer
-        it is to allow time based situations to be handled in the game
-        if the game state is changed, it returns a true.
-     
-        expecting that returning a true will trigger a send of tghe game
-        state to everyone
-
-
-
-    public boolean update(){
-        if(players.size() >= 2 && players_all_ready()){
-            for(Player p : players){
-                for(int j = 0; j < 5; j++) p.add_card(players_draw_card());
-                bet_place_ante(p.get_id());
-                p.set_cards();
-                nonFoldedPlayers.add(p);
-            }
-            currentPlayer = nonFoldedPlayers.get(0);
-            phase = 1;
-            turn = 0;
-            timeRemaining = 30;
-        }
-
-        if(players_num_ready() >= 2 && phase == 0){
-            kick_not_ready();
-            phase = 0;
-            timeRemaining = -1;
-        }
-
-        if(nonFoldedPlayers.size() == 1 && phase != 0 && phase != 5){
-            // if all other players fold
-            // last one standing wins
-            winner = nonFoldedPlayers.get(0).get_id();
-            winningPlayer = nonFoldedPlayers.get(0);
-            //determine_winner();
-            phase = 5;
-            nonFoldedPlayers.clear();
-            turn = -1;
-            players_set_notReady();
-            timeRemaining = -1;
-            winningPlayer.set_player_hand(winningPlayer.Cards);
-            winningPlayer.get_player_hand().get_handName();
-        }
-        //determine_player_message();
-        return true;
-    }
-*/
     public void kick_not_ready(){
         ArrayList<Player> removeList = new ArrayList<>();
         synchronized(WebPoker.mutex){
@@ -382,12 +288,12 @@ public class Game{
         players.get(event.playerID).get_player_hand().sort_by_value();
         players.get(event.playerID).get_player_hand().determine_hand();
 
+        determine_player_message(players.get(event.playerID));
+
         if(phase == 4){
             determine_winner();
-            event_reset(event);            // Phase 04 logic (idk)   
+            //event_reset(event);            // Phase 04 logic (idk)   
         }
-
-        determine_player_message(players.get(event.playerID));
     }
 
     /**************************************
@@ -405,8 +311,10 @@ public class Game{
         pot.add_to_pot(event.amount_to_bet);
 
         turn.set_bet(true);
-    }
-    public void event_check(Player p){ p.set_check(true); }     // (Player check) logic
+    }     
+    public void event_check(Player p){                                  // Player check logic
+        p.set_check(true); 
+    }     
     public void event_draw(UserEvent event){                    // Phase 02 logic
         deck_new_cards(event);
 
@@ -436,6 +344,7 @@ public class Game{
             players_empty_hand(players.get(i));
         }
 
+        pot.empty_pot();
         deck.clear();
         deck_create();
         deck_shuffle();
@@ -462,9 +371,11 @@ public class Game{
         return true;
     }
     public boolean players_all_draw(){
-        for(Player p : players)
+        for(Player p : players){
+            if(p.get_fold()) continue;
             if(!p.get_draw()) return false;
-
+        }
+            
         return true;
     }
     public boolean players_contains(Player p){
@@ -601,7 +512,8 @@ public class Game{
     ***********************************/
 
     public boolean  bet_all_equal(){
-        for(Player p : players)
+        for(Player p : players){
+            if(p.get_fold()) continue;
             if(p.get_current_bet() != highestBet){
                 System.out.println("\n\n" 
                     + p.get_current_bet() + "\n\n"
@@ -609,8 +521,8 @@ public class Game{
 
                 return false;
             }
+        }
             
-
         return true;
     }
     public boolean  bet_all_players(){

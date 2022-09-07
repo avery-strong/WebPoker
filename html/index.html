@@ -114,6 +114,7 @@
     var phase = 0;
     var playerID;
     var playerObj;
+    var gameObj;
     
     //document.getElementById('chips').src = "";
     document.getElementById('infoButton').style = "text-align:center";
@@ -136,6 +137,8 @@
         msg = evt.data;
         // Take the msg and turn it into a javascript object
         const obj = JSON.parse(msg);
+
+        gameObj = obj;
 
         display_info(obj);
         if(phase > 0) display_cards();
@@ -211,6 +214,13 @@
     }
     function event_check(){
         eventType = "CHECK";
+
+        gameObj.players.forEach(player =>{
+            document.getElementById("buttons_display").style.display = "block";
+            document.getElementById("sendCheck").disabled = true;
+            if(player.fold) document.getElementById("buttons_display").style.display = "none";
+        });
+
         send();
     }
     function event_draw(){
@@ -275,6 +285,9 @@
     }
     function event_fold(){
         eventType = "FOLD";
+
+        document.getElementById("buttons_display").style.display = "none";
+
         send();
     }
     function event_name(){
@@ -361,7 +374,7 @@
                 
                 break;
             case 4:    // Showdown
-                if(obj.winner != -1) alert(obj.winningPlayer.name + " won" + " with a "+ obj.winningPlayer.pHand.handname);
+                if(!obj.tie) alert(obj.winningPlayer.name + " won" + " with a "+ obj.winningPlayer.pHand.handname);
                 else alert("Tie!");  
 
                 document.getElementById("sendReady").style          = "text-align:center";
@@ -377,7 +390,12 @@
                 break;
             default:
                 break;
-        }    
+        }  
+/*
+        if(obj.players[playerID].fold){
+
+        }  
+*/
     }
     function display_cards(){
         document.getElementById("cards_display").style.display = "block";
@@ -471,6 +489,7 @@
                     + " | Current Bet: " + player.currentBet
                     + " Wallet: " + player.wallet
                     + " ready: " + (player.ready?"Yes":"No")
+                    + " fold: " + (player.fold?"Yes":"No")
                     + "\n";
             });
 
