@@ -111,17 +111,10 @@ public class Game{
                     else turn = players.get(turn.get_id()+1);
                 }
 
-                if(bet_all_equal()){
-                    turn = players.get(0);
-                    phase++;
-                }
+                
                 break;
             case CALL:
-                if(turn.equals(players.get(players.size()-1))){
-                    turn = players.get(0);
-
-                    if(bet_all_equal()) phase++;
-                }
+                if(turn.equals(players.get(players.size()-1)))turn = players.get(0);
                 else turn = players.get(event.playerID+1);
 
                 break;
@@ -153,6 +146,11 @@ public class Game{
             default:
 
                 break;
+        }
+
+        if(bet_all_equal() && highestBet != 0){
+            turn = players.get(0);
+            phase++;
         }
 
         if(turn.get_fold()) turn = players.get(turn.get_id()+1);
@@ -227,7 +225,8 @@ public class Game{
                 
                 break; 
             case CALL:
-                event.amount_to_bet = highestBet;
+                event.amount_to_bet = highestBet - event.amount_to_bet;
+                
                 event_bet(event);
 
                 determine_player(event);
