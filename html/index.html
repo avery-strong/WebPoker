@@ -218,7 +218,6 @@
         gameObj.players.forEach(player =>{
             document.getElementById("buttons_display").style.display = "block";
             document.getElementById("sendCheck").disabled = true;
-            if(player.fold) document.getElementById("buttons_display").style.display = "none";
         });
 
         send();
@@ -369,8 +368,6 @@
                 document.getElementById('sendBet3').style           = "text-align:center";
                 document.getElementById('sendDraw').style.display   = "none";
                 document.getElementById('sendSort').style           = "text-align:center";
-
-                if(obj.roundBet > 0 || obj.players[0].check) document.getElementById('sendCheck').disabled = true;
                 
                 break;
             case 4:    // Showdown

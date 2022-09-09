@@ -98,11 +98,12 @@ public class Game{
     public void determine_player(UserEvent event){
         switch(event.event){
             case BET:
-                while(turn.get_bet() && !bet_all_equal()){
+                while(turn.get_bet()){
                     // if it is currently the turn of the last player
                     if(turn.equals(players.get(players.size()-1))){
                         turn = players.get(0);
 
+                        // if not all bets are equal we reset the bet status allowing players to match bet
                         if(!bet_all_equal()){
                             for(Player p : players)
                                 if(p.get_current_bet() != highestBet) p.set_bet(false);
@@ -110,19 +111,21 @@ public class Game{
                     }
                     else turn = players.get(turn.get_id()+1);
                 }
-
                 
                 break;
-            case CALL:
-                if(turn.equals(players.get(players.size()-1)))turn = players.get(0);
+            case CALL: 
+                // if it is currently the turn of the last player
+                if(turn.equals(players.get(players.size()-1))) turn = players.get(0);
                 else turn = players.get(event.playerID+1);
 
-                break;
-            case CHECK:
-                turn = players.get(event.playerID+1);
+                if(bet_all_equal()){
+                    turn = players.get(0);
+                    phase++;
+                }
 
                 break;
             case DRAW:
+                // if it is currently the turn of the last player
                 if(turn.equals(players.get(players.size()-1))) turn = players.get(0);
                 else turn = players.get(event.playerID+1);
 
@@ -132,10 +135,6 @@ public class Game{
                     players.get(0).set_check(false);    // need to reset check (weird here I know)
                 }
                 break;
-            case FOLD:
-                turn = players.get(event.playerID+1);
-
-                break;
             case READY:
                 if(players_all_ready()){
                     phase = 1;
@@ -144,16 +143,17 @@ public class Game{
 
                 break;
             default:
+                // if it is currently the turn of the last player
+                if(turn.equals(players.get(players.size()-1))) turn = players.get(0);
+                else turn = players.get(event.playerID+1);
 
                 break;
         }
 
-        if(bet_all_equal() && highestBet != 0){
-            turn = players.get(0);
-            phase++;
+        while(turn.get_fold()){
+            if(turn.equals(players.get(players.size()-1))) turn = players.get(0);
+            else turn = players.get(turn.get_id()+1);
         }
-
-        if(turn.get_fold()) turn = players.get(turn.get_id()+1);
     }
     public void determine_player_message(Player p){
         if(phase == 0){
@@ -216,8 +216,7 @@ public class Game{
                 event_bet(event);
 
                 // Set the highest bet
-                for(Player p : players)
-                    if(p.get_current_bet() > highestBet) highestBet = p.get_current_bet();
+                if(event_player.get_current_bet() > highestBet) highestBet = event_player.get_current_bet();
 
                 determine_player(event);
 
@@ -254,7 +253,7 @@ public class Game{
                 for(Player p : players)
                     if(p.get_fold()) foldedCount++;
 
-                if(foldedCount == 4) phase = 4;
+                if(foldedCount == players.size()-1) phase = 4;
 
                 break;
             case NAME:
@@ -513,13 +512,7 @@ public class Game{
     public boolean  bet_all_equal(){
         for(Player p : players){
             if(p.get_fold()) continue;
-            if(p.get_current_bet() != highestBet){
-                System.out.println("\n\n" 
-                    + p.get_current_bet() + "\n\n"
-                    + highestBet + "\n\n");
-
-                return false;
-            }
+            if(p.get_current_bet() != highestBet) return false;
         }
             
         return true;
