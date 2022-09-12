@@ -110,10 +110,16 @@ public class Game{
                         }
                     }
                     else turn = players.get(turn.get_id()+1);
+
+                    if(bet_all_equal()){
+                        turn = players.get(0);
+                        phase++;
+                    }
                 }
                 
                 break;
             case CALL: 
+                
                 // if it is currently the turn of the last player
                 if(turn.equals(players.get(players.size()-1))) turn = players.get(0);
                 else turn = players.get(event.playerID+1);
@@ -224,7 +230,8 @@ public class Game{
                 
                 break; 
             case CALL:
-                event.amount_to_bet = highestBet - event.amount_to_bet;
+                System.out.println("\n\n" + event.amount_to_bet + "\n\n");
+                event.amount_to_bet += (highestBet - event.amount_to_bet);
                 
                 event_bet(event);
 
@@ -260,7 +267,8 @@ public class Game{
                 if(phase == 0){
                     event_name(event);
 
-                    for(int i = 0; i < 5; i++) players.get(event.playerID).add_card(players_draw_card(), i);
+                    for(int i = 0; i < 5; i++) 
+                        players.get(event.playerID).add_card(players_draw_card(), i);
                 }    
                 
                 for(Player p : playerQueue)
@@ -290,7 +298,7 @@ public class Game{
 
         if(phase == 4){
             determine_winner();
-            //event_reset(event);            // Phase 04 logic (idk)   
+            event_reset(event);            // Phase 04 logic (idk)   
         }
     }
 
@@ -310,9 +318,7 @@ public class Game{
 
         turn.set_bet(true);
     }     
-    public void event_check(Player p){                                  // Player check logic
-        p.set_check(true); 
-    }     
+    public void event_check(Player p){ p.set_check(true); }     // Player chekc logic    
     public void event_draw(UserEvent event){                    // Phase 02 logic
         deck_new_cards(event);
 
@@ -336,10 +342,8 @@ public class Game{
         // Not an actual event/action performed by the user    
         timeRemaining = -1;
         nonFoldedPlayers.clear();
-
-        for(int i = 0; i < players.size(); i++){
-            players.get(i).set_fold(false);      // false
-            players_empty_hand(players.get(i));
+        for(Player p : players){
+            p.reset_player();
         }
 
         pot.empty_pot();
@@ -397,17 +401,9 @@ public class Game{
     }
     public int     players_size()       { return this.players.size(); }
     public void    players_add(Player p){ this.players.add(p); }
-    public void    players_empty_hand(Player p){
-        // remove all player's Cards
-        // and randomize the order in the deck_shuffle
-        // will be 52 cards in size
-        for(int i = 0; i < p.get_player_hand().cards.length; i++) deck.add(p.get_player_hand().cards[i]);
-        
-        p.get_player_hand().cards = new Card[5];
-    }
+    
     public void    players_fold(Player p){
         p.set_fold(false); 
-        players_empty_hand(p); 
     }
     public void    players_next(){ // swap players
         // If player equals first player or position of player is less than size of players-1
@@ -573,11 +569,6 @@ public class Game{
         players.get(id).subtract_wallet(20);
         pot.add_to_pot(20);
     }
-    public void     bet_set_all(){
-        for(Player p : players){
-            p.reset_bet();
-        }
-    }
 
     /**********************************
      
@@ -586,6 +577,8 @@ public class Game{
     ***********************************/
 
     public int get_phase(){ return this.phase; }
+
+    public ArrayList<Player> get_players(){ return this.players; }
 
     /****************************************************
 

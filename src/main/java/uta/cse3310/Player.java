@@ -42,9 +42,15 @@ public class Player {
     public void add_wallet(int bet)     { this.wallet += bet; }
     public void subtract_wallet(int bet){ this.wallet -= bet; }
 
-    public void reset_bet(){
-        this.bet = false;
-        this.check = false;
+    public void reset_player(){         // Resets the player at the end of the round
+        this.bet    = false;
+        this.check  = false;
+        this.draw   = false;
+        this.fold   = false;
+        this.raised = false;
+        this.ready  = false;
+
+        this.playerHand = new Hand();
     }
 
     /*************************************

@@ -83,7 +83,7 @@ public class AppTest{
         game = new Game("Empty hand");
         Player player = new Player(0);
         game.players_add(player);
-        game.players_empty_hand(player);
+        game.get_players().get(0).reset_player();
         assertTrue(player.get_player_hand().cards[0] == null);
     }
 
