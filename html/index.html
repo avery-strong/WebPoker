@@ -452,15 +452,13 @@
                 + "\n\tWallet: "      + playerObj.wallet
                 + "\n\tCurrent Bet: " + playerObj.currentBet
                 + "\n\tTotal Bet: "   + playerObj.totalBet
-                + "\n\tBet "          + playerObj.bet
+                + "\n\tBet: "         + playerObj.bet
                 + "\n\tCheck: "       + playerObj.check
                 + "\n\tDraw: "        + playerObj.draw
                 + "\n\tFold: "        + playerObj.fold
                 + "\n\tRaised: "      + playerObj.raised
                 + "\n\tReady: "       + playerObj.ready
                 + "\n");
-
-            for(var i = 0; i < playerObj.playerHand.cards.length; i++) console.log(playerObj.playerHand.cards[i].value);
             
             // display whose turn it is
             document.getElementById("phaseMessage").innerHTML = obj.playerMessage;

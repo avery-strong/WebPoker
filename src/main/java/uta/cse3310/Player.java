@@ -49,6 +49,7 @@ public class Player {
         this.fold   = false;
         this.raised = false;
         this.ready  = false;
+        this.currentBet = 0;
 
         this.playerHand = new Hand();
     }

@@ -39,62 +39,7 @@ public class Game{
         return gson.toJson(this);
     }
 
-    public void determine_winner(){
-        // SETTING TO DEFAULT PLAYER IN ARRAY BC whoWinds doesnt work
-        // so other code can be added
-        for(Player p01 : players){
-            // if the player has folded
-            if(p01.get_fold()) continue;
-            
-            for(Player p02 : players){
-                // if the player has folded
-                if(p02.get_fold()) continue;
-
-                // if the players are the same
-                if(p01.get_name().equals(p02.get_name())) continue;
-
-                // if the players hands are equal
-                if(p01.get_player_hand().strength == p02.get_player_hand().strength) tie = true;
-                
-                // if the first players hand is stronger than the second
-                else if(p01.get_player_hand().strength > p02.get_player_hand().strength){
-                    winningPlayer = p01;
-                    p02.set_fold(true);
-                }
-                // if the second players hand is stronger than the second
-                else{
-                    winningPlayer = p02;
-                    p01.set_fold(true);
-                }
-            }
-        }
-
-        System.out.println("\n\n" + winningPlayer.get_name() + "\n\n");
-
-        winningPlayer.add_wallet(pot.get_pot());
-
-        // weird situation with this not going of in determine_player_message so move to here "temporarily"
-        if(tie) playerMessage = "Tie! Both Players" + " won " + winnings/2 + " chips"; 
-        else{
-            playerMessage = "Winner: Player "
-            + winningPlayer.get_id() + " (" + winningPlayer.get_name() + ")"
-            + " won " + String.valueOf(pot.get_pot()) + " chips";
-        }
-
-        System.out.println("\n\n" + playerMessage + "\n\n");
-    }
-
-
-        // After we determine the winner we need to
-        // Save the winner
-        // Save the hand
-        // Clear hands
-        // Broadcast Winner and the winning hand
-        // Update winner wallet
-        // add cards back to deck (call deck_create())
-        // shuffle (call deck_shuffle())
-        // give players new cards starting essentially a new game
-        
+     
     public void determine_player(UserEvent event){
         switch(event.event){
             case BET:
@@ -111,22 +56,29 @@ public class Game{
                     }
                     else turn = players.get(turn.get_id()+1);
 
-                    if(bet_all_equal()){
+                    if(bet_all_equal() && highestBet > 0){
                         turn = players.get(0);
                         phase++;
+
+                        // Set the bet to false for everyone who has not folded
+                        for(Player p : players)
+                            if(!p.get_fold()) p.set_bet(false);
                     }
                 }
                 
                 break;
             case CALL: 
-                
                 // if it is currently the turn of the last player
                 if(turn.equals(players.get(players.size()-1))) turn = players.get(0);
                 else turn = players.get(event.playerID+1);
 
-                if(bet_all_equal()){
+                if(bet_all_equal() && highestBet > 0){
                     turn = players.get(0);
                     phase++;
+
+                    // Set the bet to false for everyone who has not folded
+                    for(Player p : players)
+                        if(!p.get_fold()) p.set_bet(false);
                 }
 
                 break;
@@ -184,7 +136,50 @@ public class Game{
             + "\n"
             + "Turn: " + turn.get_name();
         }
+        else if(phase == 4){ playerMessage = ""; }
     }
+    public void determine_winner(){
+        // SETTING TO DEFAULT PLAYER IN ARRAY BC whoWinds doesnt work
+        // so other code can be added
+        for(Player p01 : players){
+            // if the player has folded
+            if(p01.get_fold()) continue;
+            
+            for(Player p02 : players){
+                // if the player has folded
+                if(p02.get_fold()) continue;
+
+                // if the players are the same
+                if(p01.get_name().equals(p02.get_name())) continue;
+
+                // if the players hands are equal
+                if(p01.get_player_hand().strength == p02.get_player_hand().strength) tie = true;
+                
+                // if the first players hand is stronger than the second
+                else if(p01.get_player_hand().strength > p02.get_player_hand().strength){
+                    winningPlayer = p01;
+                    p02.set_fold(true);
+                }
+                // if the second players hand is stronger than the second
+                else{
+                    winningPlayer = p02;
+                    p01.set_fold(true);
+                }
+            }
+        }
+
+        winningPlayer.add_wallet(pot.get_pot());
+
+        // weird situation with this not going of in determine_player_message so move to here "temporarily"
+        if(tie) playerMessage = "Tie! Both Players" + " won " + winnings/2 + " chips"; 
+        else{
+            playerMessage = "Winner: Player "
+            + winningPlayer.get_id() + " (" + winningPlayer.get_name() + ")"
+            + " won " + String.valueOf(pot.get_pot()) + " chips";
+        }
+
+        System.out.println("\n\n" + playerMessage + "\n\n");
+    } 
     public void kick_not_ready(){
         ArrayList<Player> removeList = new ArrayList<>();
         synchronized(WebPoker.mutex){
@@ -230,8 +225,7 @@ public class Game{
                 
                 break; 
             case CALL:
-                System.out.println("\n\n" + event.amount_to_bet + "\n\n");
-                event.amount_to_bet += (highestBet - event.amount_to_bet);
+                event.amount_to_bet = (highestBet - event_player.get_current_bet());
                 
                 event_bet(event);
 
@@ -342,9 +336,10 @@ public class Game{
         // Not an actual event/action performed by the user    
         timeRemaining = -1;
         nonFoldedPlayers.clear();
-        for(Player p : players){
-            p.reset_player();
-        }
+
+        for(Player p : players) p.reset_player();
+
+        phase = 0;
 
         pot.empty_pot();
         deck.clear();
