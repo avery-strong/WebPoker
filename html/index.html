@@ -142,44 +142,13 @@
 
         display_info(obj);
         if(phase > 0) display_cards();
-        display_buttons(obj);
-/*
-        // Display player info after their name has been set    phaseMessage, info, pot, chips, playersTotalBets
-        if(obj.phase == 1) display_bet_01(obj);
-
-        if(obj.playerQueue.length != 0){
-            for(var i = 0; i < obj.playerQueue.length; i++){
-                try{
-                    if(obj.playerQueue[i].id == playerID){
-                        playerObj = obj.playerQueue[i];
-                        inQueue = true;
-                        document.getElementById('bodyText').style.display = "none";
-                        document.getElementById('waitingBody').style.display = "block";
-                    }   
-                }catch(error){
-                    console.log(error);
-                }
-            }
-        }
-  
-        if(obj.players.length == 5 && inQueue == true){
-            document.getElementById('waitingText').innerHTML = "Waiting for player spot to open up..."
-            + "\n" 
-            + "Players in game (" 
-            + obj.players.length 
-            + "/5)";
-        }
-        else if(inQueue == true){
-            document.getElementById('waitingQueue').innerHTML = "Waiting for round to end...";
-        }
-*/
+        //display_buttons(obj);
     }
     function send(){
         const msg = {
             event: eventType,
             name: name,
             playerID: playerID,
-            player: playerObj,
             amount_to_bet: amount,
             amount_to_draw: amountDraw,
             give_card_indexes: indexes
@@ -293,10 +262,14 @@
         eventType = "NAME";
         name = document.getElementById("event_name").value;
 
+        // Disables the name display
         document.getElementById("name_display").style.display = "none";
+
+        // Enables the info and buttons display
         document.getElementById("info_display").style.display = "block";
         document.getElementById("buttons_display").style.display = "block";
 
+        // Ready will be the first button
         document.getElementById("sendReady").style.display = "inline-block";
 
         send();    
@@ -326,10 +299,29 @@
     function display_buttons(obj){
         // only ready is displayed
 
+
+        // Finally got my idea worked out
+        // Diable buttons in the event function
+        // Display them using the display_buttons function call
+        // Probably keep the call in its current spot just need to uncomment
+
         switch(obj.phase){
             case 0: 
+                document.getElementById("cards_display").style.display = "none";
+
                 document.getElementById("sendReady").style = "text-align:center";
-                
+                document.getElementById("sendReady").disabled = false;
+
+
+                document.getElementById('sendCheck').style.display  = "none";
+                document.getElementById('sendCall').style.display   = "none";
+                document.getElementById('sendFold').style.display   = "none";
+                document.getElementById('sendBet1').style.display   = "none";
+                document.getElementById('sendBet2').style.display   = "none";
+                document.getElementById('sendBet3').style.display   = "none";
+                document.getElementById('sendDraw').style.display   = "none";
+                document.getElementById('sendSort').style.display   = "none";
+
                 break;
             case 1:
                 // bet 05, bet 10, bet 20, call, check, fold, sort
@@ -343,7 +335,7 @@
                 document.getElementById('sendDraw').style.display   = "none";
                 document.getElementById('sendSort').style           = "text-align:center";
 
-                if(obj.roundBet > 0 || obj.players[0].check) document.getElementById('sendCheck').disabled = true;
+                if(obj.players[0].check) document.getElementById('sendCheck').disabled = true;
                 
                 break;
             case 2:    // Draw Phase
@@ -388,11 +380,6 @@
             default:
                 break;
         }  
-/*
-        if(obj.players[playerID].fold){
-
-        }  
-*/
     }
     function display_cards(){
         document.getElementById("cards_display").style.display = "block";
@@ -458,6 +445,7 @@
                 + "\n\tFold: "        + playerObj.fold
                 + "\n\tRaised: "      + playerObj.raised
                 + "\n\tReady: "       + playerObj.ready
+                + "\n\tPhase: "       + obj.phase
                 + "\n");
             
             // display whose turn it is

@@ -175,7 +175,8 @@ public class Game{
         else{
             playerMessage = "Winner: Player "
             + winningPlayer.get_id() + " (" + winningPlayer.get_name() + ")"
-            + " won " + String.valueOf(pot.get_pot()) + " chips";
+            + " won " + String.valueOf(pot.get_pot()) + " chips"
+            + "\n";
         }
 
         System.out.println("\n\n" + playerMessage + "\n\n");
@@ -220,8 +221,6 @@ public class Game{
                 if(event_player.get_current_bet() > highestBet) highestBet = event_player.get_current_bet();
 
                 determine_player(event);
-
-                roundBet = highestBet;
                 
                 break; 
             case CALL:
@@ -258,12 +257,7 @@ public class Game{
 
                 break;
             case NAME:
-                if(phase == 0){
-                    event_name(event);
-
-                    for(int i = 0; i < 5; i++) 
-                        players.get(event.playerID).add_card(players_draw_card(), i);
-                }    
+                if(phase == 0) event_name(event);    
                 
                 for(Player p : playerQueue)
                     if(p.get_id() == event.playerID) p.set_name(event.name);
@@ -271,6 +265,9 @@ public class Game{
                 break;
             case READY:
                 event_ready(event); 
+
+                // hardset 5 are the # of cards in hand
+                for(int i = 0; i < 5; i++) players.get(event.playerID).add_card(players_draw_card(), i);
 
                 determine_player(event);
                 
@@ -284,10 +281,14 @@ public class Game{
                 break;
         }    
         
-        // Automatically sort the hand and set it to be displayed by index.html
-        players.get(event.playerID).get_player_hand().sort_by_value();
-        players.get(event.playerID).get_player_hand().determine_hand();
-
+        if(phase > 0){
+            // Automatically sort the hand and set it to be displayed by index.html
+            for(Player p : players){
+                p.get_player_hand().sort_by_value();
+                p.get_player_hand().determine_hand(); 
+            }
+        }
+        
         determine_player_message(players.get(event.playerID));
 
         if(phase == 4){
