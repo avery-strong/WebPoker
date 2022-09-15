@@ -142,7 +142,7 @@
 
         display_info(obj);
         if(phase > 0) display_cards();
-        //display_buttons(obj);
+        display_buttons(obj);
     }
     function send(){
         const msg = {
@@ -249,6 +249,12 @@
         document.getElementById('card5checkbox').checked = false;
         // get the indexes of the cards
 
+        gameObj.players.forEach(player =>{
+            document.getElementById("buttons_display").style.display = "block";
+            document.getElementById("sendCheck").disabled = false;
+            document.getElementById("sendReady").disabled = false;
+        });
+
         send();
     }
     function event_fold(){
@@ -310,8 +316,6 @@
                 document.getElementById("cards_display").style.display = "none";
 
                 document.getElementById("sendReady").style = "text-align:center";
-                document.getElementById("sendReady").disabled = false;
-
 
                 document.getElementById('sendCheck').style.display  = "none";
                 document.getElementById('sendCall').style.display   = "none";
@@ -350,8 +354,6 @@
                 
                 break;
             case 3:    // Bet 02
-                document.getElementById('sendCheck').disabled = false;
-
                 document.getElementById('sendCheck').style          = "text-align:center";
                 document.getElementById('sendCall').style           = "text-align:center";
                 document.getElementById('sendFold').style           = "text-align:center";
@@ -367,6 +369,8 @@
                 else alert("Tie!");  
 
                 document.getElementById("sendReady").style          = "text-align:center";
+                document.getElementById("sendReady").style.disabled = false;
+
                 document.getElementById('sendCheck').style.display  = "none";
                 document.getElementById('sendFold').style.display   = "none";
                 document.getElementById('sendCall').style.display   = "none";
