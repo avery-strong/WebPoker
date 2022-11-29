@@ -217,87 +217,96 @@ public class Game{
             + "\n\nPhase: " + this.phase);
 
         Player event_player = players.get(event.playerID);
-
-        switch(event.event){
-            case BET:
-                event_bet(event);
-
-                determine_player(event);
-                
-                break; 
-            case CALL:
-                event.amount_to_bet = highestBet - event_player.get_current_bet();
-                
-                event_bet(event);
-
-                determine_player(event);
-
-                break;
-            case CHECK:
-                event_check(event_player);
-
-                determine_player(event);
-
-                break;
-            case DRAW:
-                event_draw(event);
-
-                determine_player(event);
-
-                break;
-            case FOLD:
-                event_fold(event);
-
-                determine_player(event);
-
-                int foldedCount = 0;
-
-                for(Player p : players)
-                    if(p.get_fold()) foldedCount++;
-
-                if(foldedCount == players.size()-1) phase = 4;
-
-                break;
-            case NAME:
-                if(phase == 0) event_name(event);    
-                
-                for(Player p : playerQueue)
-                    if(p.get_id() == event.playerID) p.set_name(event.name);
-                
-                break;
-            case READY:
-                event_ready(event); 
-
-                // hardset 5 are the # of cards in hand
-                for(int i = 0; i < 5; i++) players.get(event.playerID).add_card(players_draw_card(), i);
-
-                determine_player(event);
-                
-                break;
-            case SORT:
-                player_sort_cards(players.get(event.playerID));
-                
-                break;
-            default:
-
-                break;
-        }  
-
-        determine_player(event_player.get_fold());  
-        
-        if(phase > 0){
-            // Automatically sort the hand and set it to be displayed by index.html
-            for(Player p : players){
-                p.get_player_hand().sort_by_value();
-                p.get_player_hand().determine_hand(); 
-            }
+        if(!event_player.equals(turn)){
+            System.out.println("Wait your turn loser");
         }
-        
-        determine_player_message(players.get(event.playerID));
+        else{    
+            switch(event.event){
+                case BET:
+                    event_bet(event);
 
-        if(phase == 4){
-            determine_winner();
-            event_reset(event);            // Phase 04 logic (idk)   
+                    determine_player(event);
+                    
+                    break; 
+                case CALL:
+                    event.amount_to_bet = highestBet - event_player.get_current_bet();
+                    
+                    event_bet(event);
+
+                    determine_player(event);
+
+                    break;
+                case CHECK:
+                    event_check(event_player);
+
+                    determine_player(event);
+
+                    break;
+                case DRAW:
+                    event_draw(event);
+
+                    determine_player(event);
+
+                    break;
+                case FOLD:
+                    event_fold(event);
+
+                    determine_player(event);
+
+                    int foldedCount = 0;
+
+                    for(Player p : players)
+                        if(p.get_fold()) foldedCount++;
+
+                    if(foldedCount == players.size()-1) phase = 4;
+
+                    break;
+                case NAME:
+                    if(phase == 0) event_name(event);    
+                    
+                    for(Player p : playerQueue)
+                        if(p.get_id() == event.playerID) p.set_name(event.name);
+                    
+                    break;
+                case READY:
+                    event_ready(event); 
+
+                    // hardset 5 are the # of cards in hand
+                    for(int i = 0; i < 5; i++) players.get(event.playerID).add_card(players_draw_card(), i);
+
+                    determine_player(event);
+                    
+                    break;
+                case SORT:
+                    player_sort_cards(players.get(event.playerID));
+                    
+                    break;
+                default:
+
+                    break;
+            }  
+        
+
+            /*
+                There's potential that a FOLDED player will get bypassed and therefore will still be in play.
+                This one line is just for reassaurance that doesnt happen
+            */
+            determine_player(event_player.get_fold());  
+            
+            if(phase > 0){
+                // Automatically sort the hand and set it to be displayed by index.html
+                for(Player p : players){
+                    p.get_player_hand().sort_by_value();
+                    p.get_player_hand().determine_hand(); 
+                }
+            }
+            
+            determine_player_message(players.get(event.playerID));
+
+            if(phase == 4){
+                determine_winner();
+                event_reset(event);            // Phase 04 logic (idk)   
+            }
         }
     }
 
