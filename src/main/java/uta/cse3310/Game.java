@@ -38,7 +38,6 @@ public class Game{
         Gson gson = new Gson();
         return gson.toJson(this);
     }
-
      
     public void determine_player(UserEvent event){
         switch(event.event){
@@ -92,6 +91,21 @@ public class Game{
                     turn = players.get(0);
                     players.get(0).set_check(false);    // need to reset check (weird here I know)
                 }
+
+                break;
+            case FOLD:
+                if(turn.equals(players.get(players.size()-1))) turn = players.get(0);
+                else turn = players.get(turn.get_id()+1);
+
+                if(bet_all_equal() && highestBet > 0){
+                    turn = players.get(0);
+                    phase++;
+
+                    // Set the bet to false for everyone who has not folded
+                    for(Player p : players)
+                        if(!p.get_fold()) p.set_bet(false);
+                }
+
                 break;
             case READY:
                 if(players_all_ready()){
@@ -107,11 +121,9 @@ public class Game{
 
                 break;
         }
-
-        while(turn.get_fold()){
-            if(turn.equals(players.get(players.size()-1))) turn = players.get(0);
-            else turn = players.get(turn.get_id()+1);
-        }
+    }
+    public void determine_player(boolean b){
+        if(b) turn = players.get(turn.get_id()+1);
     }
     public void determine_player_message(Player p){
         if(phase == 0){
@@ -193,13 +205,6 @@ public class Game{
     public void rearrange_ids(){
         for(int i = 0; i < players.size(); i++) players.get(i).set_id(i);
     }
-    public Player get_player(int id){ return this.players.get(id); }
-    public Player get_player_in_queue(int id){
-        for(Player p : playerQueue)
-            if(p.get_id() == id) return p;
-            
-        return null;
-    }
     public void processMessage(String msg){
         GsonBuilder builder = new GsonBuilder();
         Gson gson = builder.create();
@@ -217,14 +222,11 @@ public class Game{
             case BET:
                 event_bet(event);
 
-                // Set the highest bet
-                if(event_player.get_current_bet() > highestBet) highestBet = event_player.get_current_bet();
-
                 determine_player(event);
                 
                 break; 
             case CALL:
-                event.amount_to_bet = (highestBet - event_player.get_current_bet());
+                event.amount_to_bet = highestBet - event_player.get_current_bet();
                 
                 event_bet(event);
 
@@ -279,7 +281,9 @@ public class Game{
             default:
 
                 break;
-        }    
+        }  
+
+        determine_player(event_player.get_fold());  
         
         if(phase > 0){
             // Automatically sort the hand and set it to be displayed by index.html
@@ -297,6 +301,15 @@ public class Game{
         }
     }
 
+    public Player get_player(int id){ return this.players.get(id); }
+    public Player get_player_in_queue(int id){
+        for(Player p : playerQueue)
+            if(p.get_id() == id) return p;
+            
+        return null;
+    }
+    
+
     /**************************************
     
                     Events
@@ -310,6 +323,9 @@ public class Game{
         turn.subtract_wallet(event.amount_to_bet);
         turn.set_current_bet(event.amount_to_bet);
         pot.add_to_pot(event.amount_to_bet);
+
+        // Set the highest bet
+        if(turn.get_current_bet() > highestBet) highestBet = turn.get_current_bet();
 
         turn.set_bet(true);
     }     
@@ -381,6 +397,7 @@ public class Game{
 
         return false;
     }
+
     public Card    players_draw_card(){
         // gets a card from the front of passed in deck
         Card card = deck.get(0);
@@ -388,6 +405,7 @@ public class Game{
         
         return card;
     }  
+    
     public int     players_num_ready(){
         int count = 0;
         for(int i = 0; i < players.size(); i++)
@@ -396,8 +414,8 @@ public class Game{
         return count;
     }
     public int     players_size()       { return this.players.size(); }
-    public void    players_add(Player p){ this.players.add(p); }
     
+    public void    players_add(Player p){ this.players.add(p); }
     public void    players_fold(Player p){
         p.set_fold(false); 
     }
@@ -430,12 +448,15 @@ public class Game{
     ****************************************/
 
     public int      playerQueue_size()                  { return this.playerQueue.size(); }
+    
     public boolean  playerQueue_contains(Player p){ 
         if(this.playerQueue.contains(p)) return true; 
 
         return false;
     }
+    
     public Player   playerQueue_get()                   { return this.playerQueue.get(0); }
+    
     public void     playerQueue_remove(Player p)        { this.playerQueue.remove(p); }
     public void     playerQueue_add(Player p)           { this.playerQueue.add(p); }
     
@@ -447,12 +468,14 @@ public class Game{
     ****************************************/
 
     public void     nonFolded_add(Player p){ this.nonFoldedPlayers.add(p); }
+    public void     nonFolded_remove(Player p){ this.nonFoldedPlayers.remove(p); }
+
     public boolean  nonFolded_contains(Player p){ 
         if(this.nonFoldedPlayers.contains(p)) return true;
 
         return false;
     }
-    public void     nonFolded_remove(Player p){ this.nonFoldedPlayers.remove(p); }
+    
     public int      nonFolded_size(){ return this.nonFoldedPlayers.size(); }
 
     /**************************************
@@ -493,6 +516,7 @@ public class Game{
             System.out.println(e);
         }
     }
+
     public int  deck_size(){ return this.deck.size(); }
 
     /**********************************
@@ -515,6 +539,7 @@ public class Game{
             
         return true;
     }
+
     public int      bet_next_player(){
         Player temp = nonFoldedPlayers.get(0);
         for(int i = 1; i < nonFoldedPlayers.size(); i++){
@@ -533,6 +558,7 @@ public class Game{
             
         return temp;
     }
+
     public Player   bet_player_next(){
         if(bet_all_equal()){
             for(Player p : nonFoldedPlayers) p.set_check(true);
@@ -550,6 +576,7 @@ public class Game{
 
         return currentPlayer;
     }
+
     public void     bet_call(UserEvent event){
         int betDifference = bet_max_player() - players.get(event.playerID).get_current_bet();
         players.get(event.playerID).set_bet(true);
