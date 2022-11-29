@@ -354,7 +354,7 @@ function display_info(obj){         // Most events will need to call display_inf
             + "\n");
         
         // display whose turn it is
-        document.getElementById("phaseMessage").innerHTML = obj.playerMessage;
+        document.getElementById("gameMessage").innerHTML = obj.gameMessage;
           
         document.getElementById("info").innerHTML = 
             "Player Wallet: "   + playerObj.wallet

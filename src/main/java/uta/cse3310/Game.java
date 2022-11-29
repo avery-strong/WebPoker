@@ -39,6 +39,32 @@ public class Game{
         return gson.toJson(this);
     }
      
+    
+    public void determine_game_message(Player p){
+        if(phase == 0){
+            gameMessage = "Phase: PreGame"
+                          + "\n"
+                          + "Waiting for players to ready up...";
+        }
+        else if(phase == 1){
+            gameMessage = "Phase: First Bet Phase"
+            + "\n"
+            + "Turn: " + turn.get_name();
+        }
+
+        else if(phase == 2){
+            gameMessage = "Phase: Draw Phase"
+            + "\n"
+            + "Turn: " + turn.get_name();
+        }
+
+        else if(phase == 3){
+            gameMessage = "Phase: Second Bet Phase"
+            + "\n"
+            + "Turn: " + turn.get_name();
+        }
+        else if(phase == 4){ gameMessage = ""; }
+    }
     public void determine_player(UserEvent event){
         switch(event.event){
             case BET:
@@ -125,31 +151,6 @@ public class Game{
     public void determine_player(boolean b){
         if(b) turn = players.get(turn.get_id()+1);
     }
-    public void determine_player_message(Player p){
-        if(phase == 0){
-            playerMessage = "Phase: PreGame"
-                          + "\n"
-                          + "Waiting for players to ready up...";
-        }
-        else if(phase == 1){
-            playerMessage = "Phase: First Bet Phase"
-            + "\n"
-            + "Turn: " + turn.get_name();
-        }
-
-        else if(phase == 2){
-            playerMessage = "Phase: Draw Phase"
-            + "\n"
-            + "Turn: " + turn.get_name();
-        }
-
-        else if(phase == 3){
-            playerMessage = "Phase: Second Bet Phase"
-            + "\n"
-            + "Turn: " + turn.get_name();
-        }
-        else if(phase == 4){ playerMessage = ""; }
-    }
     public void determine_winner(){
         // SETTING TO DEFAULT PLAYER IN ARRAY BC whoWinds doesnt work
         // so other code can be added
@@ -183,15 +184,15 @@ public class Game{
         winningPlayer.add_wallet(pot.get_pot());
 
         // weird situation with this not going of in determine_player_message so move to here "temporarily"
-        if(tie) playerMessage = "Tie! Both Players" + " won " + winnings/2 + " chips"; 
+        if(tie) gameMessage = "Tie! Both Players" + " won " + winnings/2 + " chips"; 
         else{
-            playerMessage = "Winner: Player "
+            gameMessage = "Winner: Player "
             + winningPlayer.get_id() + " (" + winningPlayer.get_name() + ")"
             + " won " + String.valueOf(pot.get_pot()) + " chips"
             + "\n";
         }
 
-        System.out.println("\n\n" + playerMessage + "\n\n");
+        System.out.println("\n\n" + gameMessage + "\n\n");
     } 
     public void kick_not_ready(){
         ArrayList<Player> removeList = new ArrayList<>();
@@ -217,96 +218,100 @@ public class Game{
             + "\n\nPhase: " + this.phase);
 
         Player event_player = players.get(event.playerID);
-        if(!event_player.equals(turn)){
-            System.out.println("Wait your turn loser");
-        }
-        else{    
-            switch(event.event){
-                case BET:
-                    event_bet(event);
 
-                    determine_player(event);
-                    
-                    break; 
-                case CALL:
-                    event.amount_to_bet = highestBet - event_player.get_current_bet();
-                    
-                    event_bet(event);
+        try{
+            if(phase > 0 && !event_player.equals(turn)){
+                throw new Exception("Hey man wait your turn!");
+            }
+            else{    
+                switch(event.event){
+                    case BET:
+                        event_bet(event);
 
-                    determine_player(event);
+                        determine_player(event);
+                        
+                        break; 
+                    case CALL:
+                        event.amount_to_bet = highestBet - event_player.get_current_bet();
+                        
+                        event_bet(event);
 
-                    break;
-                case CHECK:
-                    event_check(event_player);
+                        determine_player(event);
 
-                    determine_player(event);
+                        break;
+                    case CHECK:
+                        event_check(event_player);
 
-                    break;
-                case DRAW:
-                    event_draw(event);
+                        determine_player(event);
 
-                    determine_player(event);
+                        break;
+                    case DRAW:
+                        event_draw(event);
 
-                    break;
-                case FOLD:
-                    event_fold(event);
+                        determine_player(event);
 
-                    determine_player(event);
+                        break;
+                    case FOLD:
+                        event_fold(event);
 
-                    int foldedCount = 0;
+                        determine_player(event);
 
-                    for(Player p : players)
-                        if(p.get_fold()) foldedCount++;
+                        int foldedCount = 0;
 
-                    if(foldedCount == players.size()-1) phase = 4;
+                        for(Player p : players)
+                            if(p.get_fold()) foldedCount++;
 
-                    break;
-                case NAME:
-                    if(phase == 0) event_name(event);    
-                    
-                    for(Player p : playerQueue)
-                        if(p.get_id() == event.playerID) p.set_name(event.name);
-                    
-                    break;
-                case READY:
-                    event_ready(event); 
+                        if(foldedCount == players.size()-1) phase = 4;
 
-                    // hardset 5 are the # of cards in hand
-                    for(int i = 0; i < 5; i++) players.get(event.playerID).add_card(players_draw_card(), i);
+                        break;
+                    case NAME:
+                        if(phase == 0) event_name(event);    
+                        
+                        for(Player p : playerQueue)
+                            if(p.get_id() == event.playerID) p.set_name(event.name);
+                        
+                        break;
+                    case READY:
+                        event_ready(event); 
 
-                    determine_player(event);
-                    
-                    break;
-                case SORT:
-                    player_sort_cards(players.get(event.playerID));
-                    
-                    break;
-                default:
+                        // hardset 5 are the # of cards in hand
+                        for(int i = 0; i < 5; i++) players.get(event.playerID).add_card(players_draw_card(), i);
 
-                    break;
-            }  
-        
+                        determine_player(event);
+                        
+                        break;
+                    case SORT:
+                        player_sort_cards(players.get(event.playerID));
+                        
+                        break;
+                    default:
 
-            /*
-                There's potential that a FOLDED player will get bypassed and therefore will still be in play.
-                This one line is just for reassaurance that doesnt happen
-            */
-            determine_player(event_player.get_fold());  
+                        break;
+                }  
             
-            if(phase > 0){
-                // Automatically sort the hand and set it to be displayed by index.html
-                for(Player p : players){
-                    p.get_player_hand().sort_by_value();
-                    p.get_player_hand().determine_hand(); 
+                /*
+                    There's potential that a FOLDED player will get bypassed and therefore will still be in play.
+                    This one line is just for reassaurance that does not happen
+                */
+                determine_player(event_player.get_fold());  
+                
+                if(phase > 0){
+                    // Automatically sort the hand and set it to be displayed by index.html
+                    for(Player p : players){
+                        p.get_player_hand().sort_by_value();
+                        p.get_player_hand().determine_hand(); 
+                    }
+                }
+                
+                determine_game_message(players.get(event.playerID));
+
+                if(phase == 4){
+                    determine_winner();
+                    event_reset(event);            // Phase 04 logic (idk)   
                 }
             }
-            
-            determine_player_message(players.get(event.playerID));
+        }catch(Exception e){
 
-            if(phase == 4){
-                determine_winner();
-                event_reset(event);            // Phase 04 logic (idk)   
-            }
         }
     }
 
@@ -317,7 +322,6 @@ public class Game{
             
         return null;
     }
-    
 
     /**************************************
     
@@ -638,7 +642,7 @@ public class Game{
     private Player winningPlayer;
     private Player turn;
 
-    private String playerMessage;
+    private String gameMessage;
 
     // round - these are used with javascript to determine certain displays
     private int phase = 0;
