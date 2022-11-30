@@ -283,6 +283,8 @@ function display_buttons(obj){
         default:
             break;
     }  
+
+    document.getElementById("player_message").innerHTML = obj.playerMessage;
 }
 function display_cards(){
     document.getElementById("cards_display").style.display = "block";
@@ -350,8 +352,10 @@ function display_info(obj){         // Most events will need to call display_inf
             + "\n\tReady: "       + playerObj.ready
             + "\n\tPhase: "       + obj.phase
             + "\n\tTurn: "        + obj.turn.name
-            + "\n\tPlayer: "      + obj.players[0].name
+            + "\n\tMessage: "     + obj.playerMessage                              
             + "\n");
+
+        // Nothing here
         
         // display whose turn it is
         document.getElementById("gameMessage").innerHTML = obj.gameMessage;
@@ -375,9 +379,9 @@ function display_info(obj){         // Most events will need to call display_inf
             playerTotalBetString += "id: " + player.id 
                 + " | " + player.name
                 + " | Current Bet: " + player.currentBet
-                + " Wallet: " + player.wallet
-                + " ready: " + (player.ready?"Yes":"No")
-                + " fold: " + (player.fold?"Yes":"No")
+                + " | Wallet: " + player.wallet
+                + " | Ready: " + (player.ready?"Yes":"No")
+                + " | Fold: " + (player.fold?"Yes":"No")
                 + "\n";
         });
 

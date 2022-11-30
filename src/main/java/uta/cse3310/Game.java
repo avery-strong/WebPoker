@@ -1,4 +1,4 @@
-package uta.cse3310;
+ package uta.cse3310;
 
 import java.util.ArrayList;
 
@@ -309,9 +309,11 @@ public class Game{
                     determine_winner();
                     event_reset(event);            // Phase 04 logic (idk)   
                 }
+
+                playerMessage = "";
             }
         }catch(Exception e){
-
+            playerMessage = e.getMessage();
         }
     }
 
@@ -642,11 +644,11 @@ public class Game{
     private Player winningPlayer;
     private Player turn;
 
-    private String gameMessage;
+    private String gameMessage = "";
+    private String playerMessage = "";
 
     // round - these are used with javascript to determine certain displays
     private int phase = 0;
-    //private int turn = 0;
     private int highestBet = 0;
     private int roundBet = 0;
 
@@ -654,6 +656,7 @@ public class Game{
     private int winner = -1;
     private int winnings = -1;
     private int timeRemaining = -1;
+
     private String winStr = "";
  
     private Pot pot; // total of chips being bet
