@@ -8,20 +8,20 @@
 </head>
 
 <body>
-    <big id="titleText" style="text-align:center">
-        <p style="text-align:center"><img id="mav1" src="UT_Arlington_Mavericks_logo.png" width="100px">
+    <big id="titleText" style="text-align:center; display: none;">
+        <p style="text-align: center"><img id="mav1" src="UT_Arlington_Mavericks_logo.png" width="100px">
             <big><big><b>MavPoker</b></big></big>
             <img id="mav2" src="UT_Arlington_Mavericks_logo.png" width="100px">
         </p>
     </big>
-    <hr style="height:5px; width:100%; border-width:0; color:black; background-color:black">
-    <div id="waitingBody" style="text-align:center">
-        <p id="waitingText" style="text-align:center"></p>
-        <p id="waitingQueue" style="text-align:center"></p>
-    </div>
+    <hr style="height: 5px; width: 100%; border-width: 0; color: black; background-color: black; display: none;">
+    <div id="waitingBody" style="text-align: center; display: none;">
+        <p id="waitingText" style="text-align: center"></p>
+        <p id="waitingQueue" style="text-align: center"></p>
+    </div> 
     <a id="bodyText">
         <div id="name_display">
-            <p style="text-align: center">
+            <p style="text-align: center;">
                 Name:
                 <input id="event_name"   type="text"   style="text-align: center">
                 <input id="sendConnect"  type="button" value="Connect" onclick="event_name()">
@@ -40,8 +40,8 @@
             <p id="pot"               style="width: auto; white-space: pre-line; font-weight: bold;"></p>
         </div>
         <div id="cards_display"       style="display: none;">
-            <p>Your Cards:</p>
-            <p style="text-align:center">
+            <p style="display: none;">Your Cards:</p>
+            <p style="text-align: center;">
                 <input  id="card1checkbox"  type="checkbox">
                 <img    id="card1" src=""   width="80px">
                 <input  id="card2checkbox"  type="checkbox">
@@ -55,7 +55,7 @@
             </p>
         </div>
         <div id="buttons_display"     style="display: none;">
-            <p style="text-align: center">
+            <p style="text-align: center;">
                 <input type="button" id="sendBet1"  value="Bet 05" onclick="event_bet_05()" style="display: none; text-align: center">
                 <input type="button" id="sendBet2"  value="Bet 10" onclick="event_bet_10()" style="display: none; text-align: center">
                 <input type="button" id="sendBet3"  value="Bet 20" onclick="event_bet_20()" style="display: none; text-align: center">
@@ -70,7 +70,7 @@
         </div>
         
     </a>
-    <hr style="height: 5px; width: 100%; border-width: 0; color: black; background-color: black">
+    <hr style="height: 5px; width: 100%; border-width: 0; color: black; background-color: black;">
 
     <input type="button" id="infoButton" value="Toggle Info" onclick="toggleInfo()" style="text-align:center">
     <p id="infoToggle">

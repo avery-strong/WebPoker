@@ -68,6 +68,11 @@ public class Game{
     public void determine_player(UserEvent event){
         switch(event.event){
             case BET:
+                /*
+                    Forgot why I wrote this
+                    Looks like it determines whose turn it is by a boolean value which is 
+                    determined by if they have bet already or not
+                */
                 while(turn.get_bet()){
                     // if it is currently the turn of the last player
                     if(turn.equals(players.get(players.size()-1))){
@@ -81,14 +86,7 @@ public class Game{
                     }
                     else turn = players.get(turn.get_id()+1);
 
-                    if(bet_all_equal() && highestBet > 0){
-                        turn = players.get(0);
-                        phase++;
-
-                        // Set the bet to false for everyone who has not folded
-                        for(Player p : players)
-                            if(!p.get_fold()) p.set_bet(false);
-                    }
+                    determine_bet_equal();
                 }
                 
                 break;
@@ -97,14 +95,7 @@ public class Game{
                 if(turn.equals(players.get(players.size()-1))) turn = players.get(0);
                 else turn = players.get(event.playerID+1);
 
-                if(bet_all_equal() && highestBet > 0){
-                    turn = players.get(0);
-                    phase++;
-
-                    // Set the bet to false for everyone who has not folded
-                    for(Player p : players)
-                        if(!p.get_fold()) p.set_bet(false);
-                }
+                determine_bet_equal();
 
                 break;
             case DRAW:
@@ -121,16 +112,12 @@ public class Game{
                 break;
             case FOLD:
                 if(turn.equals(players.get(players.size()-1))) turn = players.get(0);
-                else turn = players.get(turn.get_id()+1);
+                else{
+                    while(turn.get_fold())
+                        turn = players.get(turn.get_id()+1);
+                } 
 
-                if(bet_all_equal() && highestBet > 0){
-                    turn = players.get(0);
-                    phase++;
-
-                    // Set the bet to false for everyone who has not folded
-                    for(Player p : players)
-                        if(!p.get_fold()) p.set_bet(false);
-                }
+                determine_bet_equal();
 
                 break;
             case READY:
@@ -148,7 +135,23 @@ public class Game{
                 break;
         }
 
-        if(turn.get_fold()) turn = players.get(turn.get_id()+1);
+        /* 
+            Possibility that "turn" will contain a player who has folded
+            Lines just check and set to next player if found
+        
+        while(turn.get_fold())
+            turn = players.get(turn.get_id()+1);
+        */
+    }
+    public void determine_bet_equal(){
+        if(bet_all_equal() && highestBet > 0){
+            turn = players.get(0);
+            phase++;
+
+            // Set the bet to false for everyone who has not folded
+            for(Player p : players)
+                if(!p.get_fold()) p.set_bet(false);
+        }
     }
     public void determine_player(boolean b){
         if(b) turn = players.get(turn.get_id()+1);
@@ -415,7 +418,7 @@ public class Game{
         return false;
     }
 
-    public Card    players_draw_card(){
+    public Card players_draw_card(){
         // gets a card from the front of passed in deck
         Card card = deck.get(0);
         deck.remove(0);
@@ -423,20 +426,20 @@ public class Game{
         return card;
     }  
     
-    public int     players_num_ready(){
+    public int players_num_ready(){
         int count = 0;
         for(int i = 0; i < players.size(); i++)
             if(players.get(i).get_ready() == true) count++;
         
         return count;
     }
-    public int     players_size()       { return this.players.size(); }
+    public int players_size(){ return this.players.size(); }
     
-    public void    players_add(Player p){ this.players.add(p); }
-    public void    players_fold(Player p){
+    public void players_add(Player p){ this.players.add(p); }
+    public void players_fold(Player p){
         p.set_fold(false); 
     }
-    public void    players_next(){ // swap players
+    public void players_next(){ // swap players
         // If player equals first player or position of player is less than size of players-1
         if(currentPlayer == nonFoldedPlayers.get(0) || nonFoldedPlayers.indexOf(currentPlayer) < nonFoldedPlayers.size()-1)
             currentPlayer = nonFoldedPlayers.get(nonFoldedPlayers.indexOf(currentPlayer) + 1); // next player
@@ -444,16 +447,16 @@ public class Game{
         // go back to starting player / next round
         else currentPlayer = nonFoldedPlayers.get(0);
     }
-    public void    players_remove(Player p){ this.players.remove(p); }
-    public void    players_set_current(Player p){ this.currentPlayer = p; }
-    public void    players_set_notReady(){
+    public void players_remove(Player p){ this.players.remove(p); }
+    public void players_set_current(Player p){ this.currentPlayer = p; }
+    public void players_set_notReady(){
         for(int i = 0; i < players.size(); i++){
             players.get(i).set_raised(false);
             players.get(i).set_fold(false);
             players.get(i).set_current_bet(0);
         }
     }
-    public void    player_sort_cards(Player p){ 
+    public void player_sort_cards(Player p){ 
         p.get_player_hand().sort_by_value(); 
         //p.get_player_hand().sort_by_suit();
     }
@@ -464,18 +467,18 @@ public class Game{
 
     ****************************************/
 
-    public int      playerQueue_size()                  { return this.playerQueue.size(); }
+    public int playerQueue_size(){ return this.playerQueue.size(); }
     
-    public boolean  playerQueue_contains(Player p){ 
+    public boolean playerQueue_contains(Player p){ 
         if(this.playerQueue.contains(p)) return true; 
 
         return false;
     }
     
-    public Player   playerQueue_get()                   { return this.playerQueue.get(0); }
+    public Player playerQueue_get(){ return this.playerQueue.get(0); }
     
-    public void     playerQueue_remove(Player p)        { this.playerQueue.remove(p); }
-    public void     playerQueue_add(Player p)           { this.playerQueue.add(p); }
+    public void playerQueue_add(Player p)   { this.playerQueue.add(p); }
+    public void playerQueue_remove(Player p){ this.playerQueue.remove(p); }
     
 
     /***************************************
@@ -484,16 +487,16 @@ public class Game{
 
     ****************************************/
 
-    public void     nonFolded_add(Player p){ this.nonFoldedPlayers.add(p); }
-    public void     nonFolded_remove(Player p){ this.nonFoldedPlayers.remove(p); }
+    public void nonFolded_add(Player p)   { this.nonFoldedPlayers.add(p); }
+    public void nonFolded_remove(Player p){ this.nonFoldedPlayers.remove(p); }
 
-    public boolean  nonFolded_contains(Player p){ 
+    public boolean nonFolded_contains(Player p){ 
         if(this.nonFoldedPlayers.contains(p)) return true;
 
         return false;
     }
     
-    public int      nonFolded_size(){ return this.nonFoldedPlayers.size(); }
+    public int nonFolded_size(){ return this.nonFoldedPlayers.size(); }
 
     /**************************************
     
@@ -542,7 +545,7 @@ public class Game{
      
     ***********************************/
 
-    public boolean  bet_all_equal(){
+    public boolean bet_all_equal(){
         for(Player p : players){
             if(p.get_fold()) continue;
             if(p.get_current_bet() != highestBet) return false;
@@ -550,14 +553,14 @@ public class Game{
             
         return true;
     }
-    public boolean  bet_all_players(){
+    public boolean bet_all_players(){
         for(Player p : nonFoldedPlayers)
             if(p.get_bet() == false) return false;
             
         return true;
     }
 
-    public int      bet_next_player(){
+    public int bet_next_player(){
         Player temp = nonFoldedPlayers.get(0);
         for(int i = 1; i < nonFoldedPlayers.size(); i++){
             if(temp.get_current_bet() < nonFoldedPlayers.get(i).get_current_bet())      return temp.get_id();
@@ -568,7 +571,7 @@ public class Game{
 
         return 0;
     }
-    public int      bet_max_player(){
+    public int bet_max_player() {
         int temp = 0;
         for(Player p : nonFoldedPlayers)
             if(p.get_current_bet() > temp) temp = p.get_current_bet();
@@ -576,7 +579,7 @@ public class Game{
         return temp;
     }
 
-    public Player   bet_player_next(){
+    public Player bet_player_next(){
         if(bet_all_equal()){
             for(Player p : nonFoldedPlayers) p.set_check(true);
             
@@ -594,7 +597,7 @@ public class Game{
         return currentPlayer;
     }
 
-    public void     bet_call(UserEvent event){
+    public void bet_call(UserEvent event){
         int betDifference = bet_max_player() - players.get(event.playerID).get_current_bet();
         players.get(event.playerID).set_bet(true);
 
@@ -605,10 +608,10 @@ public class Game{
         players.get(event.playerID).set_current_bet(event.amount_to_bet);
         pot.add_to_pot(event.amount_to_bet);
     }
-    public void     bet_place_ante(int id){
+    public void bet_place_ante(int id){
         players.get(id).subtract_wallet(20);
         pot.add_to_pot(20);
-    }
+    } 
 
     /**********************************
      
