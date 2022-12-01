@@ -147,6 +147,8 @@ public class Game{
 
                 break;
         }
+
+        if(turn.get_fold()) turn = players.get(turn.get_id()+1);
     }
     public void determine_player(boolean b){
         if(b) turn = players.get(turn.get_id()+1);
@@ -293,7 +295,7 @@ public class Game{
                     There's potential that a FOLDED player will get bypassed and therefore will still be in play.
                     This one line is just for reassaurance that does not happen
                 */
-                determine_player(event_player.get_fold());  
+                //determine_player(event_player.get_fold());  
                 
                 if(phase > 0){
                     // Automatically sort the hand and set it to be displayed by index.html
