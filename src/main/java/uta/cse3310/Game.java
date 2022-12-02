@@ -66,6 +66,24 @@ public class Game{
         else if(phase == 4){ gameMessage = ""; }
     }
     public void determine_player(UserEvent event){
+/*        
+        if(turn.equals(players.get(players.size()-1))) turn = players.get(0);
+
+        while(turn.get_bet() || turn.get_fold()){
+            // if it is currently the turn of the last player
+            if(turn.equals(players.get(players.size()-1))){
+                turn = players.get(0);
+
+                // if not all bets are equal we reset the bet status allowing players to match bet
+                if(!bet_all_equal()){
+                    for(Player p : players)
+                        if(p.get_current_bet() != highestBet) p.set_bet(false);
+                }
+            }
+            else turn = players.get(turn.get_id()+1);
+        }
+*/
+        determine_bet_equal();
         switch(event.event){
             case BET:
                 /*
@@ -80,6 +98,7 @@ public class Game{
 
                         // if not all bets are equal we reset the bet status allowing players to match bet
                         if(!bet_all_equal()){
+                            System.out.println("\n\nNot bet all equal happened\n\n");
                             for(Player p : players)
                                 if(p.get_current_bet() != highestBet) p.set_bet(false);
                         }
@@ -134,6 +153,7 @@ public class Game{
 
                 break;
         }
+        
 
         /* 
             Possibility that "turn" will contain a player who has folded
@@ -142,7 +162,7 @@ public class Game{
         while(turn.get_fold())
             turn = players.get(turn.get_id()+1);
         */
-    }
+     }
     public void determine_bet_equal(){
         if(bet_all_equal() && highestBet > 0){
             turn = players.get(0);
